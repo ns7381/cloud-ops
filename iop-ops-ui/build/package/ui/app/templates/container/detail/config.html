@@ -1,0 +1,97 @@
+<div class="form-horizontal form-static form-align-left panel-left-indent" id="tab-pane-conf">
+    <div class="form-group form-group-border">
+        <label class="control-label col-sm-1">容器名称：</label>
+        <div class="col-sm-11">
+            <table class="table table-primary">
+                <thead>
+                    <tr>
+                        <th>容器端口</th>
+                        <th>协议</th>
+                        <th>主机端口</th>
+                        <th class="cell-em-6">操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><input type="text" name="containerPort" value="21707" readonly></td>
+                        <td><input type="text" name="protocol" value="TCP" readonly></td>
+                        <td><input type="text" name="hostPort" value="动态端口" readonly></td>
+                        <td class="cell-em-6"><a class="btn btn-del">删除</a></td>
+                    </tr>
+                    <tr>
+                        <td><input type="text" placeholder="容器端口" name="containerPort"></td>
+                        <td>
+                            <select name="protocol">
+                                <option value="HTTP">HTTP</option>
+                                <option value="TCP">TCP</option>
+                            </select>
+                        </td>
+                        <td><input type="text" placeholder="主机端口" name="hostPort"></td>
+                        <td class="cell-em-6"><a class="btn btn-addd">添加</a></td>
+                    </tr>
+                </tbody>
+            </table>
+            <a class="btn btn-save">保存更改</a>
+        </div>
+    </div>
+    <div class="form-group form-group-border">
+        <label class="control-label col-sm-1">Volumes：</label>
+        <div class="col-sm-11">
+            <table class="table table-primary" id="volumeTable">
+                <thead>
+                    <tr>
+                        <th>卷名称</th>
+                        <th>宿主机目录</th>
+                        <th>容器目录</th>
+                        <th>卷容量</th>
+                        <!--<th class="cell-em-6">操作</th>-->
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><select name="volume" id="volume" class="form-control" tabindex="1"/></td>
+                        <td><input type="text" readonly></td>
+                        <td><input type="text" readonly></td>
+                        <td><input type="text" readonly></td>
+                        <!--<td class="cell-em-6"><a class="btn btn-addd">添加</a></td>-->
+                    </tr>
+                </tbody>
+            </table>
+            <a class="btn btn-save" id="volumeBtn">保存更改</a>
+        </div>
+    </div>
+    <div class="form-group form-group-border">
+        <label class="control-label col-sm-1">环境变量：</label>
+        <div class="col-sm-11">
+            <table class="table table-primary">
+                <thead>
+                    <tr>
+                        <th>键</th>
+                        <th>值</th>
+                        <th class="cell-em-6">操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><input type="text" value="path" name="key" readonly></td>
+                        <td><input type="text" value="AAA_BBB_DDD" name="value" readonly></td>
+                        <td class="cell-em-6"><a class="btn btn-del">删除</a></td>
+                    </tr>
+                    <tr>
+                        <td><input type="text" placeholder="键" name="key"></td>
+                        <td><input type="text" placeholder="值" name="value"></td>
+                        <td class="cell-em-6"><a class="btn btn-addd">添加</a></td>
+                    </tr>
+                </tbody>
+            </table>
+            <a class="btn btn-save">保存更改</a>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-sm-1">启动命令：</label>
+        <div class="col-sm-11 form-control-static">
+            <input class="col-sm-9" type="text" placeholder="使用应用镜像中定义的启动命令" name="command">
+            <a class="btn btn-save">保存更改</a>
+        </div>
+    </div>
+</div>

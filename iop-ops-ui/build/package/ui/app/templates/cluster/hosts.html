@@ -1,0 +1,43 @@
+<div class="page-header">
+    <div class="page-title">
+        <h3>主机管理</h3>
+        <em>Host management</em>
+    </div>
+    <div class="page-desc">
+        <p>Dockerstack为您提供一种随时获取的、弹性的计算能力，这种计算能力的体现就是主机（Instance）。主机就是一台配置好了的服务器，它有您期望的硬件配置、操作系统和网络配置。通常情况下，您的请求可以在10秒到60秒的时间之内 完成，所以您完全可以动态地、按需使用计算能力。</p>
+    </div>
+</div>
+<div class="page-body">
+    <div class="table-top clearfix">
+        <div class="pull-left">
+            <a class="btn btn-reload"></a>
+            <a class="btn btn-add">主机导入</a>
+            <a class="btn btn-primary btn-cluster-init">
+                <i class="fa fa-undo"></i> 集群初始化
+            </a>
+            <a class="btn btn-primary btn-cluster-dilatation">
+                <i class="fa fa-arrows-h"></i> 集群扩容
+            </a>
+        </div>
+    </div>
+    <table class="table table-primary table-striped" id="table-cluster-hosts">
+        <thead>
+            <tr>
+                <th>
+                    <label><input type="checkbox" class="selectAll"></label>
+                </th>
+                <th>主机名称</th>
+                <th>IP</th>
+                <th>配置</th>
+                <th>组件</th>
+                <th>标签</th>
+                <th>状态</th>
+                <th>容器数量</th>
+                <th>更新时间</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+    </table>
+    {{include('+/add.html')}}
+    {{include('+/edit.html')}}
+</div>

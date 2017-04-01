@@ -1,0 +1,134 @@
+<div class="page-breadcrumb">
+    <ol class="breadcrumb">
+        <li><a href="{{getUrl('+/../')}}">主机管理</a></li>
+        <li class="active">{{name}}</li>
+    </ol>
+    <a href="{{getUrl('+/../')}}" class="btn btn-back">返回列表</a></li>
+</div>
+<div class="page-body">
+    <div class="row">
+        <div class="col-sm-5">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">基本信息</h3>
+                </div>
+                <div class="panel-body">
+                    <div class="form-static form-horizontal form-align-left">
+                        <div class="form-group">
+                            <label class="control-label col-em-5">主机名称：</label>
+                            <div class="col-em-offset-5">
+                                <p class="form-control-static">{{name}}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+			<!--
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">主机存储</h3>
+                </div>
+                <div class="panel-body">
+                    <table class="table table-primary table-striped" id="table-disk-list">
+                        <thead>
+                            <tr>
+                                <th>磁盘名称</th>
+                                <th>大小</th>
+                                <th>已用</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">网络</h3>
+                </div>
+                <div class="panel-body">
+                    <table class="table table-primary table-striped" id="table-network-list">
+                        <thead>
+                            <tr>
+                                <th>网卡名称</th>
+                                <th>大小</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>-->
+        </div>
+        <!--
+		<div class="col-sm-7">
+            <div class="panel panel-default panel-monitor">
+                <div class="panel-body">
+                    <div class="clearfix table-top">
+                        <div class="form-inline pull-right">
+                            <div class="form-group">
+                                <label>筛选：</label>
+                                <div class="dropdown inline-block">
+                                    <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                        指标
+                                        <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenu1" id="oMeter" data-hide="false">
+                                        <div class="fixdrop"></div>
+                                        <div class="drop"></div>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>&ensp;</label>
+                                <select id="period" name="period" class="form-control">
+                                    <option value="">选择周期</option>
+                                    <option value="hours">最近一小时</option>
+                                    <option value="day">最近一天</option>
+                                    <option value="week">最近一周</option>
+                                    <option value="month">最近一个月</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chart-box clearfix"></div>
+                </div>
+            </div>
+        </div>-->
+    </div>
+	<div>
+		<div class="panel panel-default panel-monitor-chart">
+	    	<h4 class="panel-title">实时监控</h4>
+	    	<div class="tab-bordered tab-bg tab-category" id="tab-constantly-monitor">
+	        	<ul class="nav nav-pills" role="tablist">
+		            <li role="presentation" class="active">
+		                <a href="#chart-cpu" aria-controls="cpu" data-toggle="pill" role="tab">CPU</a>
+		            </li>
+		            <li role="presentation">
+		                <a href="#chart-ram" aria-controls="ram" data-toggle="pill" role="tab">内存</a>
+		            </li>
+					<li role="presentation">
+		                <a href="#chart-disk" aria-controls="disk" data-toggle="pill" role="tab">磁盘</a>
+		            </li>
+		        </ul>
+		        <div class="tab-content">
+		            <div class="tab-pane active" id="chart-cpu" role="tabpanel">
+		                <div class="chart-box" id="chart-monitor-cpu">
+		                    <div class="chart-pane"></div>
+		                </div>
+		            </div>
+		            <div class="tab-pane" id="chart-ram" role="tabpanel">
+		                <div class="chart-box" id="chart-monitor-ram">
+		                    <div class="chart-pane"></div>
+		                </div>
+		            </div>
+					<div class="tab-pane" id="chart-disk" role="tabpanel">
+		                <div class="chart-box" id="chart-monitor-disk">
+		                    <div class="chart-pane"></div>
+		                </div>
+		            </div>
+		        </div>
+		    </div>
+		</div>
+	</div>	
+</div>

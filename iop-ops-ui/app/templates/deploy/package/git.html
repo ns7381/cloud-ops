@@ -1,0 +1,54 @@
+<form class="form-horizontal">
+    <div class="form-group form-required">
+        <label for="name" class="control-label col-sm-3">名称：</label>
+
+        <div class="col-sm-7">
+            <input type="text" class="form-control" id="name" name="name">
+        </div>
+    </div>
+    <div class="form-group form-required">
+        <label for="version" class="control-label col-sm-3">版本号：</label>
+
+        <div class="col-sm-7">
+            <input type="text" class="form-control" id="version" name="version">
+        </div>
+    </div>
+    <div class="form-group form-required">
+        <label for="repositoryId" class="control-label col-sm-3">git库：</label>
+
+        <div class="col-sm-7">
+            <select class="form-control" id="repositoryId" name="repositoryId">
+                {{each repositories as repository}}
+                <option value="{{repository.id}}">{{repository.repositoryUrl}}</option>
+                {{/each}}
+            </select>
+        </div>
+    </div>
+    <div class="form-group form-required">
+        <label for="branch" class="control-label col-sm-3">分支：</label>
+        <div class="col-sm-7">
+            <select class="form-control" id="branch" name="branch">
+            </select>
+        </div>
+    </div>
+    <div class="form-group form-required">
+        <label for="build" class="control-label col-sm-3">构建命令：</label>
+
+        <div class="col-sm-7">
+            <textarea class="form-control" id="build" name="build"></textarea>
+        </div>
+    </div>
+    <div class="form-group form-required">
+        <label for="buildDir" class="control-label col-sm-3">构建目录：</label>
+
+        <div class="col-sm-7">
+            <input type="text" class="form-control" id="buildDir" name="buildDir">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="description" class="control-label col-sm-3">描述：</label>
+        <div class="col-sm-7">
+            <textarea class="form-control" id="description" name="description"></textarea>
+        </div>
+    </div>
+</form>

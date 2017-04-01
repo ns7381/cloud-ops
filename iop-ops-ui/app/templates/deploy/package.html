@@ -1,0 +1,32 @@
+<!--<div id="content-header">
+    <div id="breadcrumb"><a href="#" title="Go to Home" class="tip-bottom"><i class="icon-home"></i>
+        IOPM管理系统</a><a href="#/app" class="tip-bottom">应用管理</a><a class="current">版本管理</a></div>
+    <h1>版本管理</h1>
+
+</div>-->
+<!--<h2 class="page-header">{{if app_name}}应用[{{app_name}}]{{/if}}版本列表</h2>-->
+<br>
+<div id="packageTable-toolbar" class="btn-group">
+    <button id="btn-git" type="button" class="btn btn-default">
+        <i class="fa fa-code-fork"></i>git
+    </button>
+    <button id="btn-war" type="button" class="btn btn-default">
+        <i class="fa fa-upload"></i>上传
+    </button>
+    <button id="btn-patch" type="button" class="btn btn-default">
+        <i class="fa fa-files-o"></i>Patch
+    </button>
+</div>
+<table id="packageTable" data-toggle="table" data-url="resource/package?deploymentId={{deployId}}">
+    <thead>
+    <tr>
+        <th data-field="name" data-sortable="true">名称</th>
+        <th data-field="version" data-sortable="true">版本</th>
+        <th data-field="branch">分支</th>
+        <th data-field="build" data-width="40%">构建命令</th>
+        <th data-field="createdAt">日期</th>
+        <th data-field="status" data-sortable="true" data-formatter="versionStatusFormatter">状态</th>
+        <th data-field="action" data-formatter="versionActionFormatter" data-events="versionActionEvents">操作</th>
+    </tr>
+    </thead>
+</table>

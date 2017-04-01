@@ -1,0 +1,62 @@
+<div class="page-breadcrumb">
+    <ol class="breadcrumb">
+        <li><a href="{{getUrl('+/../')}}">镜像管理</a></li>
+        <li class="active">{{Repo}}</li>
+    </ol>
+    <a href="{{getUrl('+/../')}}" class="btn btn-back">返回列表</a></li>
+</div>
+<div class="page-body">
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <div class="media">
+                <div class="media-left">
+                    <img src="{{getStyleUrl('img/sql.png')}}">
+                </div>
+                <div class="media-body">
+                    <h4 class="media-heading">{{Repo}}</h4>
+                    <p>最近更新时间{{Updatetime}}</p>
+                    <hr>
+                    <div>
+                        <span>镜像：daocloud.io/{{User}}/{{Repo}}</span>
+                        <span>最新版本：<i class="fa fa-tag"></i>{{LatestVersion}}</span>
+                    </div>
+                    <div>
+                        <span>拉取镜像：>_docker pull daocloud.io/{{User}}/{{Repo}}:{{LatestVersion}}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="tab-image-detail">
+        <ul class="nav nav-tabs" role="tablist">
+            <li role="presentation">
+                <a href="#overview" aria-controls="overview" role="tab" data-toggle="tab">概览</a>
+            </li>
+            <li role="presentation">
+                <a href="#version" aria-controls="version" role="tab" data-toggle="tab">版本</a>
+            </li>
+        </ul>
+        <div class="tab-content">
+            <div class="tab-pane" id="overview">
+                <div class="form-fieldset">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <fieldset>
+                                <legend>
+                                    <i class="icon-square-d">&nbsp&nbsp{{Repo}}</i>
+                                </legend>
+                                <p>
+                                    {{Description}}
+                                </p>
+                            </fieldset>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane" id="version">
+                {{include('+/version', {repo: Repo}, 'trigger')}}
+            </div>
+        </div>
+    </div>
+</div>

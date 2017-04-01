@@ -1,0 +1,12 @@
+<h2>{{if app_name}}{{app_name}}{{/if}}</h2>
+<ul class="nav nav-tabs" role="tablist" id="appDetailTab">
+    <li role="presentation" class="active"><a href="#version" role="tab" data-toggle="tab">代码管理</a></li>
+    <li role="presentation"><a href="#install" role="tab" data-toggle="tab">脚本管理</a></li>
+    <li role="presentation"><a href="#repository" role="tab" data-toggle="tab">仓库管理</a></li>
+</ul>
+
+<div class="tab-content">
+    <div role="tabpanel" class="tab-pane active" id="version">{{include "app/package"}}</div>
+    <div role="tabpanel" class="tab-pane" id="install">{{include "app/install"}}</div>
+    <div role="tabpanel" class="tab-pane" id="repository">{{include "app/repository"}}</div>
+</div>

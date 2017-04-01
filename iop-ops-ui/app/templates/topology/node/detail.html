@@ -1,0 +1,12 @@
+<h2 class="page-header">{{if nodeName}}{{nodeName}}{{/if}}</h2>
+<ul class="nav nav-tabs" role="tablist" id="appDetailTab">
+    <li role="presentation" class="active"><a href="#interface" role="tab" data-toggle="tab">接口</a></li>
+    <li role="presentation"><a href="#property" role="tab" data-toggle="tab">属性</a></li>
+    <li role="presentation"><a href="#artifact" role="tab" data-toggle="tab">外部文件</a></li>
+</ul>
+
+<div class="tab-content">
+    <div role="tabpanel" class="tab-pane active" id="interface">{{include "topology/node/interface"}}</div>
+    <div role="tabpanel" class="tab-pane" id="property">{{include "topology/node/property"}}</div>
+    <div role="tabpanel" class="tab-pane" id="artifact">{{include "topology/node/artifact"}}</div>
+</div>

@@ -1,0 +1,14 @@
+<h2 class="page-header">{{if deployName}}{{deployName}}{{/if}}</h2>
+<ul class="nav nav-tabs" role="tablist" id="deployDetailTab">
+    <li role="presentation" class="active"><a href="#summary" role="tab" data-toggle="tab">详情</a></li>
+    <li role="presentation"><a href="#package" role="tab" data-toggle="tab">文件</a></li>
+    <li role="presentation"><a href="#interface" role="tab" data-toggle="tab">接口</a></li>
+    <li role="presentation"><a href="#task" role="tab" data-toggle="tab">活动</a></li>
+</ul>
+
+<div class="tab-content">
+    <div role="tabpanel" class="tab-pane active" id="summary">{{include "deploy/summary"}}</div>
+    <div role="tabpanel" class="tab-pane" id="package">{{include "deploy/package"}}</div>
+    <div role="tabpanel" class="tab-pane" id="interface">{{include "deploy/interface"}}</div>
+    <div role="tabpanel" class="tab-pane" id="task">{{include "deploy/task"}}</div>
+</div>

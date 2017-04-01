@@ -1,0 +1,20 @@
+<!--<ol class="breadcrumb">
+    <li><a href="#">IOPM管理系统</a></li>
+    <li class="active">应用管理</li>
+</ol>-->
+<!--<h2 class="page-header">应用列表</h2>-->
+<br>
+<div id="property-toolbar" class="btn-group">
+    <button id="btn-add" type="button" class="btn btn-default">
+        <i class="glyphicon glyphicon-plus"></i>新建
+    </button>
+</div>
+<table id="property-table" data-toggle="table" data-url="topology/node/property?nodeId={{nodeId}}">
+    <thead>
+    <tr>
+        <th data-field="name" data-sortable="true">键</th>
+        <th data-field="value" data-sortable="true">值</th>
+        <th data-field="action" data-formatter="propertyActionFormatter" data-events="propertyActionEvents">操作</th>
+    </tr>
+    </thead>
+</table>

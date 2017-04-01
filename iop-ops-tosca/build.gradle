@@ -1,0 +1,20 @@
+project(':iop-ops-tosca') {
+
+    apply plugin: 'idea'
+    apply plugin: 'java'
+
+    dependencies {
+        compile("org.yaml:snakeyaml:1.17")
+        compile("com.google.guava:guava:18.0")
+        compile("org.projectlombok:lombok")
+    }
+
+    idea {
+        module {
+            inheritOutputDirs = false
+            outputDir = file("$buildDir/classes/main/")
+        }
+    }
+
+
+}

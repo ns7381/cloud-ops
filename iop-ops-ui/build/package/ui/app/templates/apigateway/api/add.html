@@ -1,0 +1,123 @@
+<div class="wizard-step add-api">
+    <ul class="steps">
+        <li data-step="1" data-name="basicConfig"><span class="badge">1</span>基本信息<span class="chevron"></span></li>
+        <li data-step="2" data-name="apiConfig"><span class="badge">2</span>API定义<span class="chevron"></span></li>
+        <li data-step="3" data-name="backendConfig"><span class="badge">3</span>API后端<span class="chevron"></span></li>
+    </ul>
+    <!-- 基本信息 -->
+    <div class="step-content">
+        <div class="step-pane" data-step="1">
+            <form class="form-horizontal">
+                <div class="form-group">
+                    <label class="control-label col-sm-2">API名称：</label>
+                    <div class="col-sm-9">
+                        <input class="form-control" name="apiName" id="apiName"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-2">选择分组：</label>
+                    <div class="col-sm-9">
+                        <select name="selectGroup" id="selectGroup" data-placeholder="Select a Group" class="form-control"  tabindex="1"></select>
+                    </div>
+                </div>
+                 <div class="form-group">
+                    <label class="control-label col-sm-2">选择版本：</label>
+                    <div class="col-sm-9">
+                        <select name="selectVersion" id="selectVersion" data-placeholder="Select a version" class="form-control"  tabindex="1"></select>
+                    </div>
+                 </div>
+                 <div class="form-group">
+                    <label class="control-label col-sm-2">描述：</label>
+                    <div class="col-sm-9">
+                        <textarea class="form-control" id="description" name="description"></textarea>
+                     </div>
+                    </div>
+            </form>
+        </div>
+
+        <!-- API定义 -->
+        <div class="step-pane" data-step="2">
+            <form class="form-horizontal">
+                <div class="form-group">
+                    <label class="control-label col-sm-2">协议：</label>
+                    <div class="col-sm-9">
+                        <select name="apiProtocol" id="apiProtocol" data-placeholder="Select a Protocol" class="form-control"  tabindex="1">
+                            <option value="HTTP">HTTP</option>
+                            <option value="HTTPS">HTTPS</option>
+                            <option value="HTTP/HTTPS">HTTP/HTTPS</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-2">Method：</label>
+                    <div class="col-sm-9">
+                        <select name="apiMethod" id="apiMethod" data-placeholder="Select a Method" class="form-control"  tabindex="1">
+                            <option value="GET">GET</option>
+                            <option value="POST">POST</option>
+                            <option value="PUT">PUT</option>
+                            <option value="DELETE">DELETE</option>
+                            <option value="PATCH">PATCH</option>
+                            <option value="HEAD">HEAD</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-2">请求Path：</label>
+                    <div class="col-sm-9">
+                        <label class="control-label col-em-9" style="padding-left: 0;" name="pathPre" id="pathPre"></label>
+                        <div class="col-em-offset-9">
+                            <input class="form-control" name="requestPath" id="requestPath"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-2">请求Header：</label>
+                    <div class="col-sm-9">
+                        <textarea  rows="3" class="form-control" name="requestHeader" id="requestHeader"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-2">请求入参：</label>
+                    <div class="col-sm-9">
+                        <textarea  rows="3" class="form-control" name="requestParam" id="requestParam"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-2">请求出参：</label>
+                    <div class="col-sm-9">
+                        <textarea  rows="3" class="form-control" name="responseParam" id="responseParam"/>
+                    </div>
+                </div>
+               </form>
+        </div>
+        <!-- API后端定义 -->
+        <div class="step-pane" data-step="3">
+            <form class="form-horizontal">
+                <div class="form-group">
+                    <label class="control-label col-sm-2">API 后端：</label>
+                    <div class="col-sm-9">
+                        <table id="table-api-backend" name="table-api-backend" class="table table-primary table-striped">
+                            <thead>
+                            <tr>
+                                <th>Domain</th>
+                                <th>Path</th>
+                                <th class="cell-em-6">操作</th>
+                            </tr>
+                            <tr>
+                                <td><input type="text" placeholder="Domain" name="backendDomain"></td>
+                                <td><input type="text" placeholder="Path" name="backendPath"></td>
+                                <td class="cell-em-6"><a class="btn btn-addd">添加</a></td>
+                            </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="actions">
+        <button type="button" class="btn btn-default btn-prev"><span class="glyphicon glyphicon-arrow-left"></span>上一步</button>
+        <button type="button" class="btn btn-success btn-submit"><span class="glyphicon glyphicon-floppy-saved"></span>创建</button>
+        <button type="button" class="btn btn-primary btn-next">下一步<span class="glyphicon glyphicon-arrow-right"></span></button>
+    </div>
+</div>

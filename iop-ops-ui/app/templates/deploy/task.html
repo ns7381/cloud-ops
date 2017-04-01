@@ -1,0 +1,21 @@
+<!--<ol class="breadcrumb">
+    <li><a href="#">IOPM管理系统</a></li>
+    <li class="active">应用管理</li>
+</ol>-->
+<!--<h2 class="page-header">应用列表</h2>-->
+<br>
+<div id="task-toolbar" class="btn-group">
+
+</div>
+<table id="task-table" data-toggle="table" data-url="workflow?objectId={{deployId}}">
+    <thead>
+    <tr>
+        <th data-field="name" data-sortable="true">名称</th>
+        <th data-field="description" data-sortable="true">详情</th>
+        <th data-field="startAt" data-sortable="true">开始时间</th>
+        <th data-field="endAt" data-sortable="true">结束时间</th>
+        <th data-field="step" data-formatter="taskStatusFormatter" data-sortable="true">状态</th>
+        <th data-field="action" data-formatter="taskActionFormatter" data-events="taskActionEvents">操作</th>
+    </tr>
+    </thead>
+</table>

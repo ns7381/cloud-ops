@@ -1,0 +1,49 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+topology_template:
+    node_templates:
+        tomcat_host1:
+            type: tosca.nodes.Compute.Local
+            attributes:
+                host: 10.110.20.147
+                user: root
+                password: 123456a?
+        tomcat_host2:
+            type: tosca.nodes.Compute.Local
+            attributes:
+                host: 10.110.20.148
+                user: root
+                password: 123456a?
+        mysql_host:
+            type: tosca.nodes.Compute.Local
+            attributes:
+                host: 10.110.20.155
+                user: root
+                password: 123456a?
+        mysql_server:
+            type: tosca.nodes.deploy.MySQL
+            attributes:
+                port: 3306
+                db_name: iop_dev
+                db_user: root
+                db_password: 123456a?
+            artifacts:
+                - db_upgrade: files/upgrade.sql
+                  type: tosca.artifacts.File
+            interfaces:
+                tosca.interfaces.node.lifecycle.Standard:
+                  upgrade: upgrade.sh
+            requirements:
+                - host: mysql_host
+        tomcat_server:
+            type: tosca.nodes.deploy.Tomcat
+            attributes:
+                path: /opt/tomcat-cloud-web
+            artifacts:
+                - db_upgrade: files/upgrade.sql
+                  type: tosca.artifacts.File
+            interfaces:
+                tosca.interfaces.node.lifecycle.Standard:
+                  start: /opt/tomcat-cloud-web/bin/startup.sh
+                  stop: /opt/tomcat-cloud-web/bin/shutdown.sh
+            requirements:
+                - host: host

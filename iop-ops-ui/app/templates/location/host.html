@@ -1,0 +1,21 @@
+<!--<ol class="breadcrumb">
+    <li><a href="#">IOPM管理系统</a></li>
+    <li class="active">应用管理</li>
+</ol>-->
+<h2 class="page-header">{{locationName}}</h2>
+<br>
+<div id="repository-toolbar" class="btn-group">
+    <button id="btn-add" type="button" class="btn btn-default">
+        <i class="glyphicon glyphicon-plus"></i>新建
+    </button>
+</div>
+<table id="repository-table" data-toggle="table" data-url="location/local?locationId={{locationId}}">
+    <thead>
+    <tr>
+        <th data-field="ip" data-sortable="true">IP地址</th>
+        <th data-field="type" data-sortable="true">类型</th>
+        <th data-field="username" data-sortable="true">用户名</th>
+        <th data-field="action" data-formatter="repositoryActionFormatter" data-events="repositoryActionEvents">操作</th>
+    </tr>
+    </thead>
+</table>

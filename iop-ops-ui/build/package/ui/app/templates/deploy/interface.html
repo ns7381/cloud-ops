@@ -1,0 +1,19 @@
+<!--<ol class="breadcrumb">
+    <li><a href="#">IOPM管理系统</a></li>
+    <li class="active">应用管理</li>
+</ol>-->
+<!--<h2 class="page-header">应用列表</h2>-->
+<br>
+<div id="interface-toolbar" class="btn-group">
+
+</div>
+<table id="interface-table" data-toggle="table" data-url="topology/node/interface?deploymentTopologyId={{deploymentTopologyId}}">
+    <thead>
+    <tr>
+        <th data-field="name" data-sortable="true">名称</th>
+        <th data-field="implementation" data-sortable="true">实现</th>
+        <th data-field="description" data-sortable="true">描述</th>
+        <th data-field="action" data-formatter="interfaceActionFormatter" data-events="interfaceActionEvents">操作</th>
+    </tr>
+    </thead>
+</table>

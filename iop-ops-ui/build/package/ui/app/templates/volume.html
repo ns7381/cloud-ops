@@ -1,0 +1,43 @@
+<div class="page-header">
+    <div class="page-title">
+        <h3>卷管理</h3>
+        <em>Volume management</em>
+    </div>
+    <div class="page-desc">
+        <p>容器卷，持久化容器数据</p>
+    </div>
+</div>
+<div class="page-body">
+    <div class="table-top clearfix">
+        <div class="pull-left">
+            <a class="btn btn-reload"></a>
+            <a class="btn btn-add">申请卷</a>
+        </div>
+        <div class="pull-right">
+            <label>
+                <input type="search" name="filter" class="form-control input-search table-filter" placeholder="卷名称">
+                <a class="btn btn-search"></a>
+            </label>
+        </div>
+    </div>
+    <table class="table table-primary table-striped" id="VolumesTable">
+        <thead>
+            <tr>
+                <th>
+                    <label><input type="checkbox" class="selectAll"></label>
+                </th>
+                <th>卷名称</th>
+                <th>UUID</th>
+                <th>宿主机</th>
+                <th>宿主机目录</th>
+				<th>容器目录</th>
+				<th>绑定容器ID</th>
+                <th>大小(MB)</th>
+                <th>类型</th>
+				<th>状态</th>
+                <th>创建时间</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+    </table>
+</div>

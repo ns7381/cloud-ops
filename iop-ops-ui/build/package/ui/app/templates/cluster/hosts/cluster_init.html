@@ -1,0 +1,207 @@
+<div class="wizard-step">
+    <ul class="steps">
+        <li data-step="1" data-name="global"><span class="badge">1</span>集群配置<span class="chevron"></span></li>
+        <li data-step="2" data-name="external"><span class="badge">2</span>外部服务<span class="chevron"></span></li>
+        <li data-step="3" data-name="nodes"><span class="badge">3</span>节点选择<span class="chevron"></span></li>
+    </ul>
+    <div class="step-content">
+        <!-- 基本信息 -->
+        <div class="step-pane" data-step="1">
+            <div class="step-pane-body">
+                <div class="form-fieldset">
+                    <fieldset>
+                        <legend>
+                            <i class="icon-square-d"></i>集群基本信息
+                        </legend>
+                        <form class="form-horizontal">
+                            <div class="form-group">
+                                <label class="control-label col-sm-4">集群名称：</label>
+                                <div class="col-sm-7">
+                                    <input class="form-control" name="clusterName" id="clusterName"/>
+                                </div>
+                            </div>
+                        </form>
+                    </fieldset>
+                    <fieldset>
+                        <legend>
+                            <i class="icon-square-d"></i>主机网卡配置
+                        </legend>
+                        <form class="form-horizontal">
+                            <div class="form-group">
+                                <label class="control-label col-sm-4">管理网络：</label>
+                               <div class="col-sm-8">
+                                  <select name="manageNicName" id="manageNicName" data-placeholder="Select a Nic For Management" class="form-control"  tabindex="1"></select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-sm-4">业务网络：</label>
+                                <div class="col-sm-8">
+                                    <select name="serviceNicName" id="serviceNicName" data-placeholder="Select a Nic For Service" class="form-control"  tabindex="1"></select>
+                                 </div>
+                            </div>
+                        </form>
+                    </fieldset>
+                    <fieldset>
+                        <legend>
+                            <i class="icon-square-d"></i>VLAN池信息（可选）
+                        </legend>
+                        <form class="form-horizontal">
+                            <div class="form-group">
+                                <label class="control-label col-sm-3">VLAN地址段：</label>
+                                <div class="col-sm-9">
+                                    <textarea class="form-control" name="vlan-pool" id="vlan-pool"></textarea>
+                                </div>
+                            </div>
+                        </form>
+                    </fieldset>
+
+                    <fieldset>
+                        <legend>
+                            <i class="icon-square-d"></i>域名
+                        </legend>
+                        <form class="form-horizontal">
+                            <div class="form-group form-required">
+                                <label class="control-label col-sm-3">Domain：</label>
+                                <div class="col-sm-9">
+                                    <input class="form-control" name="clusterDomain" placeholder="集群域名" id="clusterDomain"/>
+                                </div>
+                            </div>
+                        </form>
+                    </fieldset>
+                    <!--
+                            <div class="form-group">
+                                <label class="control-label col-sm-3">Haproxy：</label>
+                                <div class="col-sm-9">
+                                    <input class="form-control" name="haproxy" placeholder="外部HaProxy地址" id="haproxy"/>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-sm-3">SkyDns：</label>
+                                <div class="col-sm-9">
+                                    <input class="form-control" placeholder="外部Skydns地址" name="skydns" id="skydns"/>
+                                </div>
+                            </div>
+                        </form>
+                    </fieldset>
+                    -->
+                    <!--<fieldset>-->
+                        <!--<legend>-->
+                            <!--<i class="icon-square-d"></i>资源配置-->
+                        <!--</legend>-->
+                        <!--<form class="form-horizontal">-->
+                            <!--&lt;!&ndash;-->
+                            <!--<div class="form-group">-->
+                                <!--<label class="control-label col-sm-4">CPU虚拟化率：</label>-->
+                                <!--<div class="col-sm-8">-->
+                                    <!--<input class="form-control" name="cpu_vr_ratio" placeholder="1:8" id="cpu-vr-ratio"/>-->
+                                <!--</div>-->
+                            <!--</div>-->
+                            <!--&ndash;&gt;-->
+                            <!--<div class="form-group">-->
+                                <!--<label class="control-label col-sm-4">内存预留(Mb)：</label>-->
+                                <!--<div class="col-sm-8">-->
+                                    <!--<input class="form-control" name="ram_remain" placeholder="2048Mb" id="ram-remain"/>-->
+                                <!--</div>-->
+                            <!--</div>-->
+                            <!--<div class="form-group">-->
+                                <!--<label class="control-label col-sm-4">存储预留(Mb)：</label>-->
+                                <!--<div class="col-sm-8">-->
+                                    <!--<input class="form-control" name="disk_remain" placeholder="10240Mb" id="disk-remain"/>-->
+                                <!--</div>-->
+                            <!--</div>-->
+                        <!--</form>-->
+                    <!--</fieldset>-->
+                </div>
+            </div>
+            <div class="step-pane-right">
+                <div class="step-desc">
+                    <b>网络：</b>
+                    <p>网络相关说明</p>
+                    <!--
+                    <b>域名：</b>
+                    <p>域名相关说明</p>
+                    -->
+                    <b>资源配置：</b>
+                    <p>资源配置相关说明</p>
+                </div>
+            </div>
+        </div>
+        <div class="step-pane" data-step="2">
+            <div class="step-pane-body">
+                <div class="form-fieldset">
+                    <fieldset>
+                        <legend>
+                            <i class="icon-square-d"></i>MQ信息
+                        </legend>
+                        <form class="form-horizontal">
+                            <div class="form-group">
+                                <label class="control-label col-sm-4">Manage MQ：</label>
+                                <div class="col-sm-7">
+                                    <input class="form-control" name="managerMq" id="managerMq"/>
+                                </div>
+                            </div>
+                        </form>
+                        <form class="form-horizontal">
+                            <div class="form-group">
+                                <label class="control-label col-sm-4">Monitor MQ：</label>
+                                <div class="col-sm-7">
+                                    <input class="form-control" name="monitorMq" id="monitorMq"/>
+                                </div>
+                            </div>
+                        </form>
+                        <form class="form-horizontal">
+                            <label class="control-label col-sm-5">Monitor Version：</label>
+                            <div class="col-sm-6">
+                                <select name="monitorVersion" id="monitorVersion" data-placeholder="Select a Version" class="form-control"  tabindex="1">
+                                    <option value="V2">V2</option>
+                                    <option value="V3">V3</option>
+                                </select>
+                            </div>
+                        </form>
+                    </fieldset>
+
+                </div>
+            </div>
+            <div class="step-pane-right">
+                <div class="step-desc">
+                    <b>网络：</b>
+                    <p>网络相关说明</p>
+                    <!--
+                    <b>域名：</b>
+                    <p>域名相关说明</p>
+                    -->
+                    <b>资源配置：</b>
+                    <p>资源配置相关说明</p>
+                </div>
+            </div>
+        </div>
+        <!-- 节点选择 -->
+        <div class="step-pane" data-step="3">
+            <div class="table-top clearfix">
+                <div class="pull-left">
+                    <a class="btn btn-reload"></a>
+                </div>
+                <input type="hidden" name="status" class="form-control input-search table-filter" value="available">
+            </div>
+
+            <table class="table table-primary table-striped" id="table-nodes-check" name="table-nodes-check">
+                <thead>
+                    <tr>
+                        <th>选择</th>
+                        <th>主机名称</th>
+                        <th>IP</th>
+                        <th>配置</th>
+                        <th>角色</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="actions">
+        <button type="button" class="btn btn-default btn-prev"><span class="glyphicon glyphicon-arrow-left"></span>上一步</button>
+        <button type="button" class="btn btn-success btn-submit"><span class="glyphicon glyphicon-floppy-saved"></span>部署</button>
+        <button type="button" class="btn btn-primary btn-next">下一步<span class="glyphicon glyphicon-arrow-right"></span></button>
+    </div>
+</div>

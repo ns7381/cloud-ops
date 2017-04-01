@@ -1,0 +1,5 @@
+rootProject.name = 'iop-ops'
+include 'iop-ops-ui'
+include 'iop-ops-rest-api'
+include 'iop-ops-tosca'
+

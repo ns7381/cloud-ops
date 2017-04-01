@@ -1,0 +1,38 @@
+{{if result && result.length}}
+{{each result as item index}}
+<li class="clearfix">
+    <div class="col-sm-4 media">
+        <div class="media-left">
+            <a href="{{getUrl('/image/detail',{repo:item.Repo})}}">
+                <img src="assets/styles/img/self-image.png">
+            </a>
+        </div>
+        <div class="media-body">
+            <a href="{{getUrl('/image/detail',{repo:item.Repo})}}">
+                <h4 class="media-heading">
+                    {{if item.Repo}}
+                    {{repos = item.Repo.split('/')}}
+                    {{repos[repos.length-1]}}
+                    {{/if}}
+                </h4>
+            </a>
+            <!--<p>更新于6个月前 | 1版本</p>-->
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <p>镜像：{{item.Repo}}</p>
+        <p>标签：master-init</p>
+        <p>描述：{{item.Description}}</p>
+    </div>
+    <!--<div class="col-sm-2 deploy">-->
+    <!--<a class="btn btn-deploy">部署</a>-->
+    <!--</div>-->
+</li>
+{{/each}}
+{{else}}
+<li class="col-sm-12">
+    <div class="alert alert-warning">
+        未查询到可用的镜像！
+    </div>
+</li>
+{{/if}}

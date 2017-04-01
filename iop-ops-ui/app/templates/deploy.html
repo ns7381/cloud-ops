@@ -1,0 +1,21 @@
+<!--<ol class="breadcrumb">
+    <li><a href="#">IOPM管理系统</a></li>
+    <li class="active">应用管理</li>
+</ol>-->
+<h2 class="page-header">应用管理</h2>
+<div id="toolbar" class="btn-group">
+    <button id="btn-add" type="button" class="btn btn-default">
+        <i class="glyphicon glyphicon-plus"></i>新建
+    </button>
+</div>
+<table id="appTable" data-toggle="table" data-url="deployment">
+    <thead>
+    <tr>
+        <th data-field="name" data-sortable="true" data-formatter="nameFormatter">名称</th>
+        <th data-field="deploymentTopologyName" data-sortable="true">拓扑</th>
+        <th data-field="locationName" data-sortable="true">环境</th>
+        <th data-field="description">描述</th>
+        <th data-field="action" data-formatter="actionFormatter" data-events="actionEvents">操作</th>
+    </tr>
+    </thead>
+</table>

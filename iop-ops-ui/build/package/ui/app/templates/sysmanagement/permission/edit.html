@@ -1,0 +1,39 @@
+<form class="form-horizontal" id="form-user-profile" role="form">
+    <div class="form-group">
+        <label class="control-label col-xs-3">账号：</label>
+        <div class="col-xs-8">
+            <p class="form-control-static">{{name}}</p>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-3">真实姓名：</label>
+        <div class="col-xs-8">
+            <input class="form-control" name="trueName" value="{{trueName}}" type="text"/>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-3">状态：</label>
+        <div class="col-xs-8">
+            <p class="form-control-static">{{#statusLabel('user:'+status)}}</p>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-3">手机号：</label>
+        <div class="col-xs-8">
+            <input class="form-control" name="phone" value="{{phone}}" type="tel"/>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-3">邮箱：</label>
+        <div class="col-xs-8">
+            <input class="form-control" name="email" value="{{email}}" type="email"/>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-3">所属部门：</label>
+        <div class="col-xs-8">
+            <input type="hidden" name="organId" value="{{organId}}"/>
+            <input class="form-control" name="organName"{{if organ}} value="{{organ.organName}}"{{/if}} type="text"/>
+        </div>
+    </div>
+</form>
