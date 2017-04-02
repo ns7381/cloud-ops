@@ -46,13 +46,13 @@ class TypeManager {
         };
 
         for (INamedEntity basicType : basicTypes) {
-            this.basicTypes.put(basicType.name(),(IType) basicType);
+            this.basicTypes.put(basicType.name(), (IType) basicType);
         }
 
-        this.nodeTypes.put("tosca.nodes.Root",NodeRoot.instance());
-        NamedStruct emptyStruct = new NamedStruct("emptyStruct",new TypeStruct(null,"",Collections.emptyMap()));
+        this.nodeTypes.put("tosca.nodes.Root", NodeRoot.instance());
+        NamedStruct emptyStruct = new NamedStruct("emptyStruct", new TypeStruct(null, "", Collections.emptyMap()));
         emptyStruct.hidden = true;
-        this.structTypes.put("emptyStruct",emptyStruct);
+        this.structTypes.put("emptyStruct", emptyStruct);
     }
 
     public INodeType getNodeType(String typename) {
@@ -71,19 +71,19 @@ class TypeManager {
         return Iterables.transform(
                 Iterables.filter(nodeTypes.values(),
                         t -> !t.hidden && t.derivesFrom(rootType)),
-                t -> (INodeType)t);
+                t -> (INodeType) t);
     }
 
     public Iterable<ITypeStruct> getTypesDerivingFrom(ITypeStruct rootType) {
         return Iterables.transform(
                 Iterables.filter(structTypes.values(),
                         t -> t.derivesFrom(rootType) && !t.hidden),
-                t -> (ITypeStruct)t);
+                t -> (ITypeStruct) t);
     }
 
-    public INamedEntity registerType(String name,IType type) {
+    public INamedEntity registerType(String name, IType type) {
 
-        if(type instanceof  ITypeStruct) {
+        if (type instanceof ITypeStruct) {
             ITypeStruct struct = (ITypeStruct) type;
             final TypeStruct unnamed;
             if (nodeTypes.containsKey(name))
@@ -99,43 +99,43 @@ class TypeManager {
             NamedStruct t = new NamedStruct(name, unnamed);
             structTypes.put(name, t);
             return t;
-        } else if (type instanceof  ICoercedType) {
-            coercedTypes.put(name,new NamedCoercedType(name,(ICoercedType)type));
+        } else if (type instanceof ICoercedType) {
+            coercedTypes.put(name, new NamedCoercedType(name, (ICoercedType) type));
         }
         return null;
     }
 
-    public INamedEntity registerNodeType(String name,INodeType nodeType) {
+    public INamedEntity registerNodeType(String name, INodeType nodeType) {
         final NodeType unnamed;
-        if(nodeTypes.containsKey(name))
+        if (nodeTypes.containsKey(name))
             return null;
-        if(nodeType instanceof  NodeType)
-            unnamed = (NodeType)nodeType;
+        if (nodeType instanceof NodeType)
+            unnamed = (NodeType) nodeType;
         else {
             INodeType parentType = nodeType.baseType();
-            if(parentType != null && !(parentType instanceof NodeType))
-                parentType = nodeTypes.get(((INamedEntity)parentType).name());
-            unnamed = new NodeType((NodeType)parentType,nodeType.description(),nodeType.declaredProperties(),nodeType.declaredAttributes());
+            if (parentType != null && !(parentType instanceof NodeType))
+                parentType = nodeTypes.get(((INamedEntity) parentType).name());
+            unnamed = new NodeType((NodeType) parentType, nodeType.description(), nodeType.declaredProperties(), nodeType.declaredAttributes());
         }
-        NamedNodeType t = new NamedNodeType(name,(NodeType) unnamed);
-        nodeTypes.put(name,t);
+        NamedNodeType t = new NamedNodeType(name, (NodeType) unnamed);
+        nodeTypes.put(name, t);
         return t;
     }
 
     public INamedEntity registerNodeTemplate(String name, INodeTemplate nodeType) {
         final NodeTemplate unnamed;
-        if(nodeTypes.containsKey(name))
+        if (nodeTypes.containsKey(name))
             return null;
-        if(nodeType instanceof  NodeTemplate)
-            unnamed = (NodeTemplate)nodeType;
+        if (nodeType instanceof NodeTemplate)
+            unnamed = (NodeTemplate) nodeType;
         else {
             INodeType parentType = nodeType.baseType();
-            if(parentType != null && !(parentType instanceof NodeTemplate))
-                parentType = nodeTypes.get(((INamedEntity)parentType).name());
-            unnamed = new NodeTemplate((NodeType)parentType,nodeType.description(),nodeType.declaredProperties(),nodeType.declaredAttributes());
+            if (parentType != null && !(parentType instanceof NodeTemplate))
+                parentType = nodeTypes.get(((INamedEntity) parentType).name());
+            unnamed = new NodeTemplate((NodeType) parentType, nodeType.description(), nodeType.declaredProperties(), nodeType.declaredAttributes());
         }
         NamedNodeTemplate t = new NamedNodeTemplate(name, unnamed);
-        nodeTemplates.put(name,t);
+        nodeTemplates.put(name, t);
         return t;
     }
 
@@ -143,7 +143,7 @@ class TypeManager {
         return Iterables.transform(
                 Iterables.filter(nodeTemplates.values(),
                         t -> t.derivesFrom(rootType)),
-                t -> (INodeTemplate)t);
+                t -> (INodeTemplate) t);
     }
 
     public INodeTemplate getNodeTemplate(String entityName) {
@@ -152,21 +152,19 @@ class TypeManager {
 
     public void renameEntity(String entityName, String newEntityName) {
         NamedNodeTemplate template = nodeTemplates.remove(entityName);
-        if(template != null)
-        {
+        if (template != null) {
             template.rename(newEntityName);
-            nodeTemplates.put(newEntityName,template);
+            nodeTemplates.put(newEntityName, template);
         }
         NamedNodeType nodeType = nodeTypes.remove(entityName);
-        if(nodeType != null)
-        {
+        if (nodeType != null) {
             nodeType.rename(newEntityName);
-            nodeTypes.put(newEntityName,nodeType);
+            nodeTypes.put(newEntityName, nodeType);
         }
         NamedStruct struct = structTypes.remove(entityName);
-        if(struct != null) {
+        if (struct != null) {
             struct.rename(newEntityName);
-            structTypes.put(newEntityName,struct);
+            structTypes.put(newEntityName, struct);
         }
     }
 
@@ -174,7 +172,7 @@ class TypeManager {
         INamedEntity res;
         importNodeType((INamedEntity) ((ITypeStruct) entity).baseType());
         for (Map.Entry<String, IProperty> property : ((ITypeStruct) entity).declaredProperties().entrySet()) {
-            if(property.getValue().type() instanceof  INamedEntity)
+            if (property.getValue().type() instanceof INamedEntity)
                 toscaEnvironment.importWithSupertypes((INamedEntity) property.getValue().type());
             else if (property.getValue().type() instanceof ICoercedType)
                 toscaEnvironment.importWithSupertypes((INamedEntity) ((ICoercedType) property.getValue().type()).baseType());
@@ -189,7 +187,7 @@ class TypeManager {
         INamedEntity res;
         importNodeType((INamedEntity) ((INodeTemplate) entity).baseType());
         for (Map.Entry<String, IProperty> property : ((INodeTemplate) entity).declaredProperties().entrySet()) {
-            if(property.getValue().type() instanceof  INamedEntity)
+            if (property.getValue().type() instanceof INamedEntity)
                 toscaEnvironment.importWithSupertypes((INamedEntity) property.getValue().type());
             else if (property.getValue().type() instanceof ICoercedType)
                 toscaEnvironment.importWithSupertypes((INamedEntity) ((ICoercedType) property.getValue().type()).baseType());
@@ -206,7 +204,7 @@ class TypeManager {
         INamedEntity res;
         importNodeType((INamedEntity) ((INodeType) entity).baseType());
         for (Map.Entry<String, IProperty> property : ((INodeType) entity).declaredProperties().entrySet()) {
-            if(property.getValue().type() instanceof  INamedEntity)
+            if (property.getValue().type() instanceof INamedEntity)
                 toscaEnvironment.importWithSupertypes((INamedEntity) property.getValue().type());
             else if (property.getValue().type() instanceof ICoercedType)
                 toscaEnvironment.importWithSupertypes((INamedEntity) ((ICoercedType) property.getValue().type()).baseType());

@@ -59,7 +59,7 @@ public class ParseTrial {
             printUsage();
             return;
         }
-		
+
 		/* parsing */
         IToscaEnvironment tyaml = Tosca.newEnvironment();
         tyaml.readFile(fr, false);

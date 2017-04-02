@@ -15,6 +15,7 @@
  */
 
 package com.cloud.ops.toscamodel.impl;
+
 import com.cloud.ops.toscamodel.*;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
@@ -37,7 +38,7 @@ public class ToscaEnvironment implements IToscaEnvironment {
         //ResourceBundle bundle = ResourceBundle.getBundle("seaclouds.utils.toscamodel.impl");
         //this.getClass().getResourceAsStream(absName);
         InputStream stream = this.getClass().getResourceAsStream(relName);
-        readFile(new InputStreamReader(stream),true);
+        readFile(new InputStreamReader(stream), true);
     }
 
     @Override
@@ -54,18 +55,18 @@ public class ToscaEnvironment implements IToscaEnvironment {
     @Override
     public void hideEntity(String entityName) {
         INamedEntity ret = getNamedEntity(entityName);
-        if(ret instanceof  NamedStruct)
+        if (ret instanceof NamedStruct)
             ((NamedStruct) ret).hidden = true;
-        if(ret instanceof NamedNodeType)
+        if (ret instanceof NamedNodeType)
             ((NamedNodeType) ret).hidden = true;
     }
 
     @Override
     public void unhideEntity(String entityName) {
         INamedEntity ret = getNamedEntity(entityName);
-        if(ret instanceof  NamedStruct)
+        if (ret instanceof NamedStruct)
             ((NamedStruct) ret).hidden = false;
-        if(ret instanceof NamedNodeType)
+        if (ret instanceof NamedNodeType)
             ((NamedNodeType) ret).hidden = false;
     }
 
@@ -84,11 +85,11 @@ public class ToscaEnvironment implements IToscaEnvironment {
     public INamedEntity getNamedEntity(String entityName) {
         INamedEntity ret = null;
         if (ret == null)
-            ret = (INamedEntity)typeManager.getNodeTemplate(entityName);
+            ret = (INamedEntity) typeManager.getNodeTemplate(entityName);
         if (ret == null)
-            ret = (INamedEntity)typeManager.getNodeType(entityName);
+            ret = (INamedEntity) typeManager.getNodeType(entityName);
         if (ret == null)
-            ret = (INamedEntity)typeManager.getType(entityName);
+            ret = (INamedEntity) typeManager.getType(entityName);
 
         return ret;
     }
@@ -113,12 +114,12 @@ public class ToscaEnvironment implements IToscaEnvironment {
 
     @Override
     public INamedEntity registerType(String entityName, IType t) {
-        return typeManager.registerType(entityName,t);
+        return typeManager.registerType(entityName, t);
     }
 
     @Override
     public INamedEntity registerNodeType(String entityName, INodeType t) {
-        return typeManager.registerNodeType(entityName,t);
+        return typeManager.registerNodeType(entityName, t);
     }
 
     @Override
@@ -131,9 +132,9 @@ public class ToscaEnvironment implements IToscaEnvironment {
         INamedEntity res = getNamedEntity(entity.name());
         if (res != null)
             return res;
-        if(entity instanceof INodeType) res = typeManager.importNodeType(entity);
-        else if (entity instanceof  INodeTemplate) res = typeManager.importNodeTemplate(entity);
-        else if (entity instanceof  ITypeStruct) res = typeManager.importStructType(entity);
+        if (entity instanceof INodeType) res = typeManager.importNodeType(entity);
+        else if (entity instanceof INodeTemplate) res = typeManager.importNodeTemplate(entity);
+        else if (entity instanceof ITypeStruct) res = typeManager.importStructType(entity);
         else {
             throw new NotImplementedException();
         }
@@ -142,6 +143,6 @@ public class ToscaEnvironment implements IToscaEnvironment {
 
     @Override
     public INodeTemplate newTemplate(INodeType type) {
-        return new NodeTemplate((NamedNodeType)type,"", Collections.emptyMap(),Collections.emptyMap());
+        return new NodeTemplate((NamedNodeType) type, "", Collections.emptyMap(), Collections.emptyMap());
     }
 };

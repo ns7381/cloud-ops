@@ -17,6 +17,7 @@
 package com.cloud.ops.toscamodel.impl;
 
 import com.cloud.ops.toscamodel.*;
+import com.google.common.collect.ImmutableMap;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.events.*;
 
@@ -258,6 +259,7 @@ public final class Parser {
         final String[] description = {null};
         final Map<String, Property> properties = new HashMap<>();
         final Map<String, Object> attributes = new HashMap<>();
+        final List<Map<String, Object>> requirements = new ArrayList<>();
         ParseMapping(e, it, (key, value) -> {
             switch (key) {
                 case "type":
@@ -285,7 +287,7 @@ public final class Parser {
                 case "requirements":
                     //Expect(value.is(Event.ID.SequenceStart));
                     ParseSequence(value, it, event -> {
-                        ParseRequirement(event, it);
+                        ParseRequirement(event, it, requirements);
                     });
                     break;
                 case "attributes":
@@ -363,7 +365,7 @@ public final class Parser {
                 case "requirements":
                     //Expect(value.is(Event.ID.SequenceStart));
                     ParseSequence(value, it, event -> {
-                        ParseRequirement(event, it);
+//                        ParseRequirement(event, it);
                     });
                     break;
                 default:
@@ -436,9 +438,10 @@ public final class Parser {
         properties.put(propname, p);
     }
 
-    private void ParseRequirement(Event e, Iterator<Event> it) {
+    private void ParseRequirement(Event e, Iterator<Event> it, List<Map<String, Object>> requirements) {
         ParseMapping(e, it, (key, value) -> {
-            Skip(value, it);
+            requirements.add(ImmutableMap.of(key, GetString(value)));
+//            Skip(value, it);
             // TODO: requirements not implemented
         });
     }
