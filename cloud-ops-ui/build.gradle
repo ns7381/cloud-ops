@@ -1,0 +1,36 @@
+project(':cloud-ops-ui') {
+    apply plugin: 'java'
+
+    task copy1(type: Copy) {
+        from "app"
+        into 'build/package/ui/app'
+    }
+
+    task copy2(type: Copy) {
+        from "assets"
+        into 'build/package/ui/assets'
+    }
+
+    task copy3(type: Copy) {
+        from "data"
+        into 'build/package/ui/data'
+    }
+
+    task copy4(type: Copy) {
+        from "yfjs-lib"
+        into 'build/package/ui/yfjs-lib'
+    }
+
+    task copy5(type: Copy, dependsOn: ["copy1", "copy2", "copy3", "copy4"]) {
+        from "index.html"
+        into 'build/package/ui/'
+    }
+
+    jar {
+        dependsOn "copy5"
+        from 'build/package'
+    }
+
+    dependencies {
+    }
+}

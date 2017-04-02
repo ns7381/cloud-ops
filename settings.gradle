@@ -1,5 +1,5 @@
-rootProject.name = 'iop-ops'
-include 'iop-ops-ui'
-include 'iop-ops-rest-api'
-include 'iop-ops-tosca'
+rootProject.name = 'cloud-ops'
+include 'cloud-ops-ui'
+include 'cloud-ops-rest-api'
+include 'cloud-ops-tosca'
 
