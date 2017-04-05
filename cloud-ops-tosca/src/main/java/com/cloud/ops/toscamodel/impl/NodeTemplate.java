@@ -20,6 +20,7 @@ import com.cloud.ops.toscamodel.INodeTemplate;
 import com.cloud.ops.toscamodel.IProperty;
 import com.cloud.ops.toscamodel.IType;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -30,13 +31,19 @@ public class NodeTemplate extends NodeValue implements INodeTemplate {
         super(baseType, description, properties, attributes);
     }
 
+    public NodeTemplate(NodeType baseType, String description, Map<String, IProperty> properties,
+                        Map<String, ? extends Object> attributes, List<Map<String, Object>> requirements,
+                        Map<String, Artifact> artifacts) {
+        super(baseType, description, properties, attributes, requirements, artifacts);
+    }
+
     @Override
     public INodeTemplate addProperty(String propName, IType propType, Object defaultValue) {
-        return new NodeTemplate((NodeType)baseType,description,extendSchema(propName, propType, defaultValue),attributes);
+        return new NodeTemplate((NodeType) baseType, description, extendSchema(propName, propType, defaultValue), attributes, requirements, artifacts);
     }
 
     @Override
     public INodeTemplate changeDescription(String newDescription) {
-        return new NodeTemplate((NodeType)baseType,newDescription,declaredProperties,attributes);
+        return new NodeTemplate((NodeType) baseType, newDescription, declaredProperties, attributes, requirements, artifacts);
     }
 }

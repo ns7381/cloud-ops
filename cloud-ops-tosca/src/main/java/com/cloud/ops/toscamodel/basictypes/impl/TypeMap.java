@@ -29,17 +29,19 @@ import java.util.*;
  * Created by pq on 20/04/2015.
  */
 public class TypeMap implements ITypeMap {
-    static Map<IType,ITypeMap> instances = new HashMap<>();
+    static Map<IType, ITypeMap> instances = new HashMap<>();
+
     static public ITypeMap instance(IType t) {
         ITypeMap m = instances.get(t);
-        if(m == null) {
+        if (m == null) {
             m = new TypeMap(t);
-            instances.put(t,m);
+            instances.put(t, m);
         }
         return m;
     }
+
     class ValueMap implements IValueMap {
-        final Map<String,IValue> value;
+        final Map<String, IValue> value;
 
         @Override
         public int hashCode() {
@@ -48,20 +50,20 @@ public class TypeMap implements ITypeMap {
 
         @Override
         public boolean equals(Object obj) {
-            if(this == obj)
+            if (this == obj)
                 return true;
-            if(!(obj instanceof IValueMap))
+            if (!(obj instanceof IValueMap))
                 return false;
             return valueType().equals(((IValueMap) obj).valueType()) &&
                     get().equals(((IValueMap) obj).get());
         }
 
-        public ValueMap(Map<String,IValue> value) {
+        public ValueMap(Map<String, IValue> value) {
             this.value = value;
         }
 
         @Override
-        public Map<String,IValue> get() {
+        public Map<String, IValue> get() {
             return value;
         }
 
@@ -75,6 +77,7 @@ public class TypeMap implements ITypeMap {
             return TypeMap.this;//instances.get(valueSchema);
         }
     }
+
     final IType valueSchema;
 
     public TypeMap(IType valueSchema) {
@@ -88,15 +91,15 @@ public class TypeMap implements ITypeMap {
 
     @Override
     public IValueMap instantiate(Object value) {
-        if(value instanceof Map)
-            return instantiate((Map<String,Object>)value);
+        if (value instanceof Map)
+            return instantiate((Map<String, Object>) value);
         return null;
     }
 
     @Override
-    public IValueMap instantiate(Map<String,Object> value) {
-        Map<String,IValue> v = new HashMap<>();
-        v.putAll(Maps.transformValues(value,i->valueSchema.instantiate(i)));
+    public IValueMap instantiate(Map<String, Object> value) {
+        Map<String, IValue> v = new HashMap<>();
+        v.putAll(Maps.transformValues(value, i -> valueSchema.instantiate(i)));
         return new ValueMap(v);
     }
 

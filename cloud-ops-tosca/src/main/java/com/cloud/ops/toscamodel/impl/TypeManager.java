@@ -132,7 +132,8 @@ class TypeManager {
             INodeType parentType = nodeType.baseType();
             if (parentType != null && !(parentType instanceof NodeTemplate))
                 parentType = nodeTypes.get(((INamedEntity) parentType).name());
-            unnamed = new NodeTemplate((NodeType) parentType, nodeType.description(), nodeType.declaredProperties(), nodeType.declaredAttributes());
+            unnamed = new NodeTemplate((NodeType) parentType, nodeType.description(), nodeType.declaredProperties(),
+                    nodeType.declaredAttributes(), nodeType.declaredRequirements(), nodeType.declaredArtifacts());
         }
         NamedNodeTemplate t = new NamedNodeTemplate(name, unnamed);
         nodeTemplates.put(name, t);

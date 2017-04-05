@@ -1,16 +1,10 @@
 tosca_definitions_version: tosca_simple_yaml_1_0_0
 topology_template:
     node_templates:
-        tomcat_host1:
+        java_host:
             type: tosca.nodes.Compute.Local
             attributes:
                 host: 10.110.20.147
-                user: root
-                password: 123456a?
-        tomcat_host2:
-            type: tosca.nodes.Compute.Local
-            attributes:
-                host: 10.110.20.148
                 user: root
                 password: 123456a?
         mysql_host:
@@ -27,23 +21,48 @@ topology_template:
                 db_user: root
                 db_password: 123456a?
             artifacts:
-                - db_upgrade: files/upgrade.sql
-                  type: tosca.artifacts.File
+                db_upgrade:
+                    file: files/upgrade.sql
+                    type: tosca.artifacts.SqlFile
             interfaces:
-                tosca.interfaces.node.lifecycle.Standard:
-                  upgrade: upgrade.sh
+                Configure:
+                    upgrade:
+                        implementation: scripts/upgrade_sql.sh
+                        inputs:
+                            db_name: { get_attribute: [ SELF, db_name ] }
+                            db_user: { get_attribute: [ SELF, db_user ] }
+                            db_password: { get_attribute: [ SELF, db_password ] }
+                            db_data: { get_artifact: [ SELF, db_upgrade ] }
+                    backup:
+                        implementation: scripts/backup_db.sh
+                        inputs:
+                            db_password: { get_attribute: [ SELF, db_password ] }
             requirements:
                 - host: mysql_host
-        tomcat_server:
+        java_server:
+            type: tosca.nodes.deploy.JAVA
+            attributes:
+                java_home: /opt/jdk
+            requirements:
+                - host: java_host
+        tomcat:
             type: tosca.nodes.deploy.Tomcat
             attributes:
-                path: /opt/tomcat-cloud-web
+                tomcat_home: /opt/tomcat-cloud-web
             artifacts:
-                - db_upgrade: files/upgrade.sql
-                  type: tosca.artifacts.File
+                patch_deploy:
+                    file: files/patch_deploy.zip
+                    type: tosca.artifacts.PatchFile
             interfaces:
-                tosca.interfaces.node.lifecycle.Standard:
-                  start: /opt/tomcat-cloud-web/bin/startup.sh
-                  stop: /opt/tomcat-cloud-web/bin/shutdown.sh
+                Configure:
+                    patch_deploy:
+                        implementation: scripts/patch_deploy.sh
+                        dependencies:
+                            - backup_db: {do_interface: [mysql_server, backup]}
+                            - upgrade_sql: {do_interface: [mysql_server, upgrade]}
+                        inputs:
+                              tomcat_home: { get_attribute: [ SELF, tomcat_home ] }
+                              java_home: { get_attribute: [ java_server, java_home ] }
+                              patch_zip: { get_artifact: [ SELF, patch_deploy ] }
             requirements:
-                - host: host
+                - host: java_server

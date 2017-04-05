@@ -24,8 +24,9 @@ import com.cloud.ops.toscamodel.INamedEntity;
 public class NamedNodeTemplate extends NodeTemplate implements INamedEntity {
     private String name;
 
-    public NamedNodeTemplate(String name,NodeTemplate unnamedVersion) {
-        super((NodeType)unnamedVersion.baseType,unnamedVersion.description, unnamedVersion.declaredProperties(), unnamedVersion.attributes);
+    public NamedNodeTemplate(String name, NodeTemplate unnamedVersion) {
+        super((NodeType) unnamedVersion.baseType, unnamedVersion.description, unnamedVersion.declaredProperties(),
+                unnamedVersion.attributes, unnamedVersion.requirements, unnamedVersion.artifacts);
         this.name = name;
     }
 

@@ -259,6 +259,7 @@ public final class Parser {
         final String[] description = {null};
         final Map<String, Property> properties = new HashMap<>();
         final Map<String, Object> attributes = new HashMap<>();
+        final Map<String, Artifact> artifacts = new HashMap<>();
         final List<Map<String, Object>> requirements = new ArrayList<>();
         ParseMapping(e, it, (key, value) -> {
             switch (key) {
@@ -296,7 +297,8 @@ public final class Parser {
                     break;
                 case "artifacts":
                     // TODO
-                    Skip(value, it);
+                    ParseArtifacts(value, it, artifacts);
+//                    Skip(value, it);
                     break;
                 case "interfaces":
                     // TODO
@@ -323,9 +325,32 @@ public final class Parser {
             IValue v = newTemplate.allProperties().get(entry.getKey()).type().instantiate(entry.getValue());
             newTemplate.declaredAttributes().put(entry.getKey(), v);
         }
+        for (Map<String, Object> requirement : requirements) {
+            newTemplate.declaredRequirements().add(requirement);
+        }
+        newTemplate.declaredArtifacts().putAll(artifacts);
         //TODO: make portable "hidden"
         NamedNodeTemplate s = (NamedNodeTemplate) env.registerNodeTemplate(templateName, newTemplate);
         //s.hidden = this.loadAsShared;
+    }
+
+    private void ParseArtifacts(Event e, Iterator<Event> it, Map<String, Artifact> artifactMap) {
+        ParseMapping(e, it, (key, value) -> {
+            Artifact artifact = new Artifact();
+            ParseMapping(value, it, (k, v) -> {
+                switch (k) {
+                    case "file":
+                        artifact.setFile(GetString(v));
+                        break;
+                    case "type":
+                        artifact.setType(GetString(v));
+                        break;
+                    default:
+                        throw new ParseError();
+                }
+            });
+            artifactMap.put(key, artifact);
+        });
     }
 
     private void ParseNodeType(Event e, Iterator<Event> it, String typeName) {

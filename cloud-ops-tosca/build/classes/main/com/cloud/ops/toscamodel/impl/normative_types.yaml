@@ -60,7 +60,7 @@ datatype_definitions:
 
 
 node_types:
-    tosca.nodes.Compute:
+    tosca.nodes.VM:
         derived_from: tosca.nodes.Root
         properties:
             mem_size:
@@ -90,8 +90,8 @@ node_types:
             qos_info:
                 type: tosca.types.QosInfo
 
-    tosca.nodes.cloud.Compute:
-        derived_from: tosca.nodes.Compute
+    tosca.nodes.Compute:
+        derived_from: tosca.nodes.VM
         properties:
             scaling_horizontal:
                 type: string
@@ -136,8 +136,8 @@ node_types:
                 #constraints:
                  #   - greater_or_equal: 0 TB
   
-    tosca.nodes.Compute.Amazon:
-      derived_from: tosca.nodes.Compute
+#    tosca.nodes.Compute.Amazon:
+#      derived_from: tosca.nodes.Compute
 
     tosca.nodes.Compute.HP:
       derived_from: tosca.nodes.Compute
@@ -169,10 +169,16 @@ node_types:
             version:
                 type: string
 
+    tosca.nodes.deploy.JAVA:
+        derived_from: tosca.nodes.deploy
+        properties:
+            java_home:
+                type: string
+
     tosca.nodes.deploy.Tomcat:
         derived_from: tosca.nodes.deploy
         properties:
-            path:
+            tomcat_home:
                 type: string
             user:
                 type: string
