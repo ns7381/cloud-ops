@@ -26,7 +26,7 @@ public class NamedNodeTemplate extends NodeTemplate implements INamedEntity {
 
     public NamedNodeTemplate(String name, NodeTemplate unnamedVersion) {
         super((NodeType) unnamedVersion.baseType, unnamedVersion.description, unnamedVersion.declaredProperties(),
-                unnamedVersion.attributes, unnamedVersion.requirements, unnamedVersion.artifacts);
+                unnamedVersion.attributes, unnamedVersion.requirements, unnamedVersion.artifacts, unnamedVersion.interfaces);
         this.name = name;
     }
 

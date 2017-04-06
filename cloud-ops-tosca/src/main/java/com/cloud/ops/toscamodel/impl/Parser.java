@@ -260,6 +260,7 @@ public final class Parser {
         final Map<String, Property> properties = new HashMap<>();
         final Map<String, Object> attributes = new HashMap<>();
         final Map<String, Artifact> artifacts = new HashMap<>();
+        final Map<String, Interface> interfaces = new HashMap<>();
         final List<Map<String, Object>> requirements = new ArrayList<>();
         ParseMapping(e, it, (key, value) -> {
             switch (key) {
@@ -302,7 +303,7 @@ public final class Parser {
                     break;
                 case "interfaces":
                     // TODO
-                    Skip(value, it);
+                    ParseInterfaces(value, it, interfaces);
                     break;
                 default:
                     throw new ParseError();
@@ -329,9 +330,54 @@ public final class Parser {
             newTemplate.declaredRequirements().add(requirement);
         }
         newTemplate.declaredArtifacts().putAll(artifacts);
+        newTemplate.declaredInterfaces().putAll(interfaces);
         //TODO: make portable "hidden"
         NamedNodeTemplate s = (NamedNodeTemplate) env.registerNodeTemplate(templateName, newTemplate);
         //s.hidden = this.loadAsShared;
+    }
+
+    private void ParseInterfaces(Event e, Iterator<Event> it, Map<String, Interface> interfaces) {
+        ParseMapping(e, it, (key, value) -> {
+            switch (key) {
+                case "Standard":
+                    break;
+                case "Configure":
+                    ParseOperations(value, it, interfaces);
+                    break;
+                default:
+                    throw new ParseError();
+            }
+        });
+    }
+
+    private void ParseOperations(Event e, Iterator<Event> it, Map<String, Interface> interfaceMap) {
+        ParseMapping(e, it, (key, value) -> {
+            Interface anInterface = new Interface();
+            ParseMapping(value, it, (k, v) -> {
+                switch (k) {
+                    case "implementation":
+                        anInterface.setImplementation(GetString(v));
+                        break;
+                    case "dependencies":
+                        List<Map<String, Object>> dependencies = new ArrayList<Map<String, Object>>();
+                        ParseSequence(v, it, event -> ParseMapping(event, it, (k1, v1) -> {
+                            dependencies.add(ImmutableMap.of(k1, ParseAny(v1, it)));
+                        }));
+                        anInterface.setDependencies(dependencies);
+                        break;
+                    case "inputs":
+                        Map<String, Object> inputs = new HashMap<String, Object>();
+                        ParseMapping(v, it, (k2, v2) -> {
+                            inputs.put(k2, ParseAny(v2, it));
+                        });
+                        anInterface.setInputs(inputs);
+                        break;
+                    default:
+                        throw new ParseError();
+                }
+            });
+            interfaceMap.put(key, anInterface);
+        });
     }
 
     private void ParseArtifacts(Event e, Iterator<Event> it, Map<String, Artifact> artifactMap) {

@@ -17,6 +17,7 @@
 package com.cloud.ops.toscamodel;
 
 import com.cloud.ops.toscamodel.impl.Artifact;
+import com.cloud.ops.toscamodel.impl.Interface;
 
 import java.util.List;
 import java.util.Map;
@@ -25,13 +26,21 @@ import java.util.Map;
  * Created by pq on 16/04/2015.
  */
 public interface INodeTemplate extends ISchemaDefinition {
-    Map<String,Artifact> declaredArtifacts();
-    Map<String,Artifact> allArtifacts();
-    Map<String,IValue> declaredAttributes();
-    Map<String,IValue> allAttributes();
+    Map<String, Interface> declaredInterfaces();
 
-    List<Map<String,Object>> declaredRequirements();
-    List<Map<String,Object>> allRequirements();
+    Map<String, Interface> allInterfaces();
+
+    Map<String, Artifact> declaredArtifacts();
+
+    Map<String, Artifact> allArtifacts();
+
+    Map<String, IValue> declaredAttributes();
+
+    Map<String, IValue> allAttributes();
+
+    List<Map<String, Object>> declaredRequirements();
+
+    List<Map<String, Object>> allRequirements();
 
     @Override
     INodeTemplate addProperty(String propName, IType propType, Object defaultValue);

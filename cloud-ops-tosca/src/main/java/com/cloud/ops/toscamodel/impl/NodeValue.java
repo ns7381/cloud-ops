@@ -36,6 +36,8 @@ public abstract class NodeValue extends SchemaDefinition {
     final List<Map<String, Object>> allRequirements;
     final Map<String, Artifact> artifacts;
     final Map<String, Artifact> allArtifacts;
+    final Map<String, Interface> interfaces;
+    final Map<String, Interface> allInterfaces;
 
     public NodeValue(NodeType baseType, String description, Map<String, IProperty> properties, Map<String, ? extends Object> attributes) {
         super(baseType, description, properties);
@@ -51,30 +53,45 @@ public abstract class NodeValue extends SchemaDefinition {
         this.allRequirements = new ArrayList<>();
         this.artifacts = new HashMap<>();
         this.allArtifacts = new HashMap<>();
+        this.interfaces = new HashMap<>();
+        this.allInterfaces = new HashMap<>();
     }
 
     public NodeValue(NodeType baseType, String description, Map<String, IProperty> properties,
                      Map<String, ? extends Object> attributes, List<Map<String, Object>> requirements,
-                     Map<String, Artifact> artifacts) {
+                     Map<String, Artifact> artifacts, Map<String, Interface> interfaces) {
         super(baseType, description, properties);
         this.allAttributes = new HashMap<>();
+        this.allInterfaces = new HashMap<>();
         this.allArtifacts = new HashMap<>();
         this.allRequirements = new ArrayList<>();
         if (baseType != null) {
             this.allAttributes.putAll(baseType.allAttributes());
-            this.attributes = baseType.valueConvert(attributes);
             this.allRequirements.addAll(baseType.allRequirements);
+            this.allInterfaces.putAll(baseType.allInterfaces);
+            this.attributes = baseType.valueConvert(attributes);
             this.requirements = requirements;
+            this.interfaces = interfaces;
             this.artifacts = artifacts;
         } else {
             this.attributes = new HashMap<>();
             this.artifacts = new HashMap<>();
+            this.interfaces = new HashMap<>();
             this.requirements = new ArrayList<>();
         }
         this.allAttributes.putAll(this.attributes);
         this.allRequirements.addAll(this.requirements);
         this.allArtifacts.putAll(this.artifacts);
+        this.allInterfaces.putAll(this.interfaces);
     }
+
+    public Map<String, Interface> declaredInterfaces(){
+        return interfaces;
+    };
+
+    public Map<String, Interface> allInterfaces(){
+        return allInterfaces;
+    };
 
     public Map<String, Artifact> declaredArtifacts() {
         return artifacts;

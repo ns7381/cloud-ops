@@ -33,17 +33,19 @@ public class NodeTemplate extends NodeValue implements INodeTemplate {
 
     public NodeTemplate(NodeType baseType, String description, Map<String, IProperty> properties,
                         Map<String, ? extends Object> attributes, List<Map<String, Object>> requirements,
-                        Map<String, Artifact> artifacts) {
-        super(baseType, description, properties, attributes, requirements, artifacts);
+                        Map<String, Artifact> artifacts, Map<String, Interface> interfaces) {
+        super(baseType, description, properties, attributes, requirements, artifacts, interfaces);
     }
 
     @Override
     public INodeTemplate addProperty(String propName, IType propType, Object defaultValue) {
-        return new NodeTemplate((NodeType) baseType, description, extendSchema(propName, propType, defaultValue), attributes, requirements, artifacts);
+        return new NodeTemplate((NodeType) baseType, description, extendSchema(propName, propType, defaultValue),
+                attributes, requirements, artifacts, interfaces);
     }
 
     @Override
     public INodeTemplate changeDescription(String newDescription) {
-        return new NodeTemplate((NodeType) baseType, newDescription, declaredProperties, attributes, requirements, artifacts);
+        return new NodeTemplate((NodeType) baseType, newDescription, declaredProperties, attributes, requirements,
+                artifacts, interfaces);
     }
 }
