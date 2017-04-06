@@ -17,10 +17,11 @@ define(['App', 'common/ui/datatables', 'common/ui/modal'], function (App, DataTa
             return DataTables.parseAjax(
                 this,
                 this.$table,
-                "v1/topology"
+                "v1/topologies"
             );
         },
         initTable: function (callback) {
+            var self = this;
             DataTables.init(this.$table, {
                 serverSide: true,
                 ajax: this.tableAjax(),
@@ -30,8 +31,11 @@ define(['App', 'common/ui/datatables', 'common/ui/modal'], function (App, DataTa
                         "defaultContent": "<label><input type='checkbox'></label>"
                     },
                     {
-                        "data": "name",
-                        "width": DataTables.width("name")
+                        "data": {},
+                        "width": DataTables.width("name"),
+                        "render": function (data) {
+                            return '<a href="' + self.getUrl('+/detail', {'id': data.id}) + '">' + data.name + '</a>';
+                        }
                     },
                     {
                         "data": "description",
@@ -84,7 +88,7 @@ define(['App', 'common/ui/datatables', 'common/ui/modal'], function (App, DataTa
                         var topology = $(".form-horizontal", $modal).serializeObject();
                         var keywords = App.highlight("模板配置" + topology.name, 4);
                         var processor = Modal.processing('正在保存' + keywords + '信息');
-                        self.ajax.post("v1/topology", topology, function (err, data) {
+                        self.ajax.post("v1/topologies", topology, function (err, data) {
                             if (err) {
                                 processor.error(keywords + '创建失败!原因：' + err.message);
                             } else {
@@ -131,7 +135,7 @@ define(['App', 'common/ui/datatables', 'common/ui/modal'], function (App, DataTa
                         if (!valid) return false;
                         var topology = $(".form-horizontal", $modal).serializeObject();
                         var processor = Modal.processing('正在保存' + keywords + '信息');
-                        self.ajax.post("v1/topology", topology, function (err, data) {
+                        self.ajax.post("v1/topologies/"+id, topology, function (err, data) {
                             if (err) {
                                 processor.error(keywords + '创建失败!原因：' + err.message);
                             } else {

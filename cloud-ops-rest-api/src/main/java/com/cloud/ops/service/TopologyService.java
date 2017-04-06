@@ -1,34 +1,33 @@
 package com.cloud.ops.service;
 
-import com.cloud.ops.dao.DeploymentTopologyDao;
-import com.cloud.ops.entity.deployment.DeploymentTopology;
-
+import com.cloud.ops.dao.TopologyDao;
+import com.cloud.ops.entity.deployment.Topology;
 import com.cloud.ops.utils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 
 import java.util.List;
 
-import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
 
 @Service
 @Transactional
-public class DeploymentTopologyService {
+public class TopologyService {
 	
 	@Autowired
-	private DeploymentTopologyDao dao;
+	private TopologyDao dao;
 
-	public DeploymentTopology get(String id) {
+	public Topology get(String id) {
 		return dao.findOne(id);
 	}
 
-	public DeploymentTopology create(DeploymentTopology shell){
+	public Topology create(Topology shell){
 		dao.save(shell);
 		return shell;
 	}
 
-    public List<DeploymentTopology> getAll() {
+    public List<Topology> getAll() {
         return dao.findAll();
     }
 
@@ -36,9 +35,9 @@ public class DeploymentTopologyService {
         dao.delete(id);
     }
 
-	public DeploymentTopology update(String id, DeploymentTopology topology){
-        assertNotNull(id);
-        DeploymentTopology db = this.get(id);
+	public Topology update(String id, Topology topology){
+        Assert.notNull(id, "id is required");
+        Topology db = this.get(id);
         BeanUtils.copyNotNullProperties(topology, db);
         dao.save(db);
         return db;

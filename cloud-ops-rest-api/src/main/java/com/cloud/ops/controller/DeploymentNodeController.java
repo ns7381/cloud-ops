@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping(value="/topology/node")
+@RequestMapping(value="/topology/yml")
 public class DeploymentNodeController {
 
     @Autowired

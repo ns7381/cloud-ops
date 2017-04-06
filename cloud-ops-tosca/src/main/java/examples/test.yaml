@@ -45,7 +45,7 @@ topology_template:
                 java_home: /opt/jdk
             requirements:
                 - host: java_host
-        tomcat:
+        tomcat_cloud_web:
             type: tosca.nodes.deploy.Tomcat
             attributes:
                 tomcat_home: /opt/tomcat-cloud-web
@@ -56,10 +56,28 @@ topology_template:
             interfaces:
                 Configure:
                     patch_deploy:
-                        implementation: scripts/patch_deploy.sh
+                        implementation: scripts/patch_deploy_web.sh
                         dependencies:
                             - backup_db: {do_interface: [mysql_server, backup]}
                             - upgrade_sql: {do_interface: [mysql_server, upgrade]}
+                        inputs:
+                              tomcat_home: { get_attribute: [ SELF, tomcat_home ] }
+                              java_home: { get_attribute: [ java_server, java_home ] }
+                              patch_zip: { get_artifact: [ SELF, patch_deploy ] }
+            requirements:
+                - host: java_server
+        tomcat_swift:
+            type: tosca.nodes.deploy.Tomcat
+            attributes:
+                tomcat_home: /opt/tomcat-swift
+            artifacts:
+                patch_deploy:
+                    file: files/patch_deploy.zip
+                    type: tosca.artifacts.PatchFile
+            interfaces:
+                Configure:
+                    patch_deploy:
+                        implementation: scripts/patch_deploy_swift.sh
                         inputs:
                               tomcat_home: { get_attribute: [ SELF, tomcat_home ] }
                               java_home: { get_attribute: [ java_server, java_home ] }
