@@ -2,32 +2,55 @@ package com.cloud.ops.service;
 
 import com.cloud.ops.dao.TopologyDao;
 import com.cloud.ops.entity.deployment.Topology;
+import com.cloud.ops.toscamodel.INodeTemplate;
+import com.cloud.ops.toscamodel.INodeType;
+import com.cloud.ops.toscamodel.IToscaEnvironment;
+import com.cloud.ops.toscamodel.Tosca;
 import com.cloud.ops.utils.BeanUtils;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 
 @Service
 @Transactional
 public class TopologyService {
-	
-	@Autowired
+    private final Logger logger = LoggerFactory.getLogger(getClass());
+    @Autowired
 	private TopologyDao dao;
 
 	public Topology get(String id) {
-		return dao.findOne(id);
-	}
+        Topology topology = dao.findOne(id);
+        if (StringUtils.isNotBlank(topology.getYamlFilePath())) {
+            IToscaEnvironment toscaEnvironment = Tosca.newEnvironment();
+            try {
+                toscaEnvironment.readFile(new FileReader(topology.getYamlFilePath()), false);
+                topology.setToscaEnvironment(toscaEnvironment);
+            } catch (FileNotFoundException e) {
+                logger.error("yaml file not find. ", e);
+            }
+        }
+        return topology;
+    }
 
 	public Topology create(Topology shell){
 		dao.save(shell);
 		return shell;
 	}
 
-    public List<Topology> getAll() {
+    public List<Topology> findAll() {
         return dao.findAll();
     }
 
@@ -42,4 +65,25 @@ public class TopologyService {
         dao.save(db);
         return db;
 	}
+
+    public List<Map<String, Object>> getHosts(String id) {
+        Topology topology = dao.findOne(id);
+        List<Map<String, Object>> rst = Lists.newArrayList();
+        if (StringUtils.isNotBlank(topology.getYamlFilePath())) {
+            IToscaEnvironment toscaEnvironment = Tosca.newEnvironment();
+            try {
+                toscaEnvironment.readFile(new FileReader(topology.getYamlFilePath()), false);
+                INodeType rootNode = (INodeType) toscaEnvironment.getNamedEntity("tosca.nodes.Compute");
+                Iterable<INodeTemplate> rootNodeTemplate = toscaEnvironment.getNodeTemplatesOfType(rootNode);
+                for (INodeTemplate nodeType : rootNodeTemplate){
+                    Map<String, Object> map = Maps.newHashMap();
+                    map.put(nodeType.toString(), nodeType.baseType().toString());
+                    rst.add(map);
+                }
+            } catch (FileNotFoundException e) {
+                logger.error("yaml file not find. ", e);
+            }
+        }
+        return rst;
+    }
 }

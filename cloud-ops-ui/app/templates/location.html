@@ -1,4 +1,4 @@
-<div class="page-header">
+<!--<div class="page-header">
     <div class="page-title">
         <h3>环境管理</h3>
         <em>environment manage</em>
@@ -6,31 +6,17 @@
     <div class="page-desc">
         <p>环境管理，针对不同的环境提供代码包的管理和升级操作的功能。</p>
     </div>
-</div>
+</div>-->
 <div class="page-body">
-    <div class="table-top clearfix">
-        <div class="pull-left">
-            <a class="btn btn-reload"></a>
-            <a class="btn btn-add">创建</a>
-        </div>
-        <div class="pull-right">
-            <label>
-                <input type="search" name="filter" class="form-control input-search table-filter" placeholder="环境名称">
-                <a class="btn btn-search"></a>
-            </label>
-        </div>
+    <div class="row home-summaries-row">
+        {{each locations as location}}
+        <a class="roundedSummary viewLocation" href="{{getUrl('+/detail', {'id': location.id})}}">
+            <div class="roundedSummaryText">
+                <span class="big" id="numApps"></span>
+                {{location.name}}<br/>
+            </div>
+        </a>
+        {{/each}}
+        <button class="addSummary addLocation roundedSummary" type="button">添加环境</button>
     </div>
-    <table class="table table-primary table-striped" id="location-table">
-        <thead>
-        <tr>
-            <th>
-                <label><input type="checkbox" class="selectAll"></label>
-            </th>
-            <th>名称</th>
-            <th>类型</th>
-            <th>描述</th>
-            <th>操作</th>
-        </tr>
-        </thead>
-    </table>
 </div>

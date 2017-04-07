@@ -1,17 +1,24 @@
 define(['App', 'common/ui/datatables', 'common/ui/modal'], function (App, DataTables, Modal) {
     return App.View({
         $table: $([]),
+        data: function () {
+            return App.remote("v1/location");
+        },
+        dataFilter: function(err, data){
+            return {locations: data};
+        },
         ready: function () {
             var self = this;
             self.$table = $('#location-table');
-
+            self.bind('click', $('.addLocation'), self.addLocation);
+/*
             this.initTable(function () {
                 var $tableTop = $(self.$table.selector + "_top");
 
                 self.bind('click', $('.btn-add', $tableTop), self.addLocation);
                 self.bind('click', $('.btn-edit', self.$table), self.editLocation);
                 self.bind("click", $(".btn-delete", self.$table), self.deleteLocation);
-            });
+            });*/
         },
         tableAjax: function () {
             return DataTables.parseAjax(

@@ -3691,3 +3691,76 @@ aside {
     margin-top: -4px;
     border: 1px solid #dfdddd;
 }
+
+
+.home-summaries-row {
+    text-align: center;
+    margin: 0px 0px 30px 0px;
+}
+
+.roundedSummary {
+    float: left;
+    border: 1px solid #d4d4d4;
+    -webkit-border-radius: 15px;
+    -moz-border-radius: 15px;
+    border-radius: 15px;
+    background-color: #f7f6e8;
+    margin: 10px 15px 0px 0px;
+    padding: 20px 20px;
+    color: #505050 !important;
+    width: 264px;
+    height: 160px;
+    line-height: 1.2;
+    font-size: 140%;
+    display: inline-block;
+    text-align: left;
+    background: #f9f9f9 url(img/roundedSummary-background.png) top
+    repeat-x !important;
+}
+.roundedSummary:hover {
+    border: 1px solid #58a82e !important;
+    color: #58a82e !important;
+    background: #f9f9f9 url(img/roundedSummary-background.png) top
+    repeat-x !important;
+}
+
+.roundedSummary:last-child {
+    margin-right: 0px;
+}
+
+.roundedSummary:before { /* makes the summary vertically centered */
+    content: '';
+    display: inline-block;
+    height: 100%;
+    vertical-align: middle;
+    margin-right: 0px !important;
+    /*
+    margin-right: -0.25em;
+    adjusts for horiz spacing */
+}
+
+.roundedSummaryText {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.addSummary {
+    border: 1px solid #a1cb8c !important;
+    color: #505050 !important;
+    background: url(img/addApplication-plus.png) no-repeat 0 -20px !important;
+    padding: 10px 0px 0px 74px !important;
+    width: 264px !important;
+    height: 160px !important;
+}
+
+.addSummary:hover {
+    border: 1px solid #58a82e !important;
+    color: #58a82e !important;
+    background: url(img/addApplication-plus-hover.png) 0 -20px no-repeat
+    !important;
+}
+
+.home-summaries-row {
+    padding: 0px 0px 0px 0px !important;
+    margin: 0px !important;
+}

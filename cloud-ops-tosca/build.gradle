@@ -7,6 +7,7 @@ project(':cloud-ops-tosca') {
         compile("org.yaml:snakeyaml:1.17")
         compile("com.google.guava:guava:18.0")
         compile("org.projectlombok:lombok:1.16.14")
+        testCompile("junit:junit:4.12")
     }
 
     idea {

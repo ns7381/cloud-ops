@@ -22,7 +22,8 @@ topology_template:
                 db_password: some_password
                 version: 5.0
             artifacts:
-                - db_create: files/db_create.sql
+                db_create:
+                  file: files/db_create.sql
                   type: tosca.artifacts.File
 
             requirements:

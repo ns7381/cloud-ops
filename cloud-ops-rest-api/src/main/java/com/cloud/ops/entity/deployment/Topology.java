@@ -1,19 +1,37 @@
 package com.cloud.ops.entity.deployment;
 
 import com.cloud.ops.entity.BaseObject;
+import com.cloud.ops.toscamodel.IToscaEnvironment;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 /**
  * Created by Administrator on 2017/1/13.
  */
 @Entity
 @Table(name="topology")
-@Getter
-@Setter
 public class Topology extends BaseObject {
     String yamlFilePath;
+    IToscaEnvironment toscaEnvironment;
+
+    public String getYamlFilePath() {
+        return yamlFilePath;
+    }
+
+    public void setYamlFilePath(String yamlFilePath) {
+        this.yamlFilePath = yamlFilePath;
+    }
+
+    @Transient
+    public IToscaEnvironment getToscaEnvironment() {
+        return toscaEnvironment;
+    }
+
+    public void setToscaEnvironment(IToscaEnvironment toscaEnvironment) {
+        this.toscaEnvironment = toscaEnvironment;
+    }
 }

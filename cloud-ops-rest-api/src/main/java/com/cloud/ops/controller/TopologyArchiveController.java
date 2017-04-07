@@ -30,7 +30,7 @@ public class TopologyArchiveController {
     @PostMapping
     public TopologyArchive create(@RequestParam("file") MultipartFile file, @PathVariable String topologyId,
                                   @RequestBody TopologyArchive entity) throws IOException {
-        String filePath = fileStore.storeFile(file.getInputStream(), FileStore.TOPOLOGY_FILE_PATH + File.separator +
+        String filePath = fileStore.storeFile(file.getInputStream(), FileStore.TOPOLOGY_FILE_PATH +
                 topologyService.get(topologyId).getName() + File.separator + file.getOriginalFilename());
         entity.setTopologyId(topologyId);
         entity.setFilePath(filePath);
