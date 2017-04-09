@@ -4,7 +4,7 @@ node_types:
     tosca.nodes.Compute.hp_cloud_services.2xl:
         derived_from: tosca.nodes.Compute
         attributes:
-            location: 'tosca.types.Locations.NV.US.LasVegas'
+            applicationEnvironment: 'tosca.types.Locations.NV.US.LasVegas'
             load_balancing: false
             scaling_horizontal: 'no'
             storage_file_system: 'ext4'

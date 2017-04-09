@@ -16,6 +16,7 @@
 
 package com.cloud.ops.toscamodel.basictypes;
 
+import com.cloud.ops.toscamodel.INamedEntity;
 import com.cloud.ops.toscamodel.IType;
 
 import java.util.List;
@@ -23,11 +24,16 @@ import java.util.List;
 /**
  * Created by pq on 19/03/2015.
  */
-public interface ITypeList extends IType {
+public interface ITypeList extends IType, INamedEntity {
     IType valueSchema();
 
     @Override
     IValueList instantiate(Object value);
 
     public IValueList instantiate(List value);
+
+    @Override default
+    String name() {
+        return "list";
+    }
 }

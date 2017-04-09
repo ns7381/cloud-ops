@@ -1,6 +1,6 @@
 package com.cloud.ops.controller;
 
-import com.cloud.ops.entity.deployment.TopologyArchive;
+import com.cloud.ops.entity.topology.TopologyArchive;
 import com.cloud.ops.service.TopologyArchiveService;
 import com.cloud.ops.service.TopologyService;
 import com.cloud.ops.store.FileStore;
@@ -45,7 +45,7 @@ public class TopologyArchiveController {
         if (StringUtils.isNotBlank(archive.getFilePath())) {
             fileStore.delete(archive.getFilePath());
         }
-        String filePath = fileStore.storeFile(file.getInputStream(), FileStore.TOPOLOGY_FILE_PATH + File.separator +
+        String filePath = fileStore.storeFile(file.getInputStream(), FileStore.TOPOLOGY_FILE_PATH +
                 topologyService.get(topologyId).getName() + File.separator + file.getOriginalFilename());
         archive.setFilePath(filePath);
         return service.update(archive);

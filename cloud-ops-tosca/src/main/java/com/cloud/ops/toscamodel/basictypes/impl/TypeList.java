@@ -90,7 +90,19 @@ public class TypeList implements ITypeList {
 
     @Override
     public IValueList instantiate(Object value) {
-        return null;
+        if (value instanceof List) {
+            List<IValue> v = new ArrayList<>();
+            List<Object> values = (List<Object>) value;
+            for (Object o : values) {
+                v.add(valueSchema.instantiate(o));
+            }
+            return new ValueList(v);
+        } else if (value instanceof ValueList) {
+            return (IValueList) value;
+        } else {
+            return null;
+        }
+
     }
 
     @Override

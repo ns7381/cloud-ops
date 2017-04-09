@@ -42,6 +42,7 @@ class TypeManager {
                 TypeFloat.instance(),
                 TypeInteger.instance(),
                 TypeRange.instance(),
+                TypeList.instance(TypeString.instance()),
                 TypeScalarUnit.instance()
         };
 

@@ -1,0 +1,9 @@
+local:
+    management:
+        port: 8090
+spring:
+    datasource:
+        driver-class-name: com.mysql.jdbc.Driver
+        url: jdbc:mysql://10.110.20.20:3306/cloud-ops
+        username: root
+        password: 123456a?

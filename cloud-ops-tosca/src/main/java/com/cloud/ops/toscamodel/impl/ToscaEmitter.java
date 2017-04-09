@@ -96,6 +96,19 @@ public class ToscaEmitter {
         EndMap(e);
     }
 
+    private void WriteMap(Emitter e, Map<String, Object> map) throws IOException {
+        StartMap(e);
+        for (Map.Entry<String, Object> entry : map.entrySet()) {
+            WriteScalarValue(e, entry.getKey());
+            if (entry.getValue() instanceof Map) {
+                WriteScalarValue(e, entry.getValue().toString().replace("=", ": "));
+            } else {
+                WriteScalarValue(e, entry.getValue());
+            }
+        }
+        EndMap(e);
+    }
+
     private void WriteListValue(Emitter e, List<IValue> list) throws IOException {
         StartSequence(e);
         for (IValue iValue : list) {
@@ -110,7 +123,7 @@ public class ToscaEmitter {
     }
 
     private void StartSequence(Emitter e) throws IOException {
-        e.emit(new SequenceStartEvent(null, null, false, null, null, false));
+        e.emit(new SequenceStartEvent(null, null, true, null, null, false));
     }
 
     private void WriteValue(Emitter e, IValue value) throws IOException {
@@ -152,6 +165,61 @@ public class ToscaEmitter {
         if (!t.declaredAttributes().isEmpty()) {
             WriteScalarValue(e, "attributes");
             WriteStructValue(e, t.declaredAttributes());
+        }
+        if (!t.declaredRequirements().isEmpty()) {
+            WriteScalarValue(e, "requirements");
+            for (Map<String, Object> map : t.declaredRequirements()) {
+                StartSequence(e);
+                WriteMap(e, map);
+                EndSequence(e);
+            }
+        }
+        if (!t.declaredArtifacts().isEmpty()) {
+            WriteScalarValue(e, "artifacts");
+            StartMap(e);
+            for (Map.Entry<String, Artifact> entry : t.declaredArtifacts().entrySet()) {
+                WriteScalarValue(e, entry.getKey());
+                StartMap(e);
+                if (entry.getValue().getFile() != null) {
+                    WriteScalarValue(e, "file");
+                    WriteScalarValue(e, entry.getValue().getFile());
+                }
+                if (entry.getValue().getType() != null) {
+                    WriteScalarValue(e, "type");
+                    WriteScalarValue(e, entry.getValue().getType());
+                }
+                EndMap(e);
+            }
+            EndMap(e);
+        }
+        if (!t.declaredInterfaces().isEmpty()) {
+            WriteScalarValue(e, "interfaces");
+            StartMap(e);
+            WriteScalarValue(e, "Configure");
+            StartMap(e);
+            for (Map.Entry<String, Interface> entry : t.declaredInterfaces().entrySet()) {
+                WriteScalarValue(e, entry.getKey());
+                StartMap(e);
+                if (entry.getValue().getImplementation() != null) {
+                    WriteScalarValue(e, "implementation");
+                    WriteScalarValue(e, entry.getValue().getImplementation());
+                }
+                if (entry.getValue().getInputs() != null) {
+                    WriteScalarValue(e, "inputs");
+                    WriteMap(e, entry.getValue().getInputs());
+                }
+                if (entry.getValue().getDependencies() != null) {
+                    WriteScalarValue(e, "dependencies");
+                    StartSequence(e);
+                    for (Map<String, Object> map : entry.getValue().getDependencies()) {
+                        WriteMap(e, map);
+                    }
+                    EndSequence(e);
+                }
+                EndMap(e);
+            }
+            EndMap(e);
+            EndMap(e);
         }
         EndMap(e);
     }

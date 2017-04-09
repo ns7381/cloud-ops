@@ -13,4 +13,6 @@ public interface FileStore {
             File.separator + "topology" + File.separator;
     String storeFile(InputStream data, String filePath);
     void delete(String filePath);
+
+    String makeFile(String filePath);
 }

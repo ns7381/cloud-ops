@@ -1,7 +1,7 @@
 package com.cloud.ops.service;
 
-import com.cloud.ops.dao.WorkFlowDao;
-import com.cloud.ops.entity.WorkFlow;
+import com.cloud.ops.repository.WorkFlowRepository;
+import com.cloud.ops.entity.application.WorkFlow;
 
 import com.cloud.ops.utils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,16 +9,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Service
 @Transactional
 public class WorkFlowService {
 	
 	@Autowired
-	private WorkFlowDao dao;
+	private WorkFlowRepository dao;
 
 	public WorkFlow get(String id) {
 		return dao.findOne(id);

@@ -7,10 +7,9 @@ import com.cloud.ops.service.ResourcePackageServiceTool;
 import com.cloud.ops.utils.FileUtils;
 import com.cloud.ops.utils.SpringContextHolder;
 import com.cloud.ops.utils.ThreadWithEntity;
-import com.cloud.ops.ws.WebSocketConstants;
-import com.cloud.ops.ws.WebSocketHandler;
+import com.cloud.ops.configuration.ws.WebSocketConstants;
+import com.cloud.ops.configuration.ws.CustomWebSocketHandler;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -23,13 +22,13 @@ import java.util.Map;
 import java.util.UUID;
 
 @RestController
-@RequestMapping(value = "/resource/package")
+@RequestMapping(value = "/resource-packages")
 public class ResourcePackageController {
 
     @Autowired
     private ResourcePackageService service;
     @Autowired
-    private WebSocketHandler webSocketHandler;
+    private CustomWebSocketHandler webSocketHandler;
     /**
      * 新增版本信息
      *
@@ -117,7 +116,7 @@ public class ResourcePackageController {
         final ResourcePackage nextPackage = service.get(nextPackageId);
         final String uploadPath = FileUtils.getPatchFilePath(nextPackage.getName()+"-patch");
         ResourcePackage patchPackage = new ResourcePackage();
-        patchPackage.setDeploymentId(deploymentId);
+        patchPackage.setApplicationId(deploymentId);
         patchPackage.setName(prePackage.getVersion() + "To" + nextPackage.getVersion());
         patchPackage.setVersion(prePackage.getVersion() + "To" + nextPackage.getVersion());
         patchPackage.setDescription(prePackage.getVersion() + "版本至" + nextPackage.getVersion() + "版本的patch");
@@ -146,7 +145,7 @@ public class ResourcePackageController {
         resourcePackage.setName(name);
         resourcePackage.setDescription(description);
         resourcePackage.setVersion(version);
-        resourcePackage.setDeploymentId(deploymentId);
+        resourcePackage.setApplicationId(deploymentId);
         resourcePackage.setStatus(ResourcePackageStatus.SAVING);
         if (file != null && !file.getOriginalFilename().trim().equals("")) {
             service.create(resourcePackage);

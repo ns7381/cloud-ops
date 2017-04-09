@@ -1,7 +1,7 @@
 package com.cloud.ops.service;
 
-import com.cloud.ops.dao.TopologyArchiveDao;
-import com.cloud.ops.entity.deployment.TopologyArchive;
+import com.cloud.ops.repository.TopologyArchiveRepository;
+import com.cloud.ops.entity.topology.TopologyArchive;
 import com.cloud.ops.utils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,7 +15,7 @@ import java.util.List;
 public class TopologyArchiveService {
 	
 	@Autowired
-	private TopologyArchiveDao dao;
+	private TopologyArchiveRepository dao;
 
 	public TopologyArchive get(String id) {
 		return dao.findOne(id);

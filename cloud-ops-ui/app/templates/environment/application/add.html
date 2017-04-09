@@ -1,0 +1,27 @@
+<form class="form-horizontal">
+    <div class="form-group form-required">
+        <label for="name" class="control-label col-sm-3">名称：</label>
+
+        <div class="col-sm-7">
+            <input type="text" class="form-control" id="name" name="name">
+        </div>
+    </div>
+    <div class="form-group form-required">
+        <label for="topologyId" class="control-label col-sm-3">拓扑：</label>
+
+        <div class="col-sm-7">
+            <select class="form-control" id="topologyId" name="topologyId">
+                <option value="9e35f0ca450e42a3904e5d24a4e38833">tomcat应用模板</option>
+            </select>
+        </div>
+    </div>
+    {{ each hosts as host}}
+    <div class="form-group form-required">
+        <label for="{{host.name}}" class="control-label col-sm-3">{{host.name}}：</label>
+
+        <div class="col-sm-7">
+            <input type="text" class="form-control" id="{{host.name}}" name="{{host.name}}">
+        </div>
+    </div>
+    {{/each}}
+</form>

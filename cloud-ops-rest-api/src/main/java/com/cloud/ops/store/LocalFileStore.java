@@ -31,6 +31,15 @@ public class LocalFileStore implements FileStore{
         }
     }
 
+    @Override
+    public String makeFile(String filePath) {
+        File path = new File(filePath);
+        if (!path.exists()) {
+            path.mkdirs();
+        }
+        return filePath;
+    }
+
     public static void main(String[] args) {
         System.out.println(TOPOLOGY_FILE_PATH);
     }

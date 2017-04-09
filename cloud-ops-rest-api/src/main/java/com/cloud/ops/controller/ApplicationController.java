@@ -1,55 +1,56 @@
 package com.cloud.ops.controller;
 
-import com.cloud.ops.entity.Application;
+import com.cloud.ops.entity.application.Application;
 import com.cloud.ops.service.ApplicationService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
-@RequestMapping(value="/application")
+@RequestMapping(value="/applications")
 public class ApplicationController {
 
     @Autowired
 	private ApplicationService service;
 
 	/**
-	 * 新增应用程序 
+	 * 新增
 	 * @return
 	 */
 	@RequestMapping(method = RequestMethod.POST)
-	public Application addApp(@RequestBody Application application){
-		return service.addApp(application);
+	public Application create(@RequestBody Application application){
+		return service.create(application);
 	}
 
     /**
-     * 删除应用程序
+     * 删除
      * @return
      */
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     public Boolean delete(@PathVariable String id){
-        service.deleteApp(id);
+        service.delete(id);
         return Boolean.TRUE;
     }
 
-	/**
-	 * 编辑
-	 * @return
-	 */
-	@RequestMapping(method = RequestMethod.PUT)
-	public Application edit(@RequestBody Application application){
-		return service.editApp(application);
-	}
+
+    /**
+     * 部署
+     * @return
+     */
+    @RequestMapping(value = "/{id}/interface/{interfaceId}", method = RequestMethod.PUT)
+    public Boolean doInterface(@PathVariable String id, @PathVariable String interfaceId, @RequestParam Map<String, Object> params){
+        return service.doInterface(id, interfaceId, params);
+    }
 
 	/**
 	 * 获取所有数据
 	 * @return
 	 */
 	@RequestMapping(method = RequestMethod.GET )
-	public List<Application> getAll(){
-		return service.getAll();
+	public List<Application> findByEnvironmentId(@RequestParam String environmentId){
+		return service.findByEnvironmentId(environmentId);
 	}
 
 }

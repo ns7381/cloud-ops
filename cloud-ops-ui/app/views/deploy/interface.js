@@ -30,7 +30,7 @@ define(["common/dialog", 'common/ajax', 'common/alert','common/tool', 'common/va
                         var valid = $(".form-horizontal", $modal).valid();
                         if (!valid) return false;
                         var interface = $(".form-horizontal", $modal).serializeObject();
-                        Ajax.putJson("deployment/"+deployId+"/interface/"+row.id+setUrlK(interface), function () {
+                        Ajax.putJson("application/"+deployId+"/interface/"+row.id+setUrlK(interface), function () {
                             dialog.close();
                             $('#deployDetailTab a:last').tab('show');
                         }, function (msg) {

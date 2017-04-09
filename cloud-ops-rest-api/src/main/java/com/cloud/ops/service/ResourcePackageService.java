@@ -1,13 +1,9 @@
 package com.cloud.ops.service;
 
-import com.cloud.ops.dao.ResourcePackageDao;
-import com.cloud.ops.entity.Resource.Repository;
+import com.cloud.ops.repository.ResourcePackageRepository;
 import com.cloud.ops.entity.Resource.ResourcePackage;
 import com.cloud.ops.entity.Resource.ResourcePackageStatus;
 import com.cloud.ops.utils.*;
-import com.cloud.ops.ws.WebSocketConstants;
-import com.cloud.ops.ws.WebSocketHandler;
-
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
@@ -15,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
-
+import com.cloud.ops.configuration.ws.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -25,11 +21,9 @@ import java.util.Map;
 @Transactional
 public class ResourcePackageService {
     @Autowired
-    private ResourcePackageDao dao;
+    private ResourcePackageRepository dao;
     @Autowired
-    private RepositoryService repositoryService;
-    @Autowired
-    private WebSocketHandler webSocketHandler;
+    private CustomWebSocketHandler webSocketHandler;
 
     public ResourcePackage get(String id) {
         return dao.findOne(id);
@@ -51,7 +45,7 @@ public class ResourcePackageService {
         }
     }
     public List<ResourcePackage> getList(Map<String, Object> params) {
-        return dao.findByDeploymentId((String) params.get("deploymentId"));
+        return dao.findByApplicationId((String) params.get("applicationId"));
     }
 
     public ResourcePackage update(ResourcePackage version) {
@@ -64,7 +58,6 @@ public class ResourcePackageService {
 
     public void packageWar(ResourcePackage resourcePackage) {
         assert StringUtils.isNotBlank(resourcePackage.getBuild());
-        final Repository repository = repositoryService.get(resourcePackage.getRepositoryId());
 
         resourcePackage.setStatus(ResourcePackageStatus.CLONING);
         this.create(resourcePackage);
@@ -79,13 +72,13 @@ public class ResourcePackageService {
                     if(!localPath.delete()) {
                         throw new IOException("Could not delete temporary file " + localPath);
                     }
-                    System.out.println("clone from " + repository.getRepositoryUrl() + " to " + localPath);
+                    System.out.println("clone from " + entity.getGitUrl() + " to " + localPath);
                     Git result = Git.cloneRepository()
-                            .setURI(repository.getRepositoryUrl())
+                            .setURI(entity.getGitUrl())
                             .setDirectory(localPath)
                             .setCloneSubmodules(true)
                             .setBranch(entity.getBranch())
-                            .setCredentialsProvider(new UsernamePasswordCredentialsProvider(repository.getUsername(), repository.getPassword()))
+                            .setCredentialsProvider(new UsernamePasswordCredentialsProvider(entity.getGitUsername(), entity.getGitPassword()))
                             .call();
                     System.out.println("Having repository: " + result.getRepository().getDirectory());
                     /*Git result = Git.open(new File(repository.getLocalDir()));
@@ -109,7 +102,7 @@ public class ResourcePackageService {
                     service.save(entity);
                     webSocketHandler.sendMsg(WebSocketConstants.PACKAGE_STATUS, entity);
 
-                    String uploadPath = FileUtils.getPackageFilePath(repository.getId(), entity.getId());
+                    String uploadPath = FileUtils.getPackageFilePath(resourcePackage.getId(), entity.getId());
                     List<File> files = FileUtils.findFile(new File(dir + File.separator + entity.getBuildDir()));
                     assert files.size() > 0;
                     File destFile = new File(uploadPath);

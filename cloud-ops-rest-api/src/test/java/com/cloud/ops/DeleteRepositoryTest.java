@@ -1,11 +1,10 @@
 package com.cloud.ops;
 
-import com.cloud.ops.dao.DeploymentDao;
-import com.cloud.ops.entity.deployment.Deployment;
+import com.cloud.ops.repository.ApplicationRepository;
+import com.cloud.ops.entity.application.Application;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -23,31 +22,31 @@ import static junit.framework.TestCase.assertEquals;
 public class DeleteRepositoryTest {
 
     @Autowired
-    private DeploymentDao deploymentDao;
+    private ApplicationRepository applicationRepository;
 
     @Test
     public void testDeletion() throws Exception {
         // Validates if there are no users in the repository.
-        assertEquals(0, deploymentDao.count());
-        assertEquals(0, deploymentDao.countDeletedEntries());
+        assertEquals(0, applicationRepository.count());
+//        assertEquals(0, applicationRepository.countDeletedEntries());
 
-        // Creates a new deployment and saves it.
-        Deployment deployment = new Deployment();
-        deployment.setName("foo");
-        deployment.setDescription("bar");
-        Deployment db = deploymentDao.saveAndFlush(deployment);
+        // Creates a new application and saves it.
+        com.cloud.ops.entity.application.Application application = new Application();
+        application.setName("foo");
+        application.setDescription("bar");
+        Application db = applicationRepository.saveAndFlush(application);
 
-        // Now there is one deployment in the Database.
-        assertEquals(1, deploymentDao.count());
-        assertEquals(0, deploymentDao.countDeletedEntries());
+        // Now there is one application in the Database.
+        assertEquals(1, applicationRepository.count());
+//        assertEquals(0, applicationRepository.countDeletedEntries());
 
-        db = deploymentDao.findOne(db.getId());
-        // Deletes the deployment.
-        deploymentDao.delete(db.getId());
+        db = applicationRepository.findOne(db.getId());
+        // Deletes the application.
+        applicationRepository.delete(db.getId());
 
-        // Ensures that the repository-methods doesn't return the deleted deployment.
-        assertEquals(0, deploymentDao.count());
-        // But there should be one deployment which is still reachable by a native sql-query.
-        assertEquals(1, deploymentDao.countDeletedEntries());
+        // Ensures that the repository-methods doesn't return the deleted application.
+        assertEquals(0, applicationRepository.count());
+        // But there should be one application which is still reachable by a native sql-query.
+//        assertEquals(1, applicationRepository.countDeletedEntries());
     }
 }

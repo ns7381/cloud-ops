@@ -1,6 +1,6 @@
 package com.cloud.ops.controller;
 
-import com.cloud.ops.entity.deployment.Topology;
+import com.cloud.ops.entity.topology.Topology;
 import com.cloud.ops.service.TopologyService;
 import com.cloud.ops.store.FileStore;
 import io.swagger.annotations.Api;
