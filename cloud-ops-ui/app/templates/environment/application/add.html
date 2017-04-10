@@ -11,17 +11,24 @@
 
         <div class="col-sm-7">
             <select class="form-control" id="topologyId" name="topologyId">
-                <option value="9e35f0ca450e42a3904e5d24a4e38833">tomcat应用模板</option>
+                {{each topologies as t}}
+                <option value="{{t.id}}">{{t.name}}</option>
+                {{/each}}
             </select>
         </div>
     </div>
     {{ each hosts as host}}
-    <div class="form-group form-required">
-        <label for="{{host.name}}" class="control-label col-sm-3">{{host.name}}：</label>
-
-        <div class="col-sm-7">
-            <input type="text" class="form-control" id="{{host.name}}" name="{{host.name}}">
-        </div>
+    <div class="form-group">
+        <label class="sr-only" for="user">user</label>
+        <input type="email" class="form-control" id="user" placeholder="用户名">
+    </div>
+    <div class="form-group">
+        <label class="sr-only" for="password">Password</label>
+        <input type="password" class="form-control" id="password" placeholder="密码">
+    </div>
+    <div class="form-group">
+        <label class="sr-only" for="password">hosts</label>
+        <input type="password" class="form-control" id="hosts" placeholder="IP">
     </div>
     {{/each}}
 </form>

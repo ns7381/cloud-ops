@@ -145,7 +145,7 @@ node_types:
     tosca.nodes.Compute.Local:
       derived_from: tosca.nodes.Compute
       properties:
-              host:
+              hosts:
                 type: list
               user:
                 type: string

@@ -3,6 +3,7 @@ package com.cloud.ops.controller;
 import com.cloud.ops.entity.topology.Topology;
 import com.cloud.ops.service.TopologyService;
 import com.cloud.ops.store.FileStore;
+import com.cloud.ops.toscamodel.INodeTemplate;
 import io.swagger.annotations.Api;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,14 +58,14 @@ public class TopologyController {
         return service.get(id);
     }
 
-    @GetMapping(value = "/{id}/hosts")
-    public List<Map<String, Object>> getHosts(@PathVariable String id) {
-        return service.getHosts(id);
-    }
-
     @GetMapping
     public List<Topology> findAll() {
         return service.findAll();
+    }
+
+    @GetMapping(value = "/computes")
+    public List<Topology> getListWithComputes() {
+        return service.getListWithComputes();
     }
 
 }

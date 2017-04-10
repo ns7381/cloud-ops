@@ -70,9 +70,9 @@ define(['App', 'common/ui/datatables', 'common/ui/modal'], function (App, DataTa
                     var def = $.Deferred();
                     self.render({
                         url: '+/add.html',
-                        data: App.remote("/v1/topologies/9e35f0ca450e42a3904e5d24a4e38833/hosts"),
+                        data: App.remote("/v1/topologies/computes"),
                         dataFilter: function(err, data) {
-                            return {hosts: data};
+                            return {topologies: data};
                         },
                         callback: function(err, html, data) {
                             def.resolve(html);

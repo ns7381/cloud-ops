@@ -2,31 +2,28 @@ package com.cloud.ops.service;
 
 import com.cloud.ops.entity.topology.Topology;
 import com.cloud.ops.repository.ApplicationRepository;
-import com.cloud.ops.entity.Resource.ResourcePackage;
 import com.cloud.ops.entity.application.WorkFlow;
 import com.cloud.ops.entity.application.*;
 import com.cloud.ops.store.FileStore;
 import com.cloud.ops.toscamodel.INodeTemplate;
 import com.cloud.ops.toscamodel.INodeType;
 import com.cloud.ops.toscamodel.IToscaEnvironment;
+import com.cloud.ops.toscamodel.Tosca;
+import com.cloud.ops.toscamodel.basictypes.impl.TypeList;
 import com.cloud.ops.toscamodel.basictypes.impl.TypeString;
 import com.cloud.ops.utils.*;
 import com.cloud.ops.configuration.ws.*;
-import com.google.common.collect.Maps;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
-import org.springframework.web.socket.WebSocketHandler;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.*;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -34,6 +31,7 @@ public class ApplicationService {
 
     private static final String ARTIFACT_PATH = "/opt/iop-ops/artifact";
     private static final String INTERFACE_PATH = "/opt/iop-ops/interface";
+    private final Logger logger = LoggerFactory.getLogger(getClass());
     @Autowired
     private ApplicationRepository dao;
     @Autowired
@@ -48,7 +46,15 @@ public class ApplicationService {
     private FileStore fileStore;
 
     public Application get(String id) {
-        return dao.findOne(id);
+        Application application = dao.findOne(id);
+        IToscaEnvironment toscaEnvironment = Tosca.newEnvironment();
+        try {
+            toscaEnvironment.readFile(new FileReader(application.getYamlFilePath()), false);
+            application.setToscaEnvironment(toscaEnvironment);
+        } catch (FileNotFoundException e) {
+            logger.error("yaml file not find. ", e);
+        }
+        return application;
     }
 
     public Application create(Application application) {
@@ -57,11 +63,13 @@ public class ApplicationService {
         INodeType rootNode = (INodeType) toscaEnvironment.getNamedEntity("tosca.nodes.Compute");
         Iterable<INodeTemplate> rootNodeTemplate = toscaEnvironment.getNodeTemplatesOfType(rootNode);
         for (INodeTemplate nodeTemplate : rootNodeTemplate) {
-            Host host = application.getHosts().get(nodeTemplate.toString());
-            assert host != null;
-            nodeTemplate.declaredAttributes().put("host", TypeString.instance().instantiate(host.getIp()));
-            nodeTemplate.declaredAttributes().put("username", TypeString.instance().instantiate(host.getUsername()));
-            nodeTemplate.declaredAttributes().put("password", TypeString.instance().instantiate(host.getPassword()));
+            LocalLocation localLocation = application.getLocations().get(nodeTemplate.toString());
+            assert localLocation != null;
+            assert StringUtils.isNotBlank(localLocation.getHosts());
+            List<String> hosts = Arrays.asList(localLocation.getHosts().split(",")).stream().map(String::trim).collect(Collectors.toList());
+            nodeTemplate.declaredAttributes().put("hosts", TypeList.instance(TypeString.instance()).instantiate(hosts));
+            nodeTemplate.declaredAttributes().put("user", TypeString.instance().instantiate(localLocation.getUser()));
+            nodeTemplate.declaredAttributes().put("password", TypeString.instance().instantiate(localLocation.getPassword()));
         }
         try {
             String fileName = fileStore.makeFile(fileStore.TOPOLOGY_FILE_PATH +

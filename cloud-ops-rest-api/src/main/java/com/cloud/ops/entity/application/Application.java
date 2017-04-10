@@ -1,8 +1,7 @@
 package com.cloud.ops.entity.application;
 
 import com.cloud.ops.entity.BaseObject;
-import lombok.Getter;
-import lombok.Setter;
+import com.cloud.ops.toscamodel.IToscaEnvironment;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -16,9 +15,10 @@ import java.util.Map;
 @Table(name="application")
 public class Application extends BaseObject {
     String yamlFilePath;
-    Map<String, Host> hosts;
+    Map<String, LocalLocation> locations;
     String topologyId;
     String environmentId;
+    IToscaEnvironment toscaEnvironment;
 
     public String getYamlFilePath() {
         return yamlFilePath;
@@ -29,12 +29,12 @@ public class Application extends BaseObject {
     }
 
     @Transient
-    public Map<String, Host> getHosts() {
-        return hosts;
+    public Map<String, LocalLocation> getLocations() {
+        return locations;
     }
 
-    public void setHosts(Map<String, Host> hosts) {
-        this.hosts = hosts;
+    public void setLocations(Map<String, LocalLocation> locations) {
+        this.locations = locations;
     }
 
     public String getTopologyId() {
@@ -51,5 +51,14 @@ public class Application extends BaseObject {
 
     public void setEnvironmentId(String environmentId) {
         this.environmentId = environmentId;
+    }
+
+    @Transient
+    public IToscaEnvironment getToscaEnvironment() {
+        return toscaEnvironment;
+    }
+
+    public void setToscaEnvironment(IToscaEnvironment toscaEnvironment) {
+        this.toscaEnvironment = toscaEnvironment;
     }
 }

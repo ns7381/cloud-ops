@@ -8,8 +8,8 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class Host {
-    String ip;
-    String username;
+public class LocalLocation {
+    String hosts;
+    String user;
     String password;
 }

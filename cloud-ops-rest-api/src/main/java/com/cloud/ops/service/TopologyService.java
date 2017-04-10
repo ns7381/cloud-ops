@@ -19,6 +19,7 @@ import org.springframework.util.Assert;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -65,9 +66,8 @@ public class TopologyService {
         return db;
 	}
 
-    public List<Map<String, Object>> getHosts(String id) {
-        Topology topology = dao.findOne(id);
-        List<Map<String, Object>> rst = Lists.newArrayList();
+    private List<INodeTemplate> getComputeNodeTemplates(Topology topology) {
+        List<INodeTemplate> rst = Lists.newArrayList();
         if (StringUtils.isNotBlank(topology.getYamlFilePath())) {
             IToscaEnvironment toscaEnvironment = Tosca.newEnvironment();
             try {
@@ -75,15 +75,20 @@ public class TopologyService {
                 INodeType rootNode = (INodeType) toscaEnvironment.getNamedEntity("tosca.nodes.Compute");
                 Iterable<INodeTemplate> rootNodeTemplate = toscaEnvironment.getNodeTemplatesOfType(rootNode);
                 for (INodeTemplate nodeType : rootNodeTemplate){
-                    Map<String, Object> map = Maps.newHashMap();
-                    map.put("name", nodeType.toString());
-                    map.put("type", nodeType.baseType().toString());
-                    rst.add(map);
+                    rst.add(nodeType);
                 }
             } catch (FileNotFoundException e) {
                 logger.error("yaml file not find. ", e);
             }
         }
         return rst;
+    }
+
+    public List<Topology> getListWithComputes() {
+        List<Topology> topologies = dao.findAll();
+        for (Topology topology : topologies) {
+            topology.setComputeNodes(getComputeNodeTemplates(topology));
+        }
+        return topologies;
     }
 }

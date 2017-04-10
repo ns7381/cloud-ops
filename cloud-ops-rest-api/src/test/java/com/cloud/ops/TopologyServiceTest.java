@@ -1,16 +1,11 @@
 package com.cloud.ops;
 
-import com.cloud.ops.entity.application.Application;
-import com.cloud.ops.entity.application.Host;
-import com.cloud.ops.service.ApplicationService;
 import com.cloud.ops.service.TopologyService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import java.util.HashMap;
 
 /**
  * Test to validate the correctness of the soft-delete implementation.
