@@ -11,6 +11,7 @@ import com.cloud.ops.toscamodel.IToscaEnvironment;
 import com.cloud.ops.toscamodel.Tosca;
 import com.cloud.ops.toscamodel.basictypes.impl.TypeList;
 import com.cloud.ops.toscamodel.basictypes.impl.TypeString;
+import com.cloud.ops.toscamodel.impl.ToscaEnvironment;
 import com.cloud.ops.utils.*;
 import com.cloud.ops.configuration.ws.*;
 import org.apache.commons.lang.StringUtils;
@@ -51,6 +52,13 @@ public class ApplicationService {
         try {
             toscaEnvironment.readFile(new FileReader(application.getYamlFilePath()), false);
             application.setToscaEnvironment(toscaEnvironment);
+            INodeType rootNode = (INodeType) toscaEnvironment.getNamedEntity("tosca.nodes.Root");
+            Iterable<INodeTemplate> rootNodeTemplate = toscaEnvironment.getNodeTemplatesOfType(rootNode);
+            List<DeploymentNode> nodes = new ArrayList<>();
+            for (INodeTemplate nodeTemplate : rootNodeTemplate) {
+                nodes.add(DeploymentNode.convert(nodeTemplate));
+            }
+            application.setNodes(nodes);
         } catch (FileNotFoundException e) {
             logger.error("yaml file not find. ", e);
         }
@@ -91,10 +99,10 @@ public class ApplicationService {
         dao.delete(id);
     }
 
-    public Application update(Application shell) {
-        Assert.notNull(shell.getId());
-        Application db = this.get(shell.getId());
-        BeanUtils.copyNotNullProperties(shell, db);
+    public Application update(Application app) {
+        Assert.notNull(app.getId());
+        Application db = dao.findOne(app.getId());
+        BeanUtils.copyNotNullProperties(app, db);
         dao.save(db);
         return db;
     }

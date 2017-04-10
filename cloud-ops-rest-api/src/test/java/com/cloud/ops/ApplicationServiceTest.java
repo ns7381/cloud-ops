@@ -75,7 +75,7 @@ public class ApplicationServiceTest {
 
     @Test
     public void testGet() {
-        Application application = applicationService.get("8a48aca65b517c12015b517c29ed0000");
+        Application application = applicationService.get("8a48aca65b56ac30015b56b17c8f0000");
         System.out.println(application);
     }
 }

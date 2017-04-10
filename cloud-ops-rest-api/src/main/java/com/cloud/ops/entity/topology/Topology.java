@@ -1,7 +1,7 @@
 package com.cloud.ops.entity.topology;
 
 import com.cloud.ops.entity.BaseObject;
-import com.cloud.ops.toscamodel.INodeTemplate;
+import com.cloud.ops.entity.application.DeploymentNode;
 import com.cloud.ops.toscamodel.IToscaEnvironment;
 
 import javax.persistence.Entity;
@@ -17,7 +17,7 @@ import java.util.List;
 public class Topology extends BaseObject {
     String yamlFilePath;
     IToscaEnvironment toscaEnvironment;
-    List<INodeTemplate> computeNodes;
+    List<DeploymentNode> nodes;
 
     public String getYamlFilePath() {
         return yamlFilePath;
@@ -37,12 +37,12 @@ public class Topology extends BaseObject {
     }
 
     @Transient
-    public List<INodeTemplate> getComputeNodes() {
-        return computeNodes;
+    public List<DeploymentNode> getNodes() {
+        return nodes;
     }
 
-    public void setComputeNodes(List<INodeTemplate> computeNodes) {
-        this.computeNodes = computeNodes;
+    public void setNodes(List<DeploymentNode> nodes) {
+        this.nodes = nodes;
     }
 }
 

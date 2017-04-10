@@ -1,0 +1,94 @@
+<div class="form-horizontal form-static form-align-left panel-left-indent">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">基本信息
+                <a class="btn-edit fa fa-pencil pull-right" data-toggle="tooltip" title="编辑">
+                </a>
+            </h3>
+        </div>
+        <div class="panel-body">
+            <div class="form-group">
+                <label class="control-label col-em-6">应 用 I D：</label>
+
+                <div class="col-em-offset-6">
+                    <p class="form-control-static">{{topology.id}}</p>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-em-6">应用名称：</label>
+
+                <div class="col-em-offset-6">
+                    <p class="form-control-static" id="name">{{topology.name}}</p>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-em-6">模板名称：</label>
+
+                <div class="col-em-offset-6">
+                    <p class="form-control-static">{{topology.topologyName}}</p>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-em-6">创建时间：</label>
+
+                <div class="col-em-offset-6">
+                    <p class="form-control-static">{{topology.createdAt}}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">主机信息
+                <a class="btn-edit fa fa-pencil pull-right" data-toggle="tooltip" title="编辑">
+                </a>
+            </h3>
+        </div>
+        <div class="panel-body">
+            {{each topology.nodes as node}}
+            {{if node.type == "tosca.nodes.Compute.Local"}}
+            <div class="form-group">
+                <label class="control-label col-em-12">{{node.name}}主机：</label>
+
+                <div class="col-em-offset-6">
+                    <p class="form-control-static">
+                        {{each node.attributes.hosts as ip i}}
+                        {{if i>1}}&nbsp;&nbsp;{{/if}}{{ip}}
+                        {{/each}}
+                    </p>
+                </div>
+            </div>
+            {{/if}}
+            {{/each}}
+        </div>
+    </div>
+    {{each topology.nodes as node}}
+    {{if node.type.indexOf("tosca.nodes.deploy")>=0}}
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">{{node.name}}配置信息
+                <a class="btn-edit fa fa-pencil pull-right" data-toggle="tooltip" title="编辑">
+                </a>
+            </h3>
+        </div>
+        <div class="panel-body">
+            {{each node.attributes as attr key}}
+            <div class="form-group">
+                <label class="control-label col-em-12">{{key}}：</label>
+                <div class="col-em-offset-6">
+                    <p class="form-control-static">{{attr}}</p>
+                </div>
+            </div>
+            {{/each}}
+        </div>
+    </div>
+    {{/if}}
+    {{/each}}
+</div>
+
+
+
+
+
+
+

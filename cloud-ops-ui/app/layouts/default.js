@@ -23,7 +23,7 @@ define(['App', 'common/ui/resetpwd', 'bs/collapse', 'jq/nicescroll'], function(A
                 }
             ]
         ],
-		data: App.remote('/api/v1/clusters/json'),
+		/*data: App.remote('/api/v1/clusters/json'),
      	dataFilter: function(err, result) {
 	        if (err) {
 	            // this.onError(err, function(err) {
@@ -32,7 +32,7 @@ define(['App', 'common/ui/resetpwd', 'bs/collapse', 'jq/nicescroll'], function(A
 	            result = [];
 	        }
         	return {result: result};
-        },
+        },*/
         ready: function() {
 			var result = this.getData('result');
            // alert(result)

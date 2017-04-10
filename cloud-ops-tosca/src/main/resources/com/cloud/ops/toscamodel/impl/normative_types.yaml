@@ -180,6 +180,8 @@ node_types:
         properties:
             tomcat_home:
                 type: string
+            app_context:
+                type: string
             user:
                 type: string
             password:

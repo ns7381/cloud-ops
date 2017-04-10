@@ -44,7 +44,12 @@ public class ApplicationController {
         return service.doInterface(id, interfaceId, params);
     }
 
-	/**
+    @GetMapping(value = "/{id}")
+    public Application get(@PathVariable String id) {
+        return service.get(id);
+    }
+
+    /**
 	 * 获取所有数据
 	 * @return
 	 */

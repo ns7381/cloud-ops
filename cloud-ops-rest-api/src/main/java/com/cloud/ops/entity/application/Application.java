@@ -6,6 +6,7 @@ import com.cloud.ops.toscamodel.IToscaEnvironment;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -17,8 +18,10 @@ public class Application extends BaseObject {
     String yamlFilePath;
     Map<String, LocalLocation> locations;
     String topologyId;
+    String topologyName;//TODO KVMapping
     String environmentId;
     IToscaEnvironment toscaEnvironment;
+    List<DeploymentNode> nodes;
 
     public String getYamlFilePath() {
         return yamlFilePath;
@@ -60,5 +63,22 @@ public class Application extends BaseObject {
 
     public void setToscaEnvironment(IToscaEnvironment toscaEnvironment) {
         this.toscaEnvironment = toscaEnvironment;
+    }
+
+    public String getTopologyName() {
+        return topologyName;
+    }
+
+    public void setTopologyName(String topologyName) {
+        this.topologyName = topologyName;
+    }
+
+    @Transient
+    public List<DeploymentNode> getNodes() {
+        return nodes;
+    }
+
+    public void setNodes(List<DeploymentNode> nodes) {
+        this.nodes = nodes;
     }
 }
