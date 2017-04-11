@@ -234,4 +234,12 @@ public class ApplicationService {
         String shellName = new File(nodeInterface.getImplementation()).getName();
         shellContent.append("sh " + INTERFACE_PATH +"/"+ shellName);*/
     }
+
+    public Boolean deploy(String id, String nodeId, String packageId) {
+        return null;
+    }
+
+    public Boolean changeApplicationAttributes(String id, String nodeId, Map<String, Object> attributes) {
+        return null;
+    }
 }

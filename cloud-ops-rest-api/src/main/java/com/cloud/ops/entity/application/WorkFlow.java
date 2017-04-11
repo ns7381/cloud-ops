@@ -1,6 +1,7 @@
 package com.cloud.ops.entity.application;
 
 import com.cloud.ops.entity.BaseObject;
+import com.cloud.ops.entity.IdEntity;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -15,7 +16,7 @@ import java.util.Date;
 @Table(name="work_flow")
 @Getter
 @Setter
-public class WorkFlow extends BaseObject {
+public class WorkFlow extends IdEntity {
     private String objectId;
     private String step;
     private String message;

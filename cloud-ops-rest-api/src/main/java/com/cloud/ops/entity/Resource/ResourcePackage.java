@@ -7,28 +7,67 @@ import com.cloud.ops.entity.BaseObject;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name="RESOURCE_PACKAGE")
-@Getter
-@Setter
 public class ResourcePackage extends BaseObject {
 	
 	private String version;
     private String applicationId;
-
-    private String gitUrl;
-    private String gitUsername;
-    private String gitPassword;
-
-    private String branch;
-    private String build;
-    private String buildDir;
+    private ResourcePackageConfig config;
     private String warPath;
-    @Enumerated(EnumType.STRING)
     private ResourcePackageStatus status;
+    private ResourcePackageType type;
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
+    }
+
+    public String getApplicationId() {
+        return applicationId;
+    }
+
+    public void setApplicationId(String applicationId) {
+        this.applicationId = applicationId;
+    }
+
+    @Transient
+    public ResourcePackageConfig getConfig() {
+        return config;
+    }
+
+    public void setConfig(ResourcePackageConfig config) {
+        this.config = config;
+    }
+
+    public String getWarPath() {
+        return warPath;
+    }
+
+    public void setWarPath(String warPath) {
+        this.warPath = warPath;
+    }
+
+    @Enumerated(EnumType.STRING)
+    public ResourcePackageStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(ResourcePackageStatus status) {
+        this.status = status;
+    }
+
+    @Enumerated(EnumType.STRING)
+    public ResourcePackageType getType() {
+        return type;
+    }
+
+    public void setType(ResourcePackageType type) {
+        this.type = type;
+    }
 }

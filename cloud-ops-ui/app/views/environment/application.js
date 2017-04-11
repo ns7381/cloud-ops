@@ -2,11 +2,11 @@ define(['App', 'common/ui/datatables', 'common/ui/modal', 'rq/text!app/templates
     function (App, DataTables, Modal, LocationTpl) {
         return App.View({
             $table: $([]),
-            environmentId: '',
+            applicationId: '',
             environmentName: '',
             ready: function () {
                 var self = this;
-                self.environmentId = App.getParam('id');
+                self.applicationId = App.getParam('id');
                 self.environmentName = App.getParam('name');
                 self.$table = $('#appTable');
 
@@ -22,7 +22,7 @@ define(['App', 'common/ui/datatables', 'common/ui/modal', 'rq/text!app/templates
                 return DataTables.parseAjax(
                     this,
                     this.$table,
-                    "v1/applications?environmentId=" + this.environmentId
+                    "v1/applications?environmentId=" + this.applicationId
                 );
             },
             initTable: function (callback) {
@@ -128,7 +128,7 @@ define(['App', 'common/ui/datatables', 'common/ui/modal', 'rq/text!app/templates
                                 delete app[node.name + "hosts"];
                             });
                             app.locations = locations;
-                            app.environmentId = self.environmentId;
+                            app.environmentId = self.applicationId;
                             app.topologyName = topology.name;
                             var keywords = App.highlight("应用" + app.name, 2);
                             var processor = Modal.processing('正在保存' + keywords + '信息');

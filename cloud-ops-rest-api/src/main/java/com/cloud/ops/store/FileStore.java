@@ -1,5 +1,7 @@
 package com.cloud.ops.store;
 
+import net.lingala.zip4j.exception.ZipException;
+
 import java.io.File;
 import java.io.InputStream;
 
@@ -8,10 +10,16 @@ import java.io.InputStream;
  */
 public interface FileStore {
     String USER_HOME = System.getProperty("user.home");
-    String TOPOLOGY_FILE_PATH = USER_HOME + File.separator + "iop-ops" +
-            File.separator + "topology" + File.separator;
+    String TOPOLOGY_FILE_PATH = USER_HOME + File.separator + "iop-ops" + File.separator + "topology" + File.separator;
+    String PACKAGE_FILE_PATH = USER_HOME + File.separator + "iop-ops" + File.separator + "package" + File.separator;
+
+
     String storeFile(InputStream data, String filePath);
+
     void delete(String filePath);
 
     String makeFile(String filePath);
+
+    String compareWar(String oldWarPath, String newWarPath, String outPath);
+
 }

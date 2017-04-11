@@ -1,69 +1,90 @@
-define(["common/dialog", 'common/ajax', 'common/alert','common/tool', 'common/validate', 'common/table'], function (Dialog, Ajax, Alert, Tool) {
-    var appPage = {};
-    appPage.init = function () {
-        window.taskActionFormatter = function (value, row, index) {
-            return [
-                '<a class="log" data-toggle="tooltip" href="javascript:void(0)" title="查看日志">',
-                '<i class="fa fa-file-word-o"></i>',
-                '</a>'
-            ].join('');
-        };
-        window.taskActionEvents = {
-            'click .log': function (e, value, row, index) {
-                Dialog.modal({
-                    title: '查看日志',
-                    nl2br: true,
-                    message: row.message,
-                    clickOk: function (dialog) {
+define(['App', 'common/ui/datatables', 'common/ui/modal'], function (App, DataTables, Modal, LocationTpl) {
+    return App.View({
+        $table: $([]),
+        applicationId: '',
+        environmentName: '',
+        ready: function () {
+            var self = this;
+            self.applicationId = App.getParam('id');
+            self.$table = $('#taskTable');
+
+            this.initTable(function () {
+                var $tableTop = $(self.$table.selector + "_top");
+
+                // self.bind('click', $('.btn-add', $tableTop), self.addTopology);
+                self.bind('click', $('.btn-view', self.$table), self.viewTask);
+                // self.bind("click", $(".btn-delete", self.$table), self.deleteTopology);
+            });
+        },
+        tableAjax: function () {
+            return DataTables.parseAjax(
+                this,
+                this.$table,
+                "v1/workflows?objectId=" + this.applicationId
+            );
+        },
+        initTable: function (callback) {
+            var self = this;
+            DataTables.init(this.$table, {
+                serverSide: true,
+                ajax: this.tableAjax(),
+                columns: [
+                    {
+                        "width": DataTables.width("check"),
+                        "defaultContent": "<label><input type='checkbox'></label>"
+                    },
+                    {
+                        "data": "name",
+                        "width": DataTables.width("name")
+                    },
+                    {
+                        "data": "description",
+                        "width": DataTables.width("name")
+                    },
+                    {
+                        "data": "startAt",
+                        "width": DataTables.width("datetime")
+                    },
+                    {
+                        "data": "endAt",
+                        "width": DataTables.width("datetime")
+                    },
+                    {
+                        "data": "step",
+                        "width": "5em"
+                    },
+                    {
+                        "data": {},
+                        "width": DataTables.width("opt"),
+                        "render": function (data) {
+                            return [
+                                '<a class="btn-opt btn-view" data-toggle="tooltip" href="javascript:void(0)" title="执行结果">',
+                                '<i class="fa fa-file-word-o"></i>',
+                                '</a>'
+                            ].join('');
+                        }
+                    }
+                ]
+            }, callback);
+        },
+        viewTask: function (e) {
+            var self = this;
+            var row = $(e.currentTarget).data("row.dt"),
+                rowData = row.data(),
+                id = rowData.id;
+            Modal.show({
+                title: "查看结果",
+                size: {
+                    width: '740px'
+                },
+                message: rowData.message,
+                buttons: [{
+                    label: "关闭",
+                    action: function (dialog) {
                         dialog.close();
                     }
-                });
-            }
-        };
-        window.taskStatusFormatter = function (value, row, index) {
-            return '<span class="text-info">' + generateRequestStatus(row.step) + '</span>';
-            function generateRequestStatus(status) {
-                if (status == null) {
-                    return "";
-                }
-                var label = "";
-                switch (status) {
-                    case 'SUCCESS':
-                        label = "执行完成";
-                        break;
-                    case 'FAIL':
-                        label = "执行失败";
-                        break;
-                    default :
-                        label = '<div class="progress progress-striped active">' +
-                            '<div class="progress-bar" role="progressbar" style="width: 100%;">' +
-                            '<div class="text">'+status+'</div></div>' +
-                            '</div>';
-                        break;
-                }
-                return label;
-            }
-        };
-        $('#task-table').bootstrapTable({toolbar: "#task-toolbar"});
-        $("#task-table").bootstrapTable('refresh');
-        Tool.webSocket("/messages?routing-key=task.status", function (event) {
-            var payload = JSON.parse(event.data);
-            $('#task-table').bootstrapTable('updateByUniqueId', {id: payload.id, row: payload});
-        });
-    };
-    function formValidate($modal) {
-        return $(".form-horizontal", $modal).validate({
-            rules: {
-                'name': {
-                    required: true,
-                    maxlength: 128
-                },
-                'description': {
-                    maxlength: 1024
-                }
-            }
-        });
-    }
-
-    return appPage;
-}); 
+                }]
+            });
+        }
+    });
+});

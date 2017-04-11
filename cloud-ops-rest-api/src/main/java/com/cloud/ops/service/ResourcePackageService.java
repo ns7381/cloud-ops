@@ -1,13 +1,18 @@
 package com.cloud.ops.service;
 
+import com.cloud.ops.entity.Resource.ResourcePackageConfig;
+import com.cloud.ops.entity.Resource.ResourcePackageType;
 import com.cloud.ops.repository.ResourcePackageRepository;
 import com.cloud.ops.entity.Resource.ResourcePackage;
 import com.cloud.ops.entity.Resource.ResourcePackageStatus;
+import com.cloud.ops.store.FileStore;
 import com.cloud.ops.utils.*;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -16,6 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @Service
 @Transactional
@@ -23,7 +29,11 @@ public class ResourcePackageService {
     @Autowired
     private ResourcePackageRepository dao;
     @Autowired
+    private ResourcePackageConfigService configService;
+    @Autowired
     private CustomWebSocketHandler webSocketHandler;
+    @Autowired
+    private ApplicationContext context;
 
     public ResourcePackage get(String id) {
         return dao.findOne(id);
@@ -49,36 +59,38 @@ public class ResourcePackageService {
     }
 
     public ResourcePackage update(ResourcePackage version) {
-        Assert.notNull(version.getId());
         ResourcePackage db = this.get(version.getId());
         BeanUtils.copyNotNullProperties(version, db);
         dao.save(db);
         return db;
     }
 
-    public void packageWar(ResourcePackage resourcePackage) {
-        assert StringUtils.isNotBlank(resourcePackage.getBuild());
-
+    public ResourcePackage packageWar(ResourcePackage resourcePackage) {
+        ResourcePackageConfig config = configService.findByApplicationId(resourcePackage.getApplicationId());
+        resourcePackage.setConfig(config);
+        assert StringUtils.isNotBlank(config.getBuild());
+        resourcePackage.setType(ResourcePackageType.WarFile);
         resourcePackage.setStatus(ResourcePackageStatus.CLONING);
         this.create(resourcePackage);
         new ThreadWithEntity<ResourcePackage>(resourcePackage) {
 
             @Override
             public void run(ResourcePackage entity) {
-                ResourcePackageServiceTool service = SpringContextHolder.getBean(ResourcePackageServiceTool.class);
+                ResourcePackageServiceTool service = context.getBean(ResourcePackageServiceTool.class);
+                ResourcePackageConfig config = entity.getConfig();
                 File localPath = null;
                 try {
                     localPath = File.createTempFile("TestGitRepository", "");
                     if(!localPath.delete()) {
                         throw new IOException("Could not delete temporary file " + localPath);
                     }
-                    System.out.println("clone from " + entity.getGitUrl() + " to " + localPath);
+                    System.out.println("clone from " + config.getGitUrl() + " to " + localPath);
                     Git result = Git.cloneRepository()
-                            .setURI(entity.getGitUrl())
+                            .setURI(config.getGitUrl())
                             .setDirectory(localPath)
                             .setCloneSubmodules(true)
-                            .setBranch(entity.getBranch())
-                            .setCredentialsProvider(new UsernamePasswordCredentialsProvider(entity.getGitUsername(), entity.getGitPassword()))
+                            .setBranch(config.getBranch())
+                            .setCredentialsProvider(new UsernamePasswordCredentialsProvider(config.getGitUsername(), config.getGitPassword()))
                             .call();
                     System.out.println("Having repository: " + result.getRepository().getDirectory());
                     /*Git result = Git.open(new File(repository.getLocalDir()));
@@ -97,23 +109,24 @@ public class ResourcePackageService {
                     webSocketHandler.sendMsg(WebSocketConstants.PACKAGE_STATUS, entity);
 
                     File dir = result.getRepository().getDirectory().getParentFile();
-                    LocalExecuteCommand.execute(entity.getBuild(), dir);
+                    LocalExecuteCommand.execute(config.getBuild(), dir);
                     entity.setStatus(ResourcePackageStatus.SAVING);
                     service.save(entity);
                     webSocketHandler.sendMsg(WebSocketConstants.PACKAGE_STATUS, entity);
 
-                    String uploadPath = FileUtils.getPackageFilePath(resourcePackage.getId(), entity.getId());
-                    List<File> files = FileUtils.findFile(new File(dir + File.separator + entity.getBuildDir()));
+                    String uploadPath = FileStore.PACKAGE_FILE_PATH + UUID.randomUUID().toString();
+                    FileUtils.forceMkdir(new File(uploadPath));
+                    List<File> files = (List<File>) FileUtils.listFiles(new File(dir + File.separator + config.getBuildDir()), new String[]{"war"}, false);
                     assert files.size() > 0;
                     File destFile = new File(uploadPath);
-                    org.apache.commons.io.FileUtils.copyFileToDirectory(files.get(0), destFile);
+                    FileUtils.copyFileToDirectory(files.get(0), destFile);
                     entity.setWarPath(destFile + File.separator + files.get(0).getName());
                     entity.setStatus(ResourcePackageStatus.FINISH);
                     service.save(entity);
                     webSocketHandler.sendMsg(WebSocketConstants.PACKAGE_STATUS, entity);
-                    FileUtils.deleteFile(localPath);
+                    FileUtils.forceDelete(localPath);
                 } catch (Exception e) {
-                    FileUtils.deleteFile(localPath);
+                    deleteFile(localPath);
                     e.printStackTrace();
                     entity.setStatus(ResourcePackageStatus.FAIL);
                     service.save(entity);
@@ -121,6 +134,18 @@ public class ResourcePackageService {
                 }
             }
         }.start();
-
+        return resourcePackage;
+    }
+    void deleteFile(File file) {
+        if (file.exists()) {
+            if (file.isFile()) {
+                file.delete();
+            } else if (file.isDirectory()) {
+                for (File child : file.listFiles()) {
+                    deleteFile(child);
+                }
+            }
+            file.delete();
+        }
     }
 }
