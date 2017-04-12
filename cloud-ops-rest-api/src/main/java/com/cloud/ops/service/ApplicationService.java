@@ -128,14 +128,25 @@ public class ApplicationService {
         Map<String, DeploymentNode> nodeMap =
                 application.getNodes().stream().collect(Collectors.toMap(DeploymentNode::getName,
                         Function.identity()));
-        List<WorkFlowStep> steps = processInterface(nodeId, interfaceName, nodeMap);
-        for (WorkFlowStep step : steps) {
-            workFlowStepService.save(step);
-        }
-        //deploy
         WorkFlow workFlow = WorkFlow.builder().name(interfaceName).startAt(new Date()).objectId(application.getId())
                 .packageId(packageId).build();
         workFlowService.save(workFlow);
+        List<WorkFlowStep> stepTemps = processInterface(nodeId, interfaceName, nodeMap);
+        List<WorkFlowStep> steps = Lists.newArrayList();
+        for (WorkFlowStep stepTemp : stepTemps) {
+            for (Map<String, String> hostIp : stepTemp.getLocations()) {
+                WorkFlowStep step = new WorkFlowStep();
+                BeanUtils.copyNotNullProperties(stepTemp, step);
+                step.setHostIp(hostIp.get("ip"));
+                step.setWorkFlowId(workFlow.getId());
+                step.setUser(hostIp.get("user"));
+                step.setPassword(hostIp.get("password"));
+                workFlowStepService.save(step);
+                steps.add(step);
+            }
+        }
+        //distelli
+
         new ThreadWithEntity<WorkFlow>(workFlow){
 
             @Override
@@ -144,48 +155,47 @@ public class ApplicationService {
                 WorkFlowStepService stepService = context.getBean(WorkFlowStepService.class);
                 try {
                     //Traversal interface template to execute
-                    for (WorkFlowStep executeObject : steps) {
-                        workFlow.setStep(executeObject.getName());
+                    for (WorkFlowStep step : steps) {
+                        workFlow.setStep(step.getName());
                         String message;
-                        for (Map<String, String> hostMap : executeObject.getLocations()) {
-                            RemoteExecuteCommand remoteExecuteCommand = new RemoteExecuteCommand(hostMap.get("ip"),
-                                    hostMap.get("user"), hostMap.get("password"));
-                            remoteExecuteCommand.execute("mkdir -p " + INTERFACE_PATH + ";mkdir -p " + ARTIFACT_PATH);
-                            SCPUtils.uploadFileToServer(hostMap.get("ip"), hostMap.get("user"),hostMap.get("password"),
-                                    executeObject.getScriptFilePath(), INTERFACE_PATH, "0744");
-                            for (Artifact artifact : executeObject.getArtifacts()) {
-                                if (artifact.getType().equals("tosca.artifacts.PatchFile")) {
-                                    SCPUtils.uploadFileToServer(hostMap.get("ip"), hostMap.get("user"),hostMap.get("password"),
-                                            resourcePackage.getWarPath(), artifact.getFile(), ARTIFACT_PATH, "0644");
-                                }
-                            }
-                            StringBuilder shellContent = new StringBuilder();
-                            for (Map.Entry<String, Object> ENV : executeObject.getEnv().entrySet()) {
-                                shellContent.append("export "+ENV.getKey()+"=" + ENV.getValue() + ";");
-                            }
-                            shellContent.append("sh " + INTERFACE_PATH +"/"+ new File(executeObject.getScriptFilePath()).getName());
-                            RemoteExecuteResult executeResult = remoteExecuteCommand.execute(shellContent.toString());
-                            message = executeResult.getMessage();
-                            message = message.replaceAll("\\s+\\d+K\\s+\\d+\\.?\\d*(M|K)?\\n\\r", "");
-                            if(message.length() > 65534){
-                                message = message.substring(message.length()-65534);
-                            }
-                            executeObject.appendMessage(hostMap.get("ip") + " 执行结果： \n" + message);
-                            if (executeResult.getExitCode() == null) {
-                                executeObject.setStatus(WorkFlowStatus.SUCCESS);
-                            } else if (executeResult.getExitCode() == 0) {
-                                executeObject.setStatus(WorkFlowStatus.SUCCESS);
-                            } else {
-                                executeObject.setStatus(WorkFlowStatus.FAIL);
+                        RemoteExecuteCommand remoteExecuteCommand = new RemoteExecuteCommand(step.getHostIp(),
+                                step.getUser(), step.getPassword());
+                        remoteExecuteCommand.execute("mkdir -p " + INTERFACE_PATH + ";mkdir -p " + ARTIFACT_PATH);
+                        SCPUtils.uploadFileToServer(step.getHostIp(), step.getUser(),step.getPassword(),
+                                step.getScriptFilePath(), INTERFACE_PATH, "0744");
+                        for (Artifact artifact : step.getArtifacts()) {
+                            if (artifact.getType().equals("tosca.artifacts.PatchFile")) {
+                                SCPUtils.uploadFileToServer(step.getHostIp(), step.getUser(),step.getPassword(),
+                                        resourcePackage.getWarPath(), artifact.getFile(), ARTIFACT_PATH, "0644");
                             }
                         }
-                        service.save(workFlow);
-                        webSocketHandler.sendMsg(WebSocketConstants.WORKFLOW_STATUS, workFlow);
+                        StringBuilder shellContent = new StringBuilder();
+                        for (Map.Entry<String, Object> ENV : step.getEnv().entrySet()) {
+                            shellContent.append("export ").append(ENV.getKey()).append("=").append(ENV.getValue()).append(";");
+                        }
+                        shellContent.append("sh " + INTERFACE_PATH +"/"+ new File(step.getScriptFilePath()).getName());
+                        RemoteExecuteResult executeResult = remoteExecuteCommand.execute(shellContent.toString());
+                        message = executeResult.getMessage();
+                        message = message.replaceAll("\\s+\\d+K\\s+\\d+\\.?\\d*(M|K)?\\n\\r", "");
+                        if(message.length() > 65534){
+                            message = message.substring(message.length()-65534);
+                        }
+                        step.setDescription(message);
+                        if (executeResult.getExitCode() == null) {
+                            step.setStatus(WorkFlowStatus.SUCCESS);
+                        } else if (executeResult.getExitCode() == 0) {
+                            step.setStatus(WorkFlowStatus.SUCCESS);
+                        } else {
+                            step.setStatus(WorkFlowStatus.FAIL);
+                        }
+                        stepService.save(step);
                     }
+                    service.save(workFlow);
+                    webSocketHandler.sendMsg(WebSocketConstants.WORKFLOW_STATUS, workFlow);
+
                 } catch (IOException e) {
-
+                    e.printStackTrace();
                 }
-
             }
         }.start();
         return Boolean.TRUE;

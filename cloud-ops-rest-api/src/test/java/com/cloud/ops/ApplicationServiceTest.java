@@ -81,6 +81,7 @@ public class ApplicationServiceTest {
 
     @Test
     public void testDeploy() {
-        applicationService.deploy("8a48aca65b56ac30015b56b17c8f0000", "tomcat", "8a48aca65b5bc49e015b5c3870010003");
+//        applicationService.deploy("8a48aca65b56ac30015b56b17c8f0000", "tomcat", "8a48aca65b5bc49e015b5c3870010003");
+        applicationService.deploy("402882e55b57fc3a015b57ffd6920000", "tomcat", "8a48aca65b5bc49e015b5c3870010003");
     }
 }

@@ -26,10 +26,10 @@ public class ApplicationController {
         return Boolean.TRUE;
     }
 
-    @RequestMapping(value = "/{id}/interface/{interfaceId}", method = RequestMethod.PUT)
+    /*@RequestMapping(value = "/{id}/interface/{interfaceId}", method = RequestMethod.PUT)
     public Boolean doInterface(@PathVariable String id, @PathVariable String interfaceId, @RequestParam Map<String, Object> params){
         return service.doInterface(id, interfaceId, params);
-    }
+    }*/
 
     @RequestMapping(value = "/{id}/node/{nodeId}/deploy/{packageId}", method = RequestMethod.PUT)
     public Boolean deploy(@PathVariable String id, @PathVariable String nodeId, @PathVariable String packageId){

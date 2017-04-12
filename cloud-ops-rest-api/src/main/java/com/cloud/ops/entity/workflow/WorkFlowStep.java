@@ -1,5 +1,6 @@
 package com.cloud.ops.entity.workflow;
 
+import com.cloud.ops.entity.BaseObject;
 import com.cloud.ops.entity.IdEntity;
 import com.cloud.ops.toscamodel.INodeTemplate;
 import com.cloud.ops.toscamodel.IValue;
@@ -19,10 +20,11 @@ import java.util.*;
  */
 @Entity
 @Table(name="work_flow")
-public class WorkFlowStep extends IdEntity {
-    String name;
-    String message;
+public class WorkFlowStep extends BaseObject {
     private String workFlowId;
+    private String hostIp;
+    private String user;
+    private String password;
     private Date startAt;
     private Date endAt;
     private WorkFlowStatus status;
@@ -31,32 +33,38 @@ public class WorkFlowStep extends IdEntity {
     List<Artifact> artifacts;
     List<Map<String, String>> locations;
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public void appendMessage(String message) {
-        this.message += message;
-    }
-
     public String getWorkFlowId() {
         return workFlowId;
     }
 
     public void setWorkFlowId(String workFlowId) {
         this.workFlowId = workFlowId;
+    }
+
+    public String getHostIp() {
+        return hostIp;
+    }
+
+    public void setHostIp(String hostIp) {
+        this.hostIp = hostIp;
+    }
+
+    @Transient
+    public String getUser() {
+        return user;
+    }
+
+    public void setUser(String user) {
+        this.user = user;
+    }
+
+    @Transient
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public Date getStartAt() {
