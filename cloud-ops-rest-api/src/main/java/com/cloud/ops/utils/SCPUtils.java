@@ -9,7 +9,7 @@ import java.io.IOException;
  * Created by Administrator on 2017/2/8.
  */
 public class SCPUtils {
-    public static void uploadFilesToServer(String hostIp, String username, String password, String localFile,
+    public static void uploadFileToServer(String hostIp, String username, String password, String localFile,
                                            String remoteFileName, String remoteTargetDirectory, String mode) throws IOException {
         Connection con = new Connection(hostIp);
         con.connect();
@@ -21,7 +21,7 @@ public class SCPUtils {
         con.close();
     }
 
-    public static void uploadFilesToServer(String hostIp, String username, String password, String localFile,
+    public static void uploadFileToServer(String hostIp, String username, String password, String localFile,
                                            String remoteTargetDirectory, String mode) throws IOException {
         Connection con = new Connection(hostIp);
         con.connect();

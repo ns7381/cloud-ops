@@ -1,7 +1,7 @@
 package com.cloud.ops.service;
 
 import com.cloud.ops.repository.WorkFlowRepository;
-import com.cloud.ops.entity.application.WorkFlow;
+import com.cloud.ops.entity.workflow.WorkFlow;
 
 import com.cloud.ops.utils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;

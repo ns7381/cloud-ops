@@ -1,6 +1,6 @@
 package com.cloud.ops.controller;
 
-import com.cloud.ops.entity.application.WorkFlow;
+import com.cloud.ops.entity.workflow.WorkFlow;
 import com.cloud.ops.service.WorkFlowService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

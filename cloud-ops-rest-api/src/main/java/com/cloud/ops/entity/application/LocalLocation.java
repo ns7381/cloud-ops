@@ -1,5 +1,6 @@
 package com.cloud.ops.entity.application;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
