@@ -4,11 +4,9 @@ import com.cloud.ops.entity.IdEntity;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by Administrator on 2017/2/9.
@@ -24,6 +22,7 @@ public class WorkFlow extends IdEntity {
     private WorkFlowStatus status;
     private Date startAt;
     private Date endAt;
+    private List<WorkFlowStep> steps;
 
     public String getName() {
         return name;
@@ -80,5 +79,14 @@ public class WorkFlow extends IdEntity {
 
     public void setPackageId(String packageId) {
         this.packageId = packageId;
+    }
+
+    @Transient
+    public List<WorkFlowStep> getSteps() {
+        return steps;
+    }
+
+    public void setSteps(List<WorkFlowStep> steps) {
+        this.steps = steps;
     }
 }

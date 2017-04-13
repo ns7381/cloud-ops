@@ -17,6 +17,8 @@ public class WorkFlowService {
 	
 	@Autowired
 	private WorkFlowRepository dao;
+	@Autowired
+	private WorkFlowStepService workFlowStepService;
 
 	public WorkFlow get(String id) {
 		return dao.findOne(id);
@@ -28,7 +30,11 @@ public class WorkFlowService {
 	}
 
     public List<WorkFlow> getByObjectId(String objectId) {
-        return dao.findByObjectId(objectId);
+        List<WorkFlow> workFlows = dao.findByObjectId(objectId);
+        for (WorkFlow workFlow : workFlows) {
+            workFlow.setSteps(workFlowStepService.findByWorkFlowId(workFlow.getId()));
+        }
+        return workFlows;
     }
 
     public void delete(String id) {

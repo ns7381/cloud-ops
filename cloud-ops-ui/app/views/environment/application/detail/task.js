@@ -85,6 +85,7 @@ define(['App', 'common/ui/datatables', 'common/ui/modal'], function (App, DataTa
             var self = this;
             var tr = $(e.currentTarget).closest('tr'),
                 row = self.table.row(tr),
+                rowData = row.data(),
                 index = tr.attr('index'),
                 that = $(e.currentTarget);
             var $Rtr = $('.DTFC_RightWrapper').find('tr[index="'+index+'"]');
@@ -97,7 +98,7 @@ define(['App', 'common/ui/datatables', 'common/ui/modal'], function (App, DataTa
             } else {
                 that.children('.glyphicon-chevron-down').hide();
                 that.children('.glyphicon-chevron-up').show();
-                row.child(self.format(index)).show();
+                row.child(self.format(rowData)).show();
                 tr.addClass('shown');
                 $Rtr.after('<tr></tr>');
                 $Rtr.next('tr').height(tr.next('tr').height());
@@ -105,18 +106,14 @@ define(['App', 'common/ui/datatables', 'common/ui/modal'], function (App, DataTa
             }
             self.$table.resize();
         },
-        format: function (index) {
+        format: function (rowData) {
             var self = this;
-            self.postParam.actionName = "server_status";
-            self.postParam.actionParams = [];
-            self.postParam.actionParams.push("app" + index);
 
-            var servers = self.listens[index].servers || [],
-                serverStr = '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">',
+            var serverStr = '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">',
                 optStr =
                     '<a class="btn-opt btn-edit-server" data-toggle="tooltip" title="修改"><li class="fa fa-pencil fa-fw"></li></a>' +
                     '<a class="btn-opt btn-delete-server" data-toggle="tooltip" title="删除"><i class="fa fa-trash-o fa-fw"></i></a>';
-            $.each(servers, function (k, server) {
+            $.each(rowData.steps, function (k, step) {
                 serverStr +=
                     "<tr data-server='" + JSON.stringify(server) + "' data-index='" + k + "' data-listen='" + index + "'>" +
                     '<td>后端云主机' + (k + 1) + ':</td><td>IP: ' + server.ip + '</td><td> 端口: ' + server.port + '</td><td> 权重: ' +
