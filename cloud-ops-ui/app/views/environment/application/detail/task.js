@@ -1,6 +1,7 @@
 define(['App', 'common/ui/datatables', 'common/ui/modal'], function (App, DataTables, Modal, LocationTpl) {
     return App.View({
         $table: $([]),
+        table: $([]),
         applicationId: '',
         environmentName: '',
         ready: function () {
@@ -12,9 +13,9 @@ define(['App', 'common/ui/datatables', 'common/ui/modal'], function (App, DataTa
                 var $tableTop = $(self.$table.selector + "_top");
 
                 // self.bind('click', $('.btn-add', $tableTop), self.addTopology);
-                self.bind('click', $('.btn-view', self.$table), self.viewTask);
+                self.bind('click', $('.btn-view', self.$table), self.viewMessage);
                 // self.bind("click", $(".btn-delete", self.$table), self.deleteTopology);
-                self.bind('click', $('.btn-detail', self.$table), self.viewServer);
+                self.bind('click', $('.btn-detail', self.$table), self.viewTask);
             });
         },
         tableAjax: function () {
@@ -26,12 +27,11 @@ define(['App', 'common/ui/datatables', 'common/ui/modal'], function (App, DataTa
         },
         initTable: function (callback) {
             var self = this;
-            DataTables.init(this.$table, {
+            self.table = DataTables.init(this.$table, {
                 serverSide: true,
                 ajax: this.tableAjax(),
                 columns: [{
-                    "targets": [0],
-                    "class": "cell-em-2",
+                    "width": DataTables.width("check"),
                     "render": function (data, type, full) {
                         return '<a class="btn-opt btn-detail">' +
                             '<i class=" glyphicon glyphicon-chevron-down" data-toggle="tooltip" title="展开"></i>'
@@ -47,32 +47,20 @@ define(['App', 'common/ui/datatables', 'common/ui/modal'], function (App, DataTa
                     "data": "endAt",
                     "width": DataTables.width("datetime")
                 }, {
-                    "data": "step",
+                    "data": "status",
                     "width": "5em"
-                }, {
-                    "data": {},
-                    "width": DataTables.width("opt"),
-                    "render": function (data) {
-                        return [
-                            '<a class="btn-opt btn-view" data-toggle="tooltip" href="javascript:void(0)" title="执行结果">',
-                            '<i class="fa fa-file-word-o"></i>',
-                            '</a>'
-                        ].join('');
-                    }
                 }]
             }, callback);
         },
-        viewTask: function (e) {
+        viewMessage: function (e) {
             var self = this;
-            var row = $(e.currentTarget).data("row.dt"),
-                rowData = row.data(),
-                id = rowData.id;
+            var message = $(e.currentTarget).data("message");
             Modal.show({
                 title: "查看结果",
                 size: {
                     width: '740px'
                 },
-                message: rowData.message,
+                message: message,
                 buttons: [{
                     label: "关闭",
                     action: function (dialog) {
@@ -81,7 +69,7 @@ define(['App', 'common/ui/datatables', 'common/ui/modal'], function (App, DataTa
                 }]
             });
         },
-        viewServer: function (e) {
+        viewTask: function (e) {
             var self = this;
             var tr = $(e.currentTarget).closest('tr'),
                 row = self.table.row(tr),
@@ -109,37 +97,21 @@ define(['App', 'common/ui/datatables', 'common/ui/modal'], function (App, DataTa
         format: function (rowData) {
             var self = this;
 
-            var serverStr = '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">',
+            var stepTpl = '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">',
                 optStr =
-                    '<a class="btn-opt btn-edit-server" data-toggle="tooltip" title="修改"><li class="fa fa-pencil fa-fw"></li></a>' +
-                    '<a class="btn-opt btn-delete-server" data-toggle="tooltip" title="删除"><i class="fa fa-trash-o fa-fw"></i></a>';
+                    '<a class="btn-opt btn-view" data-toggle="tooltip" title="查看结果"><li class="fa fa-file-word-o"></li></a>';
             $.each(rowData.steps, function (k, step) {
-                serverStr +=
-                    "<tr data-server='" + JSON.stringify(server) + "' data-index='" + k + "' data-listen='" + index + "'>" +
-                    '<td>后端云主机' + (k + 1) + ':</td><td>IP: ' + server.ip + '</td><td> 端口: ' + server.port + '</td><td> 权重: ' +
-                    server.weight + '</td><td id=' + index + '_' + k + '> 状态:' + '</td>' +
+                stepTpl +=
+                    "<tr data-message='" + step.description + "'>" +
+                    '<td>操作步骤' + (k + 1) + ':</td><td>名称: ' + step.name + '</td><td>执行节点: ' + step.hostIp + '</td><td> 开始时间: ' +
+                    step.startAt + '</td><td> 结束时间:' + step.endAt+'</td>' +'</td><td> 状态:' + step.status+'</td>' +
                     '<td>' + optStr + '</td></tr>';
             });
-            if (servers.length < 1) {
-                serverStr += '<tr><td>还未绑定后端云主机</td></tr>';
-            } else if (self.instance.status == "RUNNING") {
-                self.ajax.postJSON(self.postUrl, self.postParam, function (err, data) {
-                    if (data && data.result && data.result[0].status == "SUCCESS") {
-                        if (data.result[0].result) {
-                            var arr = data.result[0].result.trim().split("\n");
-                            for (var i = 0; i < arr.length; i++) {
-                                $('#' + index + '_' + i, self.$table).text('状态: ' + (arr[i] == "UP" ? "可用" : "不可用"));
-                            }
-                        }
-                    } else {
-                        self.onError(err, function (err) {
-                            Modal.error("获取后端云主机状态失败");
-                        })
-                    }
-                });
+            if (rowData.steps.length < 1) {
+                stepTpl += '<tr><td>还未执行操作</td></tr>';
             }
-            serverStr += "</table>";
-            return serverStr;
+            stepTpl += "</table>";
+            return stepTpl;
         }
     });
 });

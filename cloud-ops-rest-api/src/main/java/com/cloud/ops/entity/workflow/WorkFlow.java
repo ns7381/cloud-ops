@@ -18,7 +18,6 @@ public class WorkFlow extends IdEntity {
     private String name;
     private String objectId;
     private String packageId;
-    private String step;
     private WorkFlowStatus status;
     private Date startAt;
     private Date endAt;
@@ -38,14 +37,6 @@ public class WorkFlow extends IdEntity {
 
     public void setObjectId(String objectId) {
         this.objectId = objectId;
-    }
-
-    public String getStep() {
-        return step;
-    }
-
-    public void setStep(String step) {
-        this.step = step;
     }
 
     @Enumerated(EnumType.STRING)

@@ -322,7 +322,7 @@ define(['App', 'common/ui/datatables', 'common/ui/modal', 'common/ui/websocket',
                                 processor.error(keywords + '部署失败!原因：' + err.message);
                             } else {
                                 processor.success(keywords + '开始部署');
-                                App.go(self.getUrl("../task", {id: self.app_id}));
+                                App.go(self.getUrl("./", {id: self.app_id}));
                             }
                         });
                     }

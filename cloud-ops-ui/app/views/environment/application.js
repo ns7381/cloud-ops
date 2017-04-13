@@ -13,9 +13,9 @@ define(['App', 'common/ui/datatables', 'common/ui/modal', 'rq/text!app/templates
                 this.initTable(function () {
                     var $tableTop = $(self.$table.selector + "_top");
 
-                    self.bind('click', $('.btn-add', $tableTop), self.addTopology);
-                    self.bind('click', $('.btn-edit', self.$table), self.editTopology);
-                    self.bind("click", $(".btn-delete", self.$table), self.deleteTopology);
+                    self.bind('click', $('.btn-add', $tableTop), self.addApp);
+                    self.bind('click', $('.btn-edit', self.$table), self.editApp);
+                    self.bind("click", $(".btn-delete", self.$table), self.deleteApp);
                 });
             },
             tableAjax: function () {
@@ -63,7 +63,7 @@ define(['App', 'common/ui/datatables', 'common/ui/modal', 'rq/text!app/templates
                     ]
                 }, callback);
             },
-            addTopology: function () {
+            addApp: function () {
                 var self = this, topologies = [], topology = {};
                 Modal.show({
                     title: "新建应用",
@@ -145,7 +145,7 @@ define(['App', 'common/ui/datatables', 'common/ui/modal', 'rq/text!app/templates
                     }]
                 });
             },
-            editTopology: function (e) {
+            editApp: function (e) {
                 var self = this;
                 var row = $(e.currentTarget).data("row.dt"),
                     rowData = row.data(),
@@ -192,7 +192,7 @@ define(['App', 'common/ui/datatables', 'common/ui/modal', 'rq/text!app/templates
                     }]
                 });
             },
-            deleteTopology: function () {
+            deleteApp: function () {
                 var self = this;
                 var row = $(e.currentTarget).data("row.dt"),
                     rowData = row.data(),

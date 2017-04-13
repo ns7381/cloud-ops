@@ -47,7 +47,6 @@ public class WorkFlowTask extends Thread {
             //Traversal interface template to execute
             for (WorkFlowStep step : steps) {
                 currentStep = step;
-                workFlow.setStep(step.getName());
                 String message;
                 String ip = step.getLocations().get(0).get("ip");
                 String user = step.getLocations().get(0).get("user");
