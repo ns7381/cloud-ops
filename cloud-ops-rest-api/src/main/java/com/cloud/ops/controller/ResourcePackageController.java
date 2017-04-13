@@ -114,14 +114,10 @@ public class ResourcePackageController {
 
     @RequestMapping(value = "/upload", method = RequestMethod.POST)
     public ResourcePackage uploadWar(@RequestParam("file") final MultipartFile file,
-                                           @RequestParam("name") String name,
                                            @RequestParam("version") String version,
-                                           @RequestParam("applicationId") String applicationId,
-                                           @RequestParam("description") String description) {
+                                           @RequestParam("applicationId") String applicationId) {
         final ResourcePackage resourcePackage = new ResourcePackage();
         resourcePackage.setType(ResourcePackageType.WarFile);
-        resourcePackage.setName(name);
-        resourcePackage.setDescription(description);
         resourcePackage.setVersion(version);
         resourcePackage.setApplicationId(applicationId);
         resourcePackage.setStatus(ResourcePackageStatus.SAVING);

@@ -9,5 +9,6 @@ public enum ResourcePackageStatus {
     BUILDING,
     SAVING,
     FINISH,
-    FAIL
+    FAIL,
+    DEPLOY
 }

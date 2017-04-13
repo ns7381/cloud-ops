@@ -1,4 +1,4 @@
-define(['App', 'common/ui/datatables', 'common/ui/modal', 'common/ui/websocket', 'common/ui/validator', 'bs/tab'], function (App, DataTables, Modal, WS) {
+define(['App', 'common/ui/datatables', 'common/ui/modal', 'common/ui/websocket', 'common/ui/validator', 'bs/tab', 'jq/form'], function (App, DataTables, Modal, WS) {
     return App.View({
         app_id: "",
         table: null,
@@ -15,6 +15,7 @@ define(['App', 'common/ui/datatables', 'common/ui/modal', 'common/ui/websocket',
         },
         ready: function () {
             var self = this;
+            self.patch_containers = [];
             self.app_id = App.getParam('id');
             self.$table = $('#packageTable');
             $.each(self.topology.nodes || [], function (k, node) {
@@ -316,12 +317,12 @@ define(['App', 'common/ui/datatables', 'common/ui/modal', 'common/ui/websocket',
                         var $modal = this.getModalBody(),
                             choose = containers.length == 1 ? containers[0].name :$(":radio:checked", $modal).val();
                         var processor = Modal.processing("正在部署" + keywords);
-                        $.fileDownload(App.getRootUrl('v1/resource-packages/' + id + "/download"), {
-                            successCallback: function (url) {
+                        self.ajax.put('v1/applications/' + self.app_id + "/node/"+choose+"/deploy/"+id, function (err, data) {
+                            if (err) {
+                                processor.error(keywords + '部署失败!原因：' + err.message);
+                            } else {
                                 processor.success(keywords + '开始部署');
-                            },
-                            failCallback: function (html, url) {
-                                processor.error(keywords + '部署失败');
+                                App.go(self.getUrl("../task", {id: self.app_id}));
                             }
                         });
                     }

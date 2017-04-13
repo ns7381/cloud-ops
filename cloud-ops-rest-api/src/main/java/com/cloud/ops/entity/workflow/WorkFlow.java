@@ -2,6 +2,7 @@ package com.cloud.ops.entity.workflow;
 
 import com.cloud.ops.entity.IdEntity;
 import lombok.Builder;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -14,7 +15,7 @@ import java.util.Date;
  */
 @Entity
 @Table(name="work_flow")
-@Builder
+@NoArgsConstructor
 public class WorkFlow extends IdEntity {
     private String name;
     private String objectId;

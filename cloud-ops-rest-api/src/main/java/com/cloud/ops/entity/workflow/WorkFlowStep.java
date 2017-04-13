@@ -2,6 +2,7 @@ package com.cloud.ops.entity.workflow;
 
 import com.cloud.ops.entity.BaseObject;
 import com.cloud.ops.entity.IdEntity;
+import com.cloud.ops.entity.topology.TopologyArchive;
 import com.cloud.ops.toscamodel.INodeTemplate;
 import com.cloud.ops.toscamodel.IValue;
 import com.cloud.ops.toscamodel.basictypes.IValueList;
@@ -19,18 +20,17 @@ import java.util.*;
  * Created by Nathan on 2017/4/10.
  */
 @Entity
-@Table(name="work_flow")
+@Table(name="work_flow_step")
 public class WorkFlowStep extends BaseObject {
     private String workFlowId;
     private String hostIp;
-    private String user;
-    private String password;
     private Date startAt;
     private Date endAt;
     private WorkFlowStatus status;
-    String scriptFilePath;
-    Map<String, Object> env;
-    List<Artifact> artifacts;
+
+
+    Map<String, String> env;
+    Map<String, String> archives;
     List<Map<String, String>> locations;
 
     public String getWorkFlowId() {
@@ -47,24 +47,6 @@ public class WorkFlowStep extends BaseObject {
 
     public void setHostIp(String hostIp) {
         this.hostIp = hostIp;
-    }
-
-    @Transient
-    public String getUser() {
-        return user;
-    }
-
-    public void setUser(String user) {
-        this.user = user;
-    }
-
-    @Transient
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     public Date getStartAt() {
@@ -93,30 +75,21 @@ public class WorkFlowStep extends BaseObject {
     }
 
     @Transient
-    public String getScriptFilePath() {
-        return scriptFilePath;
-    }
-
-    public void setScriptFilePath(String scriptFilePath) {
-        this.scriptFilePath = scriptFilePath;
-    }
-
-    @Transient
-    public Map<String, Object> getEnv() {
+    public Map<String, String> getEnv() {
         return env;
     }
 
-    public void setEnv(Map<String, Object> env) {
+    public void setEnv(Map<String, String> env) {
         this.env = env;
     }
 
     @Transient
-    public List<Artifact> getArtifacts() {
-        return artifacts;
+    public Map<String, String> getArchives() {
+        return archives;
     }
 
-    public void setArtifacts(List<Artifact> artifacts) {
-        this.artifacts = artifacts;
+    public void setArchives(Map<String, String> archives) {
+        this.archives = archives;
     }
 
     @Transient

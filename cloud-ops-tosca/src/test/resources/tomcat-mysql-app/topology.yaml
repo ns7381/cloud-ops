@@ -14,8 +14,8 @@ topology_template:
                 db_password: 123456a?
             interfaces:
                 Configure:
-                    exe_sql:
-                        implementation: exe_sql.sh
+                    exe_upgrade_sql:
+                        implementation: exe_upgrade_sql.sh
                         inputs:
                             db_name: { get_attribute: [ SELF, db_name ] }
                             db_user: { get_attribute: [ SELF, db_user ] }
@@ -39,10 +39,10 @@ topology_template:
             interfaces:
                 Configure:
                     patch_deploy:
-                        implementation: scripts/patch_deploy_web.sh
+                        implementation: patch_deploy.sh
                         dependencies:
                             - backup_db: {do_interface: [mysql, backup_db]}
-                            - exe_sql: {do_interface: [mysql, exe_sql]}
+                            - exe_upgrade_sql: {do_interface: [mysql, exe_upgrade_sql]}
                         inputs:
                               tomcat_home: { get_attribute: [ SELF, tomcat_home ] }
                               app_context: { get_attribute: [ SELF, app_context ] }

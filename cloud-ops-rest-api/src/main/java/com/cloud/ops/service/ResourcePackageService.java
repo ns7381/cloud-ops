@@ -124,7 +124,7 @@ public class ResourcePackageService {
                     entity.setStatus(ResourcePackageStatus.FINISH);
                     service.save(entity);
                     webSocketHandler.sendMsg(WebSocketConstants.PACKAGE_STATUS, entity);
-                    FileUtils.forceDelete(localPath);
+                    deleteFile(localPath);
                 } catch (Exception e) {
                     deleteFile(localPath);
                     e.printStackTrace();
@@ -147,5 +147,17 @@ public class ResourcePackageService {
             }
             file.delete();
         }
+    }
+
+    public void updateDeployStatus(String packageId) {
+        for (ResourcePackage resourcePackage : dao.findAll()) {
+            if (ResourcePackageStatus.DEPLOY.equals(resourcePackage.getStatus())) {
+                resourcePackage.setStatus(ResourcePackageStatus.FINISH);
+                dao.save(resourcePackage);
+            }
+        }
+        ResourcePackage db = dao.findOne(packageId);
+        db.setStatus(ResourcePackageStatus.DEPLOY);
+        dao.save(db);
     }
 }

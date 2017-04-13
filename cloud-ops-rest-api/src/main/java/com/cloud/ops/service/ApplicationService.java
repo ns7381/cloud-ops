@@ -3,6 +3,7 @@ package com.cloud.ops.service;
 import com.cloud.ops.entity.Resource.ResourcePackage;
 import com.cloud.ops.entity.Resource.ResourcePackageType;
 import com.cloud.ops.entity.topology.Topology;
+import com.cloud.ops.entity.topology.TopologyArchive;
 import com.cloud.ops.entity.workflow.WorkFlowStatus;
 import com.cloud.ops.entity.workflow.WorkFlowStep;
 import com.cloud.ops.repository.ApplicationRepository;
@@ -55,6 +56,8 @@ public class ApplicationService {
     private ResourcePackageService resourcePackageService;
     @Autowired
     private TopologyService topologyService;
+    @Autowired
+    private TopologyArchiveService topologyArchiveService;
     @Autowired
     private FileStore fileStore;
     @Autowired
@@ -124,14 +127,20 @@ public class ApplicationService {
     public Boolean deploy(String id, String nodeId, String packageId) {
         Application application = this.get(id);
         ResourcePackage resourcePackage = resourcePackageService.get(packageId);
+        List<TopologyArchive> archives = topologyArchiveService.findByTopologyId(application.getTopologyId());
+        Map<String, String> archiveMap = archives.stream().collect(Collectors.toMap(TopologyArchive::getName, TopologyArchive::getFilePath));
+        archiveMap.put("PatchFile", resourcePackage.getWarPath());
         String interfaceName = resourcePackage.getType().equals(ResourcePackageType.PatchFile) ? "patch_deploy" : "war_deploy";
         Map<String, DeploymentNode> nodeMap =
                 application.getNodes().stream().collect(Collectors.toMap(DeploymentNode::getName,
                         Function.identity()));
-        WorkFlow workFlow = WorkFlow.builder().name(interfaceName).startAt(new Date()).objectId(application.getId())
-                .packageId(packageId).build();
+        WorkFlow workFlow = new WorkFlow();
+        workFlow.setName(interfaceName);
+        workFlow.setStartAt(new Date());
+        workFlow.setObjectId(application.getId());
+        workFlow.setPackageId(packageId);
         workFlowService.save(workFlow);
-        List<WorkFlowStep> stepTemps = processInterface(nodeId, interfaceName, nodeMap);
+        List<WorkFlowStep> stepTemps = processInterface(nodeId, interfaceName, nodeMap, archiveMap);
         List<WorkFlowStep> steps = Lists.newArrayList();
         for (WorkFlowStep stepTemp : stepTemps) {
             for (Map<String, String> hostIp : stepTemp.getLocations()) {
@@ -139,71 +148,19 @@ public class ApplicationService {
                 BeanUtils.copyNotNullProperties(stepTemp, step);
                 step.setHostIp(hostIp.get("ip"));
                 step.setWorkFlowId(workFlow.getId());
-                step.setUser(hostIp.get("user"));
-                step.setPassword(hostIp.get("password"));
                 workFlowStepService.save(step);
                 steps.add(step);
             }
         }
-        //distelli
-
-        new ThreadWithEntity<WorkFlow>(workFlow){
-
-            @Override
-            public void run(WorkFlow workFlow) {
-                WorkFlowService service = context.getBean(WorkFlowService.class);
-                WorkFlowStepService stepService = context.getBean(WorkFlowStepService.class);
-                try {
-                    //Traversal interface template to execute
-                    for (WorkFlowStep step : steps) {
-                        workFlow.setStep(step.getName());
-                        String message;
-                        RemoteExecuteCommand remoteExecuteCommand = new RemoteExecuteCommand(step.getHostIp(),
-                                step.getUser(), step.getPassword());
-                        remoteExecuteCommand.execute("mkdir -p " + INTERFACE_PATH + ";mkdir -p " + ARTIFACT_PATH);
-                        SCPUtils.uploadFileToServer(step.getHostIp(), step.getUser(),step.getPassword(),
-                                step.getScriptFilePath(), INTERFACE_PATH, "0744");
-                        for (Artifact artifact : step.getArtifacts()) {
-                            if (artifact.getType().equals("tosca.artifacts.PatchFile")) {
-                                SCPUtils.uploadFileToServer(step.getHostIp(), step.getUser(),step.getPassword(),
-                                        resourcePackage.getWarPath(), artifact.getFile(), ARTIFACT_PATH, "0644");
-                            }
-                        }
-                        StringBuilder shellContent = new StringBuilder();
-                        for (Map.Entry<String, Object> ENV : step.getEnv().entrySet()) {
-                            shellContent.append("export ").append(ENV.getKey()).append("=").append(ENV.getValue()).append(";");
-                        }
-                        shellContent.append("sh " + INTERFACE_PATH +"/"+ new File(step.getScriptFilePath()).getName());
-                        RemoteExecuteResult executeResult = remoteExecuteCommand.execute(shellContent.toString());
-                        message = executeResult.getMessage();
-                        message = message.replaceAll("\\s+\\d+K\\s+\\d+\\.?\\d*(M|K)?\\n\\r", "");
-                        if(message.length() > 65534){
-                            message = message.substring(message.length()-65534);
-                        }
-                        step.setDescription(message);
-                        if (executeResult.getExitCode() == null) {
-                            step.setStatus(WorkFlowStatus.SUCCESS);
-                        } else if (executeResult.getExitCode() == 0) {
-                            step.setStatus(WorkFlowStatus.SUCCESS);
-                        } else {
-                            step.setStatus(WorkFlowStatus.FAIL);
-                        }
-                        stepService.save(step);
-                    }
-                    service.save(workFlow);
-                    webSocketHandler.sendMsg(WebSocketConstants.WORKFLOW_STATUS, workFlow);
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }.start();
+        new WorkFlowTask(context, workFlow, steps).start();
         return Boolean.TRUE;
     }
 
-    private List<WorkFlowStep> processInterface(String nodeName, String interfaceName, Map<String, DeploymentNode> nodeMap) {
+    private List<WorkFlowStep> processInterface(String nodeName, String interfaceName, Map<String, DeploymentNode> nodeMap,
+                                                Map<String, String> archiveMap) {
         List<WorkFlowStep> results = Lists.newArrayList();
         WorkFlowStep doInterfaceTemplate = new WorkFlowStep();
+        doInterfaceTemplate.setName(interfaceName);
         DeploymentNode doNode = nodeMap.get(nodeName);
         assert doNode != null;
         Interface doInterface = doNode.getInterfaces().get(interfaceName);
@@ -218,7 +175,7 @@ public class ApplicationService {
                     doNodeName = doNodeName.equals("SELF") ? nodeName : doNodeName;
                     String doInterfaceName = (String) doInterfaces.get(1);
                     //process interface recursively
-                    results.addAll(processInterface(doNodeName, doInterfaceName, nodeMap));
+                    results.addAll(processInterface(doNodeName, doInterfaceName, nodeMap, archiveMap));
                 });
             }
         }
@@ -227,16 +184,19 @@ public class ApplicationService {
         processHostRequirement(doNode, nodeMap, doInterfaceTemplate);
 
         //3 process inputs
-        processInputs(nodeName, doInterface, nodeMap, doInterfaceTemplate);
+        processInputs(nodeName, doInterface, nodeMap, doInterfaceTemplate, archiveMap);
+
+        //4 process implement
+        doInterfaceTemplate.getArchives().put("script", archiveMap.get(doInterface.getImplementation()));
 
         results.add(doInterfaceTemplate);
         return results;
     }
 
     private void processInputs(String nodeName, Interface doInterface, Map<String, DeploymentNode> nodeMap,
-                               WorkFlowStep doInterfaceTemplate) {
-        Map<String, Object> ENVMap = Maps.newHashMap();
-        List<Artifact> artifacts = Lists.newArrayList();
+                               WorkFlowStep doInterfaceTemplate, Map<String, String> archiveMap) {
+        Map<String, String> ENVMap = Maps.newHashMap();
+        Map<String, String> archives = Maps.newHashMap();
         for (Map.Entry<String, Object> inputMap : doInterface.getInputs().entrySet()) {
             Map inputValueMap = (Map) inputMap.getValue();
             if (inputValueMap.get("get_attribute") != null) {
@@ -251,12 +211,16 @@ public class ApplicationService {
                 String applyNodeName = list.get(0).equals("SELF") ? nodeName : list.get(0);
                 String applyNodeArtifact = list.get(1);
                 Artifact artifact = nodeMap.get(applyNodeName).getArtifacts().get(applyNodeArtifact);
-                artifacts.add(artifact);
                 ENVMap.put(inputMap.getKey(), ARTIFACT_PATH + "/" + artifact.getFile());
+                if ("tosca.artifacts.PatchFile".equals(artifact.getType())) {
+                    archives.put(artifact.getFile(), archiveMap.get("PatchFile"));
+                } else {
+                    archives.put(artifact.getFile(), archiveMap.get(artifact.getFile()));
+                }
             }
         }
         doInterfaceTemplate.setEnv(ENVMap);
-        doInterfaceTemplate.setArtifacts(artifacts);
+        doInterfaceTemplate.setArchives(archives);
     }
 
 
