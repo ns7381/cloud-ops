@@ -244,6 +244,8 @@ public class ApplicationService {
     }
 
     public Boolean changeApplicationAttributes(String id, String nodeId, Map<String, Object> attributes) {
-        return null;
+        String yamlFilePath = dao.getOne(id).getYamlFilePath();
+        topologyService.updateAttribute(yamlFilePath, nodeId, attributes);
+        return Boolean.TRUE;
     }
 }

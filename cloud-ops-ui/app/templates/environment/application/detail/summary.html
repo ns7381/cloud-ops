@@ -76,7 +76,18 @@
             <div class="form-group">
                 <label class="control-label col-em-12">{{key}}：</label>
                 <div class="col-em-offset-6">
-                    <p class="form-control-static">{{attr}}</p>
+                    <span class="form-control-static">{{attr}}</span>&nbsp;
+                    <a data-node="{{node.name}}" data-key="{{key}}" data-value="{{attr}}" class="glyphicon glyphicon-edit edit-attr"
+                       data-toggle="popover" title="{{key}}" data-content='
+                       <form class="form-inline">
+                           <div class="form-group">
+                               <input type="text" class="form-control input-sm" value="{{attr}}" style="padding-right: 24px;">
+                               <button type="submit" class="btn btn-primary btn-sm editable-submit"><i class="glyphicon glyphicon-ok"></i></button>
+                           </div>
+                       </form>
+                       '>
+
+                    </a>
                 </div>
             </div>
             {{/each}}

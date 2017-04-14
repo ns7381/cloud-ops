@@ -3,10 +3,9 @@ package com.cloud.ops.service;
 import com.cloud.ops.entity.application.DeploymentNode;
 import com.cloud.ops.repository.TopologyRepository;
 import com.cloud.ops.entity.topology.Topology;
-import com.cloud.ops.toscamodel.INodeTemplate;
-import com.cloud.ops.toscamodel.INodeType;
-import com.cloud.ops.toscamodel.IToscaEnvironment;
-import com.cloud.ops.toscamodel.Tosca;
+import com.cloud.ops.toscamodel.*;
+import com.cloud.ops.toscamodel.basictypes.impl.TypeList;
+import com.cloud.ops.toscamodel.basictypes.impl.TypeString;
 import com.cloud.ops.utils.BeanUtils;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang.StringUtils;
@@ -19,7 +18,10 @@ import org.springframework.util.Assert;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 
 @Service
@@ -88,5 +90,31 @@ public class TopologyService {
             topology.setNodes(getComputeNodeTemplates(topology));
         }
         return topologies;
+    }
+
+    public void updateAttribute(String yamlFilePath, String nodeId, Map<String, Object> attributes) {
+        IToscaEnvironment toscaEnvironment = Tosca.newEnvironment();
+        try {
+            toscaEnvironment.readFile(new FileReader(yamlFilePath), false);
+            INodeType nodeTypes = (INodeType) toscaEnvironment.getNamedEntity("tosca.nodes.Root");
+            Iterable<INodeTemplate> nodes = toscaEnvironment.getNodeTemplatesOfType(nodeTypes);
+            for (INodeTemplate node : nodes) {
+                if (nodeId.equals(node.toString())) {
+                    for (Map.Entry<String, Object> attribute : attributes.entrySet()) {
+                        Object value = attribute.getValue();
+                        if (value instanceof String) {
+                            node.declaredAttributes().put(attribute.getKey(), TypeString.instance().instantiate(value));
+                        } else if (value instanceof List) {
+                            node.declaredAttributes().put(attribute.getKey(), TypeList.instance(TypeString.instance()).instantiate(value));
+                        }
+                    }
+                }
+            }
+            toscaEnvironment.writeFile(new FileWriter(yamlFilePath));
+        } catch (FileNotFoundException e) {
+            logger.error("yaml file not find. ", e);
+        } catch (IOException e) {
+            logger.error("yaml write error", e);
+        }
     }
 }

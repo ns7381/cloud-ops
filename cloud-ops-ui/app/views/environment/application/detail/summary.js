@@ -11,6 +11,15 @@ define(['App', 'common/ui/modal', 'common/ui/validator', 'bs/tab'], function (Ap
         },
         ready: function () {
             var self = this;
+            self.bind('click', $('.edit-attr'), self.changeAttr);
+            $('[data-toggle="popover"]').popover({html: true});
+        },
+        changeAttr: function (e) {
+            var self = this,
+                node = $(e.currentTarget).data("node"),
+                key = $(e.currentTarget).data("key"),
+                value = $(e.currentTarget).data("value");
+
         }
     });
 });
