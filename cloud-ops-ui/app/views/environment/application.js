@@ -2,11 +2,14 @@ define(['App', 'common/ui/datatables', 'common/ui/modal', 'rq/text!app/templates
     function (App, DataTables, Modal, LocationTpl) {
         return App.View({
             $table: $([]),
-            applicationId: '',
+            environmentId: '',
             environmentName: '',
+            data: function () {
+                return {"name": App.getParam('name'), id : App.getParam("id")};
+            },
             ready: function () {
                 var self = this;
-                self.applicationId = App.getParam('id');
+                self.environmentId = App.getParam('id');
                 self.environmentName = App.getParam('name');
                 self.$table = $('#appTable');
 
@@ -22,7 +25,7 @@ define(['App', 'common/ui/datatables', 'common/ui/modal', 'rq/text!app/templates
                 return DataTables.parseAjax(
                     this,
                     this.$table,
-                    "v1/applications?environmentId=" + this.applicationId
+                    "v1/applications?environmentId=" + this.environmentId
                 );
             },
             initTable: function (callback) {
@@ -39,7 +42,8 @@ define(['App', 'common/ui/datatables', 'common/ui/modal', 'rq/text!app/templates
                             "data": {},
                             "width": DataTables.width("name"),
                             "render": function (data) {
-                                return '<a href="' + self.getUrl('+/detail', {'id': data.id, 'name': data.name}) + '">' + data.name + '</a>';
+                                return '<a href="' + self.getUrl('+/detail', {'id': data.id, 'name': data.name,
+                                        'environmentId': self.environmentId, 'environmentName': self.environmentName}) + '">' + data.name + '</a>';
                             }
                         },
                         {
@@ -121,14 +125,15 @@ define(['App', 'common/ui/datatables', 'common/ui/modal', 'rq/text!app/templates
                                 var location = {};
                                 location.user = app[node.name + "user"];
                                 location.password = app[node.name + "password"];
-                                location.hosts = app[node.name + "hosts"];
+                                var hosts = app[node.name + "hosts"];
+                                location.hosts = hosts.trim().split(",");
                                 locations[node.name] = location;
                                 delete app[node.name + "user"];
                                 delete app[node.name + "password"];
                                 delete app[node.name + "hosts"];
                             });
                             app.locations = locations;
-                            app.environmentId = self.applicationId;
+                            app.environmentId = self.environmentId;
                             app.topologyName = topology.name;
                             var keywords = App.highlight("应用" + app.name, 2);
                             var processor = Modal.processing('正在保存' + keywords + '信息');

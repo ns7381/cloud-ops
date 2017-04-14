@@ -4,6 +4,7 @@ import com.cloud.ops.entity.Resource.ResourcePackage;
 import com.cloud.ops.entity.Resource.ResourcePackageType;
 import com.cloud.ops.entity.topology.Topology;
 import com.cloud.ops.entity.topology.TopologyArchive;
+import com.cloud.ops.entity.topology.TopologyArchiveType;
 import com.cloud.ops.entity.workflow.WorkFlowStatus;
 import com.cloud.ops.entity.workflow.WorkFlowStep;
 import com.cloud.ops.repository.ApplicationRepository;
@@ -90,9 +91,7 @@ public class ApplicationService {
         for (INodeTemplate nodeTemplate : rootNodeTemplate) {
             LocalLocation localLocation = application.getLocations().get(nodeTemplate.toString());
             assert localLocation != null;
-            assert StringUtils.isNotBlank(localLocation.getHosts());
-            List<String> hosts = Arrays.asList(localLocation.getHosts().split(",")).stream().map(String::trim).collect(Collectors.toList());
-            nodeTemplate.declaredAttributes().put("hosts", TypeList.instance(TypeString.instance()).instantiate(hosts));
+            nodeTemplate.declaredAttributes().put("hosts", TypeList.instance(TypeString.instance()).instantiate(localLocation.getHosts()));
             nodeTemplate.declaredAttributes().put("user", TypeString.instance().instantiate(localLocation.getUser()));
             nodeTemplate.declaredAttributes().put("password", TypeString.instance().instantiate(localLocation.getPassword()));
         }
@@ -129,8 +128,9 @@ public class ApplicationService {
         ResourcePackage resourcePackage = resourcePackageService.get(packageId);
         List<TopologyArchive> archives = topologyArchiveService.findByTopologyId(application.getTopologyId());
         Map<String, String> archiveMap = archives.stream().collect(Collectors.toMap(TopologyArchive::getName, TopologyArchive::getFilePath));
-        archiveMap.put("PatchFile", resourcePackage.getWarPath());
-        String interfaceName = resourcePackage.getType().equals(ResourcePackageType.PatchFile) ? "patch_deploy" : "war_deploy";
+        archiveMap.put(TopologyArchiveType.PATCH_PACKAGE.name(), resourcePackage.getWarPath());
+        String interfaceName = (resourcePackage.getType().equals(ResourcePackageType.PATCH) ?
+                DeploymentType.PATCH_DEPLOY : DeploymentType.WAR_DEPLOY).toString();
         Map<String, DeploymentNode> nodeMap =
                 application.getNodes().stream().collect(Collectors.toMap(DeploymentNode::getName,
                         Function.identity()));
@@ -143,10 +143,10 @@ public class ApplicationService {
         List<WorkFlowStep> stepTemps = processInterface(nodeId, interfaceName, nodeMap, archiveMap);
         List<WorkFlowStep> steps = Lists.newArrayList();
         for (WorkFlowStep stepTemp : stepTemps) {
-            for (Map<String, String> hostIp : stepTemp.getLocations()) {
+            for (String hostIp : stepTemp.getLocation().getHosts()) {
                 WorkFlowStep step = new WorkFlowStep();
                 BeanUtils.copyNotNullProperties(stepTemp, step);
-                step.setHostIp(hostIp.get("ip"));
+                step.setHostIp(hostIp.trim());
                 step.setWorkFlowId(workFlow.getId());
                 workFlowStepService.save(step);
                 steps.add(step);
@@ -187,7 +187,11 @@ public class ApplicationService {
         processInputs(nodeName, doInterface, nodeMap, doInterfaceTemplate, archiveMap);
 
         //4 process implement
-        doInterfaceTemplate.getArchives().put("script", archiveMap.get(doInterface.getImplementation()));
+        TopologyArchive archive = new TopologyArchive();
+        archive.setName(doInterface.getImplementation());
+        archive.setType(TopologyArchiveType.SCRIPT);
+        archive.setFilePath(archiveMap.get(doInterface.getImplementation()));
+        doInterfaceTemplate.getArchives().add(archive);
 
         results.add(doInterfaceTemplate);
         return results;
@@ -196,7 +200,6 @@ public class ApplicationService {
     private void processInputs(String nodeName, Interface doInterface, Map<String, DeploymentNode> nodeMap,
                                WorkFlowStep doInterfaceTemplate, Map<String, String> archiveMap) {
         Map<String, String> ENVMap = Maps.newHashMap();
-        Map<String, String> archives = Maps.newHashMap();
         for (Map.Entry<String, Object> inputMap : doInterface.getInputs().entrySet()) {
             Map inputValueMap = (Map) inputMap.getValue();
             if (inputValueMap.get("get_attribute") != null) {
@@ -213,14 +216,15 @@ public class ApplicationService {
                 Artifact artifact = nodeMap.get(applyNodeName).getArtifacts().get(applyNodeArtifact);
                 ENVMap.put(inputMap.getKey(), ARTIFACT_PATH + "/" + artifact.getFile());
                 if ("tosca.artifacts.PatchFile".equals(artifact.getType())) {
-                    archives.put(artifact.getFile(), archiveMap.get("PatchFile"));
-                } else {
-                    archives.put(artifact.getFile(), archiveMap.get(artifact.getFile()));
+                    TopologyArchive archive = new TopologyArchive();
+                    archive.setName(artifact.getFile());
+                    archive.setType(TopologyArchiveType.PATCH_PACKAGE);
+                    archive.setFilePath(archiveMap.get(TopologyArchiveType.PATCH_PACKAGE.name()));
+                    doInterfaceTemplate.getArchives().add(archive);
                 }
             }
         }
         doInterfaceTemplate.setEnv(ENVMap);
-        doInterfaceTemplate.setArchives(archives);
     }
 
 
@@ -235,16 +239,8 @@ public class ApplicationService {
         }
         assert hostNodeName != null;
         Map<String, Object> attributes = nodeMap.get(hostNodeName).getAttributes();
-        List<String> ips = (List<String>) attributes.get("hosts");
-        List<Map<String, String>> locations = Lists.newArrayList();
-        for (String ip : ips) {
-            Map<String, String> host = Maps.newHashMap();
-            host.put("user", (String) attributes.get("user"));
-            host.put("password", (String) attributes.get("password"));
-            host.put("ip", ip);
-            locations.add(host);
-        }
-        doInterfaceTemplate.setLocations(locations);
+        doInterfaceTemplate.setLocation(LocalLocation.builder().user((String) attributes.get("user"))
+                .password((String) attributes.get("password")).hosts((List<String>) attributes.get("hosts")).build());
     }
 
     public Boolean changeApplicationAttributes(String id, String nodeId, Map<String, Object> attributes) {

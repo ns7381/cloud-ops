@@ -91,7 +91,7 @@ public class ResourcePackageController {
         final String uploadPath = fileStore.makeFile(FileStore.PACKAGE_FILE_PATH + UUID.randomUUID().toString() + File.separator)
                 + nextPackage.getVersion() + "-patch";
         ResourcePackage patchPackage = new ResourcePackage();
-        patchPackage.setType(ResourcePackageType.PatchFile);
+        patchPackage.setType(ResourcePackageType.PATCH);
         patchPackage.setApplicationId(deploymentId);
         patchPackage.setName(nextPackage.getVersion() + "-patch");
         patchPackage.setVersion(nextPackage.getVersion() + "-patch");
@@ -117,7 +117,7 @@ public class ResourcePackageController {
                                            @RequestParam("version") String version,
                                            @RequestParam("applicationId") String applicationId) {
         final ResourcePackage resourcePackage = new ResourcePackage();
-        resourcePackage.setType(ResourcePackageType.WarFile);
+        resourcePackage.setType(ResourcePackageType.WAR);
         resourcePackage.setVersion(version);
         resourcePackage.setApplicationId(applicationId);
         resourcePackage.setStatus(ResourcePackageStatus.SAVING);

@@ -2,6 +2,9 @@ package com.cloud.ops.service;
 
 import com.cloud.ops.configuration.ws.CustomWebSocketHandler;
 import com.cloud.ops.configuration.ws.WebSocketConstants;
+import com.cloud.ops.entity.topology.Topology;
+import com.cloud.ops.entity.topology.TopologyArchive;
+import com.cloud.ops.entity.topology.TopologyArchiveType;
 import com.cloud.ops.entity.workflow.WorkFlow;
 import com.cloud.ops.entity.workflow.WorkFlowStatus;
 import com.cloud.ops.entity.workflow.WorkFlowStep;
@@ -48,21 +51,23 @@ public class WorkFlowTask extends Thread {
             for (WorkFlowStep step : steps) {
                 currentStep = step;
                 String message;
-                String ip = step.getLocations().get(0).get("ip");
-                String user = step.getLocations().get(0).get("user");
-                String password = step.getLocations().get(0).get("password");
+                String ip = step.getHostIp(), user = step.getLocation().getUser(), password = step.getLocation().getPassword();
                 RemoteExecuteCommand remoteExecuteCommand = new RemoteExecuteCommand(ip, user, password);
                 remoteExecuteCommand.execute("mkdir -p " + ARTIFACT_PATH);
-                for (Map.Entry<String, String> archive : step.getArchives().entrySet()) {
-                    SCPUtils.uploadFileToServer(ip, user, password,
-                            archive.getValue(), new File(step.getArchives().get(archive.getKey())).getName(), ARTIFACT_PATH,
-                            archive.getKey().equals("script") ? "0744" : "0644");
+                TopologyArchive scriptArchive = null;
+                for (TopologyArchive archive : step.getArchives()) {
+                    boolean isScript = TopologyArchiveType.SCRIPT.equals(archive.getType());
+                    if (isScript) {
+                        scriptArchive = archive;
+                    }
+                    SCPUtils.uploadFileToServer(ip, user, password, archive.getFilePath(), archive.getName(), ARTIFACT_PATH,
+                            isScript ? "0744" : "0644");
                 }
                 StringBuilder shellContent = new StringBuilder();
                 for (Map.Entry<String, String> ENV : step.getEnv().entrySet()) {
                     shellContent.append("export ").append(ENV.getKey()).append("=").append(ENV.getValue()).append(";");
                 }
-                shellContent.append("sh " + ARTIFACT_PATH + "/").append(new File(step.getArchives().get("script")).getName());
+                shellContent.append("sh " + ARTIFACT_PATH + "/").append(scriptArchive.getName());
                 RemoteExecuteResult executeResult = remoteExecuteCommand.execute(shellContent.toString());
                 message = executeResult.getMessage();
                 message = message.replaceAll("\\s+\\d+K\\s+\\d+\\.?\\d*(M|K)?\\n\\r", "");
@@ -76,6 +81,7 @@ public class WorkFlowTask extends Thread {
                     step.setStatus(WorkFlowStatus.SUCCESS);
                 } else {
                     step.setStatus(WorkFlowStatus.FAIL);
+                    stepService.save(step);
                     throw new RuntimeException(step.getHostIp() + "上执行[" + step.getName() + "]操作失败: " + message);
                 }
                 stepService.save(step);
@@ -87,7 +93,7 @@ public class WorkFlowTask extends Thread {
                 resourcePackageService.updateDeployStatus(workFlow.getPackageId());
             }
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             currentStep.setDescription(e.getMessage());
             currentStep.setStatus(WorkFlowStatus.FAIL);
             stepService.save(currentStep);

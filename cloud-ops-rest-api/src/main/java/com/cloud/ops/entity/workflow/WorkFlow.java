@@ -1,6 +1,7 @@
 package com.cloud.ops.entity.workflow;
 
 import com.cloud.ops.entity.IdEntity;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
 
@@ -19,7 +20,9 @@ public class WorkFlow extends IdEntity {
     private String objectId;
     private String packageId;
     private WorkFlowStatus status;
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     private Date startAt;
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     private Date endAt;
     private List<WorkFlowStep> steps;
 

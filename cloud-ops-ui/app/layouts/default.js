@@ -3,7 +3,7 @@ define(['App', 'common/ui/resetpwd', 'bs/collapse', 'jq/nicescroll'], function(A
         binds: [
             [
                 'resize', 'window', function(e) {
-                    this.resize(e.target);
+                    // this.resize(e.target);
                 }
             ],
             [
@@ -58,7 +58,7 @@ define(['App', 'common/ui/resetpwd', 'bs/collapse', 'jq/nicescroll'], function(A
             this.resize();
             this.activeSideBar(App.getState());
         },
-        destroy: function() {
+        destroyed: function() {
             var mainScrollbar = this.$pageMain.getNiceScroll(),
                 sideScrollbar = this.$sideBar.getNiceScroll();
             if (mainScrollbar && mainScrollbar.length) {

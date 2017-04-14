@@ -69,7 +69,7 @@ public class ResourcePackageService {
         ResourcePackageConfig config = configService.findByApplicationId(resourcePackage.getApplicationId());
         resourcePackage.setConfig(config);
         assert StringUtils.isNotBlank(config.getBuild());
-        resourcePackage.setType(ResourcePackageType.WarFile);
+        resourcePackage.setType(ResourcePackageType.WAR);
         resourcePackage.setStatus(ResourcePackageStatus.CLONING);
         this.create(resourcePackage);
         new ThreadWithEntity<ResourcePackage>(resourcePackage) {

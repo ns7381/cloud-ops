@@ -2,6 +2,7 @@ package com.cloud.ops.entity.workflow;
 
 import com.cloud.ops.entity.BaseObject;
 import com.cloud.ops.entity.IdEntity;
+import com.cloud.ops.entity.application.LocalLocation;
 import com.cloud.ops.entity.topology.TopologyArchive;
 import com.cloud.ops.toscamodel.INodeTemplate;
 import com.cloud.ops.toscamodel.IValue;
@@ -9,6 +10,7 @@ import com.cloud.ops.toscamodel.basictypes.IValueList;
 import com.cloud.ops.toscamodel.basictypes.IValueString;
 import com.cloud.ops.toscamodel.impl.Artifact;
 import com.cloud.ops.toscamodel.impl.Interface;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -24,14 +26,16 @@ import java.util.*;
 public class WorkFlowStep extends BaseObject {
     private String workFlowId;
     private String hostIp;
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     private Date startAt;
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     private Date endAt;
     private WorkFlowStatus status;
 
 
     Map<String, String> env;
-    Map<String, String> archives;
-    List<Map<String, String>> locations;
+    List<TopologyArchive> archives;
+    LocalLocation location;
 
     public String getWorkFlowId() {
         return workFlowId;
@@ -84,20 +88,23 @@ public class WorkFlowStep extends BaseObject {
     }
 
     @Transient
-    public Map<String, String> getArchives() {
+    public List<TopologyArchive> getArchives() {
+        if (archives == null) {
+            archives = new ArrayList<TopologyArchive>();
+        }
         return archives;
     }
 
-    public void setArchives(Map<String, String> archives) {
+    public void setArchives(List<TopologyArchive> archives) {
         this.archives = archives;
     }
 
     @Transient
-    public List<Map<String, String>> getLocations() {
-        return locations;
+    public LocalLocation getLocation() {
+        return location;
     }
 
-    public void setLocations(List<Map<String, String>> locations) {
-        this.locations = locations;
+    public void setLocation(LocalLocation location) {
+        this.location = location;
     }
 }

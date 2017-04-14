@@ -1,6 +1,9 @@
 define(['App', 'common/ui/datatables', 'common/ui/modal', 'common/ui/websocket', 'common/ui/validator', 'bs/tab', 'jq/form'], function (App, DataTables, Modal, WS) {
     return App.View({
         app_id: "",
+        app_name: "",
+        environmentId: "",
+        environmentName: "",
         table: null,
         $table: $([]),
         topology: {},
@@ -8,6 +11,9 @@ define(['App', 'common/ui/datatables', 'common/ui/modal', 'common/ui/websocket',
         war_containers: [],
         data: function () {
             this.app_id = App.getParam('id');
+            this.app_name = App.getParam('name');
+            this.environmentId = App.getParam('environmentId');
+            this.environmentName = App.getParam('environmentName');
             return App.remote("/v1/applications/" + this.app_id);
         },
         dataFilter: function (err, data) {
@@ -73,8 +79,8 @@ define(['App', 'common/ui/datatables', 'common/ui/modal', 'common/ui/websocket',
                         "data": {},
                         "width": DataTables.width("opt"),
                         "render": function (data) {
-                            if (data.status == "FINISH" && (data.type == "PatchFile" && self.patch_containers.length)
-                                || (data.type == "WarFile" && self.war_containers.length)) {
+                            if (data.status == "FINISH" && (data.type == "PATCH" && self.patch_containers.length)
+                                || (data.type == "WAR" && self.war_containers.length)) {
                                 return [
                                     '<a class="btn-opt btn-download" data-toggle="tooltip" href="javascript:void(0)" title="下载">',
                                     '<i class="fa fa-cloud-download"></i>',
@@ -304,7 +310,7 @@ define(['App', 'common/ui/datatables', 'common/ui/modal', 'common/ui/websocket',
                 name = rowData.version;
             var keywords = App.highlight('程序包' + name, 3),
                 html = '',
-                containers = type == "PatchFile" ? self.patch_containers : self.war_containers;
+                containers = type == "PATCH" ? self.patch_containers : self.war_containers;
             $.each(containers, function (k, v) {
                 html += '<input type="radio" name="container" value="' + v.name + '"' + (k == 0 ? "checked" : "") + '>' + v.name;
             });
@@ -322,7 +328,8 @@ define(['App', 'common/ui/datatables', 'common/ui/modal', 'common/ui/websocket',
                                 processor.error(keywords + '部署失败!原因：' + err.message);
                             } else {
                                 processor.success(keywords + '开始部署');
-                                App.go(self.getUrl("./", {id: self.app_id}));
+                                App.go(self.getUrl("./", {'id': self.app_id, 'name': self.app_name,
+                                    'environmentId': self.environmentId, 'environmentName': self.environmentName, 'tab': "application-task"}));
                             }
                         });
                     }

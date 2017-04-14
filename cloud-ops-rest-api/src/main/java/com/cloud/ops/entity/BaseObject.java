@@ -3,6 +3,7 @@
  */
 package com.cloud.ops.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
@@ -31,9 +32,11 @@ public abstract class BaseObject extends IdEntity {
     @CreatedDate
     @Column(name = "created_at")
     @Temporal(TemporalType.TIMESTAMP)
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
 	private Date createdAt;
     @LastModifiedDate
     @Column(name = "updated_at")
     @Temporal(TemporalType.TIMESTAMP)
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
 	private Date updatedAt;
 }

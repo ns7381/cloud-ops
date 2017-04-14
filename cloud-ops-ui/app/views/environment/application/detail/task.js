@@ -53,8 +53,9 @@ define(['App', 'common/ui/datatables', 'common/ui/modal'], function (App, DataTa
             }, callback);
         },
         viewMessage: function (e) {
-            var self = this;
-            var message = $(e.currentTarget).data("message");
+            var self = this,
+                tr = $(e.currentTarget).closest('tr'),
+                message = tr.data("message");
             Modal.show({
                 title: "查看结果",
                 size: {
