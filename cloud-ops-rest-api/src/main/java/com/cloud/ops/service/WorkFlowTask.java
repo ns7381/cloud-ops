@@ -16,6 +16,7 @@ import org.springframework.context.ApplicationContext;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -49,6 +50,7 @@ public class WorkFlowTask extends Thread {
         try {
             //Traversal interface template to execute
             for (WorkFlowStep step : steps) {
+                step.setStartAt(new Date());
                 currentStep = step;
                 String message;
                 String ip = step.getHostIp(), user = step.getLocation().getUser(), password = step.getLocation().getPassword();
@@ -74,6 +76,7 @@ public class WorkFlowTask extends Thread {
                 if(message.length() > 65534){
                     message = message.substring(message.length()-65534);
                 }
+                step.setEndAt(new Date());
                 step.setDescription(message);
                 if (executeResult.getExitCode() == null) {
                     step.setStatus(WorkFlowStatus.SUCCESS);

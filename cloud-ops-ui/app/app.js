@@ -1,5 +1,6 @@
 define(['yfjs/spa', 'common/status_label', 'jquery', 'common/ui/modal', 'common/ui/login', 'bs/tab', 'bs/popover'], function(App, StatusLabel, $, Modal, Login) {
     App.create({
+        index: "/environment",
         baseUrl: {
             resource: "/assets",
             style: "/assets/styles"
