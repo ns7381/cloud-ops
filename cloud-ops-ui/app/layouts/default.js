@@ -21,6 +21,14 @@ define(['App', 'common/ui/resetpwd', 'bs/collapse', 'jq/nicescroll'], function(A
                     });
                     return false;
                 }
+            ],
+            [
+                'click', 'window', function(e) {
+                    if ($(e.target).data('toggle') !== 'popover'
+                        && $(e.target).parents('.popover.in').length === 0) {
+                        $('[data-toggle="popover"]').popover('hide');
+                    }
+                }
             ]
         ],
 		/*data: App.remote('/api/v1/clusters/json'),

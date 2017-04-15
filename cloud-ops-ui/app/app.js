@@ -1,4 +1,4 @@
-define(['yfjs/spa', 'common/status_label', 'jquery', 'common/ui/modal', 'common/ui/login', 'bs/tab', 'bs/popover'], function(App, StatusLabel, $, Modal, Login) {
+define(['yfjs/spa', 'common/status_label', 'jquery', 'common/ui/modal', 'common/ui/login','crypto-js', 'bs/tab', 'bs/popover'], function(App, StatusLabel, $, Modal, Login, CryptoJS) {
     App.create({
         index: "/environment",
         baseUrl: {
@@ -485,6 +485,16 @@ define(['yfjs/spa', 'common/status_label', 'jquery', 'common/ui/modal', 'common/
         },
         parseStatus: function(status) {
             return StatusLabel.parseStatus(status);
+        },
+        Base64: {
+            encode: function(a) {
+                var wordArray = CryptoJS.enc.Utf8.parse(a);
+                return CryptoJS.enc.Base64.stringify(wordArray);
+            },
+            decode: function(a) {
+                var wordArray = CryptoJS.enc.Base64.parse(a);
+                return CryptoJS.enc.Utf8.stringify(wordArray);
+            }
         },
         /**
          * 加密文本显示，用于html元素中

@@ -11,15 +11,37 @@ define(['App', 'common/ui/modal', 'common/ui/validator', 'bs/tab'], function (Ap
         },
         ready: function () {
             var self = this;
-            self.bind('click', $('.edit-attr'), self.changeAttr);
+            self.bind('click', $('.btn-attr'), self.changeAttr);
             $('[data-toggle="popover"]').popover({html: true});
+            $('[data-toggle="popover"]').on('shown.bs.popover', function (e) {
+                $('body').find('[data-toggle="popover"]').each(function () {
+                    if(this!= e.target) {
+                        $(this).popover('hide');
+                    }
+                });
+                var $that = $(e.currentTarget),
+                    node = $that.data("node"),
+                    key = $that.data("key");
+                var $input = $('.input-attr[data-node="'+node+'"][data-key="'+key+'"]'), val = $("." + node + key).text();
+                $input.val('').focus().val(val);
+            })
         },
         changeAttr: function (e) {
+            var $that = $(e.currentTarget);
             var self = this,
-                node = $(e.currentTarget).data("node"),
-                key = $(e.currentTarget).data("key"),
-                value = $(e.currentTarget).data("value");
-
+                node = $that.data("node"),
+                key = $that.data("key"),
+                value = $("."+node + key).text();
+            var $input = $('.input-attr'), val = $input.val();
+            if (val == value) return false;
+            self.ajax.put("v1/applications/"+self.app_id+"/node/"+node+"/attributes?"+key+"="+val, function (err, data) {
+                if (err) {
+                    Modal.error(App.highlight("属性" + key, 2) + '修改失败!原因：' + err.message);
+                } else {
+                    $('[data-toggle="popover"]').popover('hide');
+                    $("."+node + key).text(val);
+                }
+            });
         }
     });
 });

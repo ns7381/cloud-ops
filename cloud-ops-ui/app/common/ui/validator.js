@@ -40,7 +40,7 @@ define(['jquery', 'jq/form/validator-bs3'], function($) {
             return this.optional(element) || /^[vV]?(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(\.(0|[1-9][0-9]*)(\-([a-zA-Z0-9\.])+)*)*(\.(0|[1-9][0-9]*)(\-([a-zA-Z0-9\.])+)*(\+([a-zA-Z0-9\.])+)*)*$/.test(value);
         }, "请输入正确的版本号（可以v或者V或者数字开头，字母、数字、点号、中短线、加号组成,例：v1.0,v1.0.0,1.0.0-alpha,1.0.0-alpha+001）");
         $.validator.addMethod("notEqualTo", function(value, element, param) {
-        	return value != $(param).val();
+            return value != (typeof param === 'string' ? param : $(param).val());
         }, $.validator.format("不能与指定域的值相同"));
     }
 });
