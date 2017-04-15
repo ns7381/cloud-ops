@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
+import org.springframework.web.multipart.support.MultipartFilter;
 import org.springframework.web.servlet.DispatcherServlet;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
@@ -38,6 +40,16 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
         return filter;
     }
 
+    @Bean
+    public CommonsMultipartResolver filterMultipartResolver() {
+        return new CommonsMultipartResolver();
+    }
+
+    @Bean
+    @Order(0)
+    public MultipartFilter multipartFilter() {
+        return new MultipartFilter();
+    }
     /*@Override
     public void addFormatters(FormatterRegistry registry) {
         DateTimeFormatterRegistrar registrar = new DateTimeFormatterRegistrar();

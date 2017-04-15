@@ -68,7 +68,7 @@ public class ResourcePackageService {
     public ResourcePackage packageWar(ResourcePackage resourcePackage) {
         ResourcePackageConfig config = configService.findByApplicationId(resourcePackage.getApplicationId());
         resourcePackage.setConfig(config);
-        assert StringUtils.isNotBlank(config.getBuild());
+        assert StringUtils.isNotBlank(resourcePackage.getBuild());
         resourcePackage.setType(ResourcePackageType.WAR);
         resourcePackage.setStatus(ResourcePackageStatus.CLONING);
         this.create(resourcePackage);
@@ -93,23 +93,12 @@ public class ResourcePackageService {
                             .setCredentialsProvider(new UsernamePasswordCredentialsProvider(config.getGitUsername(), config.getGitPassword()))
                             .call();
                     System.out.println("Having repository: " + result.getRepository().getDirectory());
-                    /*Git result = Git.open(new File(repository.getLocalDir()));
-                    String branch = entity.getBranch();
-                    result.branchCreate()
-                            .setName(branch)
-                            .setUpstreamMode(CreateBranchCommand.SetupUpstreamMode.SET_UPSTREAM)
-                            .setStartPoint("refs/remotes/origin/" + branch)
-                            .setForce(true)
-                            .call();
-                    result.checkout().setName(branch).call();
-                    result.pull().setCredentialsProvider(new UsernamePasswordCredentialsProvider(repository.getUsername(), repository.getPassword())).call();
-                    System.out.println("pull success: " + result.getRepository().getDirectory());*/
                     entity.setStatus(ResourcePackageStatus.BUILDING);
                     service.save(entity);
                     webSocketHandler.sendMsg(WebSocketConstants.PACKAGE_STATUS, entity);
 
                     File dir = result.getRepository().getDirectory().getParentFile();
-                    LocalExecuteCommand.execute(config.getBuild(), dir);
+                    LocalExecuteCommand.execute(entity.getBuild(), dir);
                     entity.setStatus(ResourcePackageStatus.SAVING);
                     service.save(entity);
                     webSocketHandler.sendMsg(WebSocketConstants.PACKAGE_STATUS, entity);

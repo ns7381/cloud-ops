@@ -38,9 +38,10 @@ define(['App', 'common/ui/datatables', 'common/ui/modal', 'common/ui/websocket',
             this.initTable(function () {
                 var $tableTop = $(self.$table.selector + "_top");
                 self.bind('click', $('.btn-config', $tableTop), self.configPackage);
-                self.bind('click', $('.btn-git', $tableTop), self.gitPackage);
-                self.bind('click', $('.btn-upload', $tableTop), self.uploadPackage);
-                self.bind('click', $('.btn-patch', $tableTop), self.patchPackage);
+                self.bind('click', $('.btn-add', $tableTop), self.addPackage);
+                // self.bind('click', $('.btn-git', $tableTop), self.gitPackage);
+                // self.bind('click', $('.btn-upload', $tableTop), self.uploadPackage);
+                // self.bind('click', $('.btn-patch', $tableTop), self.patchPackage);
                 self.bind('click', $('.btn-download', self.$table), self.downloadPackage);
                 self.bind('click', $('.btn-deploy', self.$table), self.deploy);
             });
@@ -154,17 +155,17 @@ define(['App', 'common/ui/datatables', 'common/ui/modal', 'common/ui/websocket',
                 }]
             });
         },
-        gitPackage: function () {
+        addPackage: function () {
             var self = this;
             Modal.show({
-                title: "git打包",
+                title: "新增",
                 remote: function () {
                     var def = $.Deferred();
                     self.render({
-                        url: "+/git.html",
+                        url: "+/add.html",
                         data: App.remote('v1/package-configs?applicationId=' + self.app_id),
                         dataFilter: function (err, data) {
-                            return data;
+                            return {config: data, rows: self.table.data("row.dt").data()};
                         },
                         callback: function (err, html) {
                             def.resolve(html);
@@ -175,10 +176,20 @@ define(['App', 'common/ui/datatables', 'common/ui/modal', 'common/ui/websocket',
                 onloaded: function (dialog) {
                     var $dialog = dialog.getModalDialog();
                     self.formValidate($dialog);
-                    $('#package', $dialog).on('change', function () {
-                        $('#fileDiv', $dialog).toggle();
-                        $('#gitDiv', $dialog).toggle();
+                    $('#type', $dialog).on('change', function () {
+                        var $method = $('#method', $dialog),
+                            type = $(this).val(),
+                            method = $method.val();
+                        self.changeTypeOrMethod(type, method, $dialog);
                     });
+                    $('#method', $dialog).on('change', function () {
+                        var $method = $('#method', $dialog),
+                            type = $('#type', $dialog).val(),
+                            method = $method.val();
+                        self.changeTypeOrMethod(type, method, $dialog);
+                    });
+                    $('#type', $dialog).trigger('change');
+                    $('#method', $dialog).trigger('change');
                 },
                 buttons: [{
                     label: "取消",
@@ -194,10 +205,10 @@ define(['App', 'common/ui/datatables', 'common/ui/modal', 'common/ui/websocket',
                         if (!valid) return false;
                         var package = $(".form-horizontal", $modal).serializeObject();
                         package.applicationId = self.app_id;
-                        var keywords = App.highlight("全量包" + package.version, 3);
+                        var keywords = App.highlight(package.type == "WAR" ? "全量包" : "增量包" + package.version, 3);
                         var processor = Modal.processing('正在保存' + keywords + '信息');
-                        if ($('#package', $modal).val() == "file" && $("#file").val()) {
-                            var $warForm = $("#war-form", $modal);
+                        if ($('#method', $modal).val() == "file" && $("#file").val()) {
+                            var $warForm = $("#package-form", $modal);
                             $warForm.attr("method", "post");
                             $warForm.attr("enctype", "multipart/form-data");
                             $warForm.attr("action", "v1/resource-packages/upload");
@@ -219,136 +230,19 @@ define(['App', 'common/ui/datatables', 'common/ui/modal', 'common/ui/websocket',
                                     processor.error(keywords + '保存失败。原因：' + App.json.parse(err.responseText).message);
                                 }
                             });
-                        } else {
+                        } else if($('#type', $modal).val() == "WAR" ){
                             self.ajax.putJSON('v1/resource-packages/git', package, function (err, data) {
                                 dialog.close();
                                 processor.success(keywords + '保存成功');
                                 self.$table.reloadTable();
                             });
-                        }
-                    }
-                }]
-            });
-        },
-        uploadPackage: function () {
-            var self = this;
-            Modal.show({
-                title: "全量包",
-                remote: function () {
-                    var def = $.Deferred();
-                    self.render({
-                        url: "+/war.html",
-                        data: App.remote('v1/package-configs?applicationId=' + self.app_id),
-                        dataFilter: function (err, data) {
-                            return data;
-                        },
-                        callback: function (err, html) {
-                            def.resolve(html);
-                        }
-                    });
-                    return def.promise();
-                },
-                onloaded: function (dialog) {
-                    var $dialog = dialog.getModalDialog();
-                    self.formValidate($dialog);
-                    $('#package', $dialog).on('change', function () {
-                        $('#fileDiv', $dialog).toggle();
-                        $('#gitDiv', $dialog).toggle();
-                    });
-                },
-                buttons: [{
-                    label: "取消",
-                    action: function (dialog) {
-                        dialog.close();
-                    }
-                }, {
-                    label: "确定",
-                    cssClass: "btn-primary",
-                    action: function (dialog) {
-                        var $modal = dialog.getModal();
-                        var valid = $(".form-horizontal", $modal).valid();
-                        if (!valid) return false;
-                        var package = $(".form-horizontal", $modal).serializeObject();
-                        package.applicationId = self.app_id;
-                        var keywords = App.highlight("全量包" + package.version, 3);
-                        var processor = Modal.processing('正在保存' + keywords + '信息');
-                        if ($('#package', $modal).val() == "file" && $("#file").val()) {
-                            var $warForm = $("#war-form", $modal);
-                            $warForm.attr("method", "post");
-                            $warForm.attr("enctype", "multipart/form-data");
-                            $warForm.attr("action", "v1/resource-packages/upload");
-
-                            $warForm.ajaxSubmit({
-                                success: function (data) {
-                                    if (data && !data.error) {
-                                        dialog.close();
-                                        processor.success(keywords + '保存成功');
-                                        self.$table.reloadTable();
-                                    } else if (data && data.error) {
-                                        processor.warning(keywords + '保存失败');
-                                        Modal.processing().error(data.message);
-                                    } else {
-                                        processor.error(keywords + '保存失败');
-                                    }
-                                },
-                                error: function (err) {
-                                    processor.error(keywords + '保存失败。原因：' + App.json.parse(err.responseText).message);
-                                }
-                            });
                         } else {
-                            self.ajax.putJSON('v1/resource-packages/git', package, function (err, data) {
+                            self.ajax.post('v1/resource-packages/patch' + self.setUrlK(package), function (err, data) {
                                 dialog.close();
                                 processor.success(keywords + '保存成功');
                                 self.$table.reloadTable();
                             });
                         }
-                    }
-                }]
-            });
-        },
-        patchPackage: function () {
-            var self = this;
-            Modal.show({
-                title: "增量包",
-                remote: function () {
-                    var def = $.Deferred();
-                    self.render({
-                        url: "+/patch.html",
-                        data: self.table.data("row.dt").data(),
-                        dataFilter: function (err, data) {
-                            return data;
-                        },
-                        callback: function (err, html) {
-                            def.resolve(html);
-                        }
-                    });
-                    return def.promise();
-                },
-                onloaded: function (dialog) {
-                    var $dialog = dialog.getModalDialog();
-                    self.formValidate($dialog);
-                },
-                buttons: [{
-                    label: "取消",
-                    action: function (dialog) {
-                        dialog.close();
-                    }
-                }, {
-                    label: "确定",
-                    cssClass: "btn-primary",
-                    action: function (dialog) {
-                        var $modal = dialog.getModal();
-                        var valid = $(".form-horizontal", $modal).valid();
-                        if (!valid) return false;
-                        var package = $(".form-horizontal", $modal).serializeObject();
-                        package.deploymentId = self.app_id;
-                        var keywords = App.highlight("增量包" + package.version, 3);
-                        var processor = Modal.processing('正在保存' + keywords + '信息');
-                        self.ajax.post('v1/resource-packages/patch' + self.setUrlK(package), function (err, data) {
-                            dialog.close();
-                            processor.success(keywords + '保存成功');
-                            self.$table.reloadTable();
-                        });
                     }
                 }]
             });
@@ -412,6 +306,29 @@ define(['App', 'common/ui/datatables', 'common/ui/modal', 'common/ui/websocket',
                     }
                 }
             });
+        },
+        changeTypeOrMethod: function (type, method, $dialog) {
+            if (type == "PATCH" && method == "file") {
+                $('#versionDiv', $dialog).show();
+                $('#fileDiv', $dialog).show();
+                $('#gitDiv', $dialog).hide();
+                $('#patchDiv', $dialog).hide();
+            } else if (type == "PATCH" && method == "build") {
+                $('#versionDiv', $dialog).hide();
+                $('#fileDiv', $dialog).hide();
+                $('#gitDiv', $dialog).hide();
+                $('#patchDiv', $dialog).show();
+            } else if (type == "WAR" && method == "file") {
+                $('#versionDiv', $dialog).show();
+                $('#fileDiv', $dialog).show();
+                $('#gitDiv', $dialog).hide();
+                $('#patchDiv', $dialog).hide();
+            } else if (type == "WAR" && method == "build") {
+                $('#versionDiv', $dialog).show();
+                $('#fileDiv', $dialog).hide();
+                $('#gitDiv', $dialog).show();
+                $('#patchDiv', $dialog).hide();
+            }
         },
         setUrlK: function (ojson) {
             var s = '', name, key, init = true;

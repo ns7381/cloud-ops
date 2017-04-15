@@ -81,7 +81,7 @@ public class ResourcePackageController {
 
     @RequestMapping(value = "/patch", method = RequestMethod.POST)
     public ResourcePackage patch(
-            @RequestParam("deploymentId") String deploymentId,
+            @RequestParam("applicationId") String applicationId,
             @RequestParam("prePackageId") String prePackageId,
             @RequestParam("nextPackageId") String nextPackageId) {
 
@@ -92,7 +92,7 @@ public class ResourcePackageController {
                 + nextPackage.getVersion() + "-patch";
         ResourcePackage patchPackage = new ResourcePackage();
         patchPackage.setType(ResourcePackageType.PATCH);
-        patchPackage.setApplicationId(deploymentId);
+        patchPackage.setApplicationId(applicationId);
         patchPackage.setName(nextPackage.getVersion() + "-patch");
         patchPackage.setVersion(nextPackage.getVersion() + "-patch");
         patchPackage.setDescription(prePackage.getVersion() + "版本至" + nextPackage.getVersion() + "版本的patch");
@@ -119,7 +119,7 @@ public class ResourcePackageController {
                                            @RequestParam("type") String type,
                                            @RequestParam("applicationId") String applicationId) {
         final ResourcePackage resourcePackage = new ResourcePackage();
-        resourcePackage.setType(ResourcePackageType.WAR);
+        resourcePackage.setType(ResourcePackageType.valueOf(type));
         resourcePackage.setVersion(version);
         resourcePackage.setApplicationId(applicationId);
         resourcePackage.setStatus(ResourcePackageStatus.SAVING);

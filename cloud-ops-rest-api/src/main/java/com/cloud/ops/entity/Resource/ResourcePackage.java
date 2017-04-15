@@ -17,6 +17,7 @@ public class ResourcePackage extends BaseObject {
     private String applicationId;
     private ResourcePackageConfig config;
     private String warPath;
+    private String build;
     private ResourcePackageStatus status;
     private ResourcePackageType type;
 
@@ -51,6 +52,15 @@ public class ResourcePackage extends BaseObject {
 
     public void setWarPath(String warPath) {
         this.warPath = warPath;
+    }
+
+    @Transient
+    public String getBuild() {
+        return build;
+    }
+
+    public void setBuild(String build) {
+        this.build = build;
     }
 
     @Enumerated(EnumType.STRING)
