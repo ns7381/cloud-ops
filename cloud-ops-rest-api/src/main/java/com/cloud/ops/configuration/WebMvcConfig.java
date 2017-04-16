@@ -30,7 +30,8 @@ import java.util.List;
 @RestController
 public class WebMvcConfig extends WebMvcConfigurerAdapter {
 
-    @Value("classpath:/ui/index.html")
+    @Value("classpath:META-INF/resources/webjars/ui/index.html")
+//@Value("classpath*:/WEB-INF/lib/cloud-ops-ui-*/ui/index.html")
     private Resource indexHtml;
 
     @Bean
@@ -59,9 +60,10 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/app/**").addResourceLocations("classpath:/ui/app/");
-        registry.addResourceHandler("/assets/**").addResourceLocations("classpath:/ui/assets/");
-        registry.addResourceHandler("/yfjs-lib/**").addResourceLocations("classpath:/ui/yfjs-lib/");
+        registry.addResourceHandler("/").addResourceLocations("classpath:META-INF/resources/ui/index.html");
+        registry.addResourceHandler("/app/**").addResourceLocations("classpath:META-INF/resources/ui/app/");
+        registry.addResourceHandler("/assets/**").addResourceLocations("classpath:META-INF/resources/ui/assets/");
+        registry.addResourceHandler("/yfjs-lib/**").addResourceLocations("classpath:META-INF/resources/ui/yfjs-lib/");
     }
 
     @Bean

@@ -37,17 +37,9 @@ public class ApplicationEnvironmentControllerTest {
     public void shouldReturn200WhenSendingRequestToController() throws Exception {
         @SuppressWarnings("rawtypes")
         ResponseEntity<List> entity = this.testRestTemplate.getForEntity(
-                "http://localhost:" + this.port + "/location", List.class);
+                "http://localhost:" + this.port + "/environments", List.class);
 
         then(entity.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 
-    @Test
-    public void shouldReturn200WhenSendingRequestToManagementEndpoint() throws Exception {
-        @SuppressWarnings("rawtypes")
-        ResponseEntity<Map> entity = this.testRestTemplate.getForEntity(
-                "http://localhost:" + this.mgt + "/info", Map.class);
-
-        then(entity.getStatusCode()).isEqualTo(HttpStatus.OK);
-    }
 }

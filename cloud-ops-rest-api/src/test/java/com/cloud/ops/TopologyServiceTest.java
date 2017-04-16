@@ -24,7 +24,7 @@ public class TopologyServiceTest {
     @Test
     public void testGet() throws Exception {
         long startTime=System.currentTimeMillis();
-        topologyService.get("9e35f0ca450e42a3904e5d24a4e38833");
+//        topologyService.get("9e35f0ca450e42a3904e5d24a4e38833");
         long endTime=System.currentTimeMillis();
         System.out.println("程序运行时间： "+(endTime-startTime)+"ms");
     }
