@@ -19,24 +19,24 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .csrf().disable()
-                /*.authorizeRequests()
-                    .antMatchers("*//*", "/app*//**", "/assets*//**", "/yfjs-lib*//**").permitAll()*/
+                .authorizeRequests()
+                    .antMatchers("/webappp/**", "/yfjs-lib/**", "/app/**", "/assets/**").permitAll()
 
-                    /*.anyRequest().authenticated()
+                    .anyRequest().authenticated()
                     .and()
                 .formLogin()
                     .loginPage("/")
                     .permitAll()
                     .and()
                 .logout()
-                    .permitAll()*/;
+                    .permitAll();
     }
 
     @Override
     public void configure(WebSecurity web) throws Exception {
         web
                 .ignoring()
-                .antMatchers("/ui/**");
+                .antMatchers("/webappp/**");
     }
 
     @Autowired
