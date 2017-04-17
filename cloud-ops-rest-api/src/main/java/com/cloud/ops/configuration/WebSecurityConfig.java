@@ -30,6 +30,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     .and()
                 .logout()
                     .permitAll();
+        //https://github.com/bkielczewski/example-spring-boot-security.git
+        //https://github.com/FutureProcessing/spring-boot-security-example.git
     }
 
     @Override
