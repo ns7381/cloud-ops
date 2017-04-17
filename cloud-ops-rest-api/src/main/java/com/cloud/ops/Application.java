@@ -25,3 +25,28 @@ public class Application extends SpringBootServletInitializer {
     }
 
 }
+/*
+@SpringBootApplication
+public class Application {
+
+    */
+/*@Bean
+    public SessionFactory sessionFactory(HibernateEntityManagerFactory hemf) {
+        return hemf.getSessionFactory();
+    }
+
+    @Bean
+    public MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter() {
+        MappingJackson2HttpMessageConverter jsonConverter = new MappingJackson2HttpMessageConverter();
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        jsonConverter.setObjectMapper(objectMapper);
+        return jsonConverter;
+    }*//*
+
+
+    public static void main(String[] args) {
+        new SpringApplication(Application.class).run(args);
+    }
+
+}*/

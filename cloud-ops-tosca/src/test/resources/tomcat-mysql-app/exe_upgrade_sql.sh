@@ -6,4 +6,6 @@ if [ -d "${sql_file}unzip" ]; then
 fi
 unzip -d${sql_file}unzip -o ${sql_file}
 
-mysql -u${db_user} -p${db_password} ${db_name} --force < ${sql_file}unzip/upgrade.sql
+if [ -e "${sql_file}unzip/upgrade.sql" ]; then
+	mysql -u${db_user} -p${db_password} ${db_name} --force < ${sql_file}unzip/upgrade.sql
+fi
