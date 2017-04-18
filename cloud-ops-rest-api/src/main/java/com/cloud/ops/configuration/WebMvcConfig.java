@@ -1,4 +1,4 @@
-package com.cloud.ops.webconfiguration;
+package com.cloud.ops.configuration;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;

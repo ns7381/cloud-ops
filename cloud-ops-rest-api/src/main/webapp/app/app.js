@@ -52,8 +52,8 @@ define(['yfjs/spa', 'common/status_label', 'jquery', 'common/ui/modal', 'common/
             name: 'login',
             access: function() {
                 var filter = this.getFilter('login');
-                // return filter.exclude(this.getPath()) || this.hasLogin();
-                return true;
+                return filter.exclude(this.getPath()) || this.hasLogin();
+                // return true;
             },
             do: function() {
                 var curUrl = this.getState('url'), params;

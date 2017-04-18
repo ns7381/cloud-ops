@@ -15,7 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.cloud.ops.webconfiguration.ws.*;
+import com.cloud.ops.configuration.ws.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;

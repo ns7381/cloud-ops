@@ -15,7 +15,6 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @SpringBootApplication
-@ComponentScan(basePackages = {"com.cloud.ops"})
 public class Application extends SpringBootServletInitializer {
 
     @Override

@@ -1,7 +1,7 @@
 package com.cloud.ops.service;
 
-import com.cloud.ops.webconfiguration.ws.CustomWebSocketHandler;
-import com.cloud.ops.webconfiguration.ws.WebSocketConstants;
+import com.cloud.ops.configuration.ws.CustomWebSocketHandler;
+import com.cloud.ops.configuration.ws.WebSocketConstants;
 import com.cloud.ops.entity.topology.TopologyArchive;
 import com.cloud.ops.entity.topology.TopologyArchiveType;
 import com.cloud.ops.entity.workflow.WorkFlow;

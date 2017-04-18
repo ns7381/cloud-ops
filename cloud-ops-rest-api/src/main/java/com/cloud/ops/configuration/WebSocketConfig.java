@@ -1,4 +1,4 @@
-package com.cloud.ops.webconfiguration;
+package com.cloud.ops.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -8,7 +8,7 @@ import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
 
-import com.cloud.ops.webconfiguration.ws.*;
+import com.cloud.ops.configuration.ws.*;
 
 /**
  * Created by Administrator on 2017/3/29.

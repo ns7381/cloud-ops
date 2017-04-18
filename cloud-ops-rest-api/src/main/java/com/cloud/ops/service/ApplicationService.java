@@ -19,7 +19,7 @@ import com.cloud.ops.toscamodel.basictypes.impl.TypeString;
 import com.cloud.ops.toscamodel.impl.Artifact;
 import com.cloud.ops.toscamodel.impl.Interface;
 import com.cloud.ops.utils.*;
-import com.cloud.ops.webconfiguration.ws.*;
+import com.cloud.ops.configuration.ws.*;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.slf4j.Logger;
