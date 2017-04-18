@@ -8,15 +8,16 @@ project(':cloud-ops-rest-api') {
     dependencies {
 //        compile project(':cloud-ops-ui')
         compile project(':cloud-ops-tosca')
+        compile project(':cloud-ops-security')
         compile("org.springframework.boot:spring-boot-devtools")
         providedRuntime("org.springframework.boot:spring-boot-starter-tomcat")
         compile ('org.springframework.boot:spring-boot-starter-web:1.5.2.RELEASE'){
             exclude group: 'org.springframework.boot', module: 'spring-boot-starter-tomcat'
         }
-        compile 'org.springframework.boot:spring-boot-starter-security:1.5.2.RELEASE'
+//        compile 'org.springframework.boot:spring-boot-starter-security:1.5.2.RELEASE'
         compile 'org.springframework.boot:spring-boot-starter-data-jpa:1.5.2.RELEASE'
         compile 'org.springframework.boot:spring-boot-starter-websocket:1.5.2.RELEASE'
-        compile 'org.springframework:springloaded:1.2.6.RELEASE'
+//        compile 'org.springframework:springloaded:1.2.6.RELEASE'
         /*compile("com.inspur.cloudframework:spring-side:4.1.0-SNAPSHOT"){
             exclude group: 'javax.servlet', module: 'servlet-api'
         }*/

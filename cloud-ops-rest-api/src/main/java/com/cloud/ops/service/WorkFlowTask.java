@@ -1,8 +1,7 @@
 package com.cloud.ops.service;
 
-import com.cloud.ops.configuration.ws.CustomWebSocketHandler;
-import com.cloud.ops.configuration.ws.WebSocketConstants;
-import com.cloud.ops.entity.topology.Topology;
+import com.cloud.ops.webconfiguration.ws.CustomWebSocketHandler;
+import com.cloud.ops.webconfiguration.ws.WebSocketConstants;
 import com.cloud.ops.entity.topology.TopologyArchive;
 import com.cloud.ops.entity.topology.TopologyArchiveType;
 import com.cloud.ops.entity.workflow.WorkFlow;
@@ -14,8 +13,6 @@ import com.cloud.ops.utils.SCPUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.context.ApplicationContext;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;

@@ -1,24 +1,12 @@
 package com.cloud.ops.service;
 
-import com.cloud.ops.configuration.ws.CustomWebSocketHandler;
-import com.cloud.ops.configuration.ws.WebSocketConstants;
 import com.cloud.ops.entity.Resource.ResourcePackageConfig;
-import com.cloud.ops.entity.Resource.ResourcePackageStatus;
 import com.cloud.ops.repository.ResourcePackageConfigRepository;
 import com.cloud.ops.utils.*;
 import lombok.NonNull;
-import org.apache.commons.lang.StringUtils;
-import org.eclipse.jgit.api.Git;
-import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
 
 @Service
 @Transactional

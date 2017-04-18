@@ -1,4 +1,4 @@
-package com.cloud.ops.configuration;
+package com.cloud.ops.webconfiguration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

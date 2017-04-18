@@ -1,10 +1,10 @@
-define(['jquery', 'common/ui/modal', 'crypto-js', 'common/ui/pwdmasked'], function($, Modal, CryptoJS) {
+define(['jquery', 'common/ui/modal', 'crypto-js', 'common/ui/pwdmasked', 'jq/form'], function($, Modal, CryptoJS) {
 
     var LoginHelper = {
         rememberKey: {
-            username: "remember_username_dockerstack",
-            password: "remember_password_dockerstack",
-            remember: "remember_dockerstack"
+            username: "remember_username_ops",
+            password: "remember_password_ops",
+            remember: "remember_ops"
         },
         $form: $([]),
         $username: $([]),
@@ -71,9 +71,30 @@ define(['jquery', 'common/ui/modal', 'crypto-js', 'common/ui/pwdmasked'], functi
             if ($btnSubmit.length) {
                 $btnSubmit.text("正在登录...").prop('disabled', true);
             }
-
-            self.ajax.postJSON({
-                url: "/api/v1/servers/login",
+            LoginHelper.$form.ajaxSubmit({
+                success: function(response, statusText, xhr, $form)  {
+                    var encryptedPwd = LoginHelper.encryptPwd($password.val());
+                    LoginHelper.setCookie.call(App, LoginHelper.rememberKey.username, data.name);
+                    if ($bRemember.prop("checked")) {
+                        LoginHelper.setCookie.call(App, LoginHelper.rememberKey.remember, '1');
+                        LoginHelper.setCookie.call(App, LoginHelper.rememberKey.password, encryptedPwd);
+                    } else {
+                        LoginHelper.removeCookie.call(App, LoginHelper.rememberKey.remember);
+                        LoginHelper.removeCookie.call(App, LoginHelper.rememberKey.password);
+                    }
+                    App.setLogin({name: data.name});
+                    if (!LoginHelper.dialog) {
+                        App.go(self.getParam('callback') || "/");
+                    }
+                },
+                error: function(response, statusText, error, $form)  {
+                    if(response != null && response.message == "authentication-failure") {
+                        LoginHelper.showErrorInfo("用户名或密码错误");
+                    }
+                }
+            });
+           /* self.ajax.postJSON({
+                url: "v1/login",
                 data: data,
                 timeout: 5000
             }, function(err, resp, xhr) {
@@ -99,7 +120,7 @@ define(['jquery', 'common/ui/modal', 'crypto-js', 'common/ui/pwdmasked'], functi
                 }
                 $btnSubmit.prop('disabled', false).html(btnSubmitText);
                 $.isFunction(callback) && callback.apply(this, arguments);
-            });
+            });*/
         },
         showErrorInfo: function(res, $tar) {
             var msg = "";

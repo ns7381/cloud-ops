@@ -48,11 +48,12 @@ define(['yfjs/spa', 'common/status_label', 'jquery', 'common/ui/modal', 'common/
                 return user ? user.name : user;
             }
         },
-        /*filter: {
+        filter: {
             name: 'login',
             access: function() {
                 var filter = this.getFilter('login');
-                return filter.exclude(this.getPath()) || this.hasLogin();
+                // return filter.exclude(this.getPath()) || this.hasLogin();
+                return true;
             },
             do: function() {
                 var curUrl = this.getState('url'), params;
@@ -65,7 +66,7 @@ define(['yfjs/spa', 'common/status_label', 'jquery', 'common/ui/modal', 'common/
             },
             includes: ['*'],
             excludes: ['/login']
-        },*/
+        },
         template: {
             helpers: {
                 'getLoginName': function() {

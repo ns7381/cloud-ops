@@ -1,4 +1,4 @@
-package com.cloud.ops.configuration.ws;
+package com.cloud.ops.webconfiguration.ws;
 
 /**
  * Created by Administrator on 2017/2/5.

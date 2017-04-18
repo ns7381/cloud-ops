@@ -1,4 +1,4 @@
-package com.cloud.ops.configuration.ws;
+package com.cloud.ops.webconfiguration.ws;
 
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;

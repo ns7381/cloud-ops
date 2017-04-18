@@ -2,4 +2,5 @@ rootProject.name = 'cloud-ops'
 include 'cloud-ops-ui'
 include 'cloud-ops-rest-api'
 include 'cloud-ops-tosca'
+include 'cloud-ops-security'
 
