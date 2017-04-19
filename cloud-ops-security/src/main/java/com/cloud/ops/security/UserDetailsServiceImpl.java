@@ -1,8 +1,8 @@
-package com.cloud.ops.security.service;
+package com.cloud.ops.security;
 
-import com.cloud.ops.security.modal.Role;
+import com.cloud.ops.security.modal.UserRole;
 import com.cloud.ops.security.modal.User;
-import com.cloud.ops.security.repository.UserRepository;
+import com.cloud.ops.security.users.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -18,16 +18,16 @@ import java.util.Set;
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
     @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
 
     @Override
     @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByUsername(username);
+        User user = userService.findByUsername(username);
 
         Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
-        for (Role role : user.getRoles()){
-            grantedAuthorities.add(new SimpleGrantedAuthority(role.getName()));
+        for (UserRole role : user.getRoles()){
+            grantedAuthorities.add(new SimpleGrantedAuthority(role.getRole().name()));
         }
 
         return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), grantedAuthorities);

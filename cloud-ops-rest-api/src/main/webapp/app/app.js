@@ -387,7 +387,7 @@ define(['yfjs/spa', 'common/status_label', 'jquery', 'common/ui/modal', 'common/
         },
         errLogin: {type: 'ajax', status: 403},
         hasLogin: function() {
-            return !!this.cookie.getLoginId();
+            return !!this.cookie.getLoginName();
         },
         setLogin: function(user) {
             this.cookie.set('user', user);

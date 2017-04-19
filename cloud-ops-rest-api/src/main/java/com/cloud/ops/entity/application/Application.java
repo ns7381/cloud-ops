@@ -1,6 +1,6 @@
 package com.cloud.ops.entity.application;
 
-import com.cloud.ops.entity.BaseObject;
+import com.cloud.ops.dao.modal.BaseObject;
 import com.cloud.ops.toscamodel.IToscaEnvironment;
 
 import javax.persistence.Entity;

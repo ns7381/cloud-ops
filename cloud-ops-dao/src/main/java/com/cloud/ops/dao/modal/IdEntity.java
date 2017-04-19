@@ -1,4 +1,4 @@
-package com.cloud.ops.entity;
+package com.cloud.ops.dao.modal;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.annotations.GenericGenerator;

@@ -1,7 +1,7 @@
 package com.cloud.ops.entity.workflow;
 
-import com.cloud.ops.entity.BaseObject;
-import com.cloud.ops.entity.IdEntity;
+import com.cloud.ops.dao.modal.BaseObject;
+import com.cloud.ops.dao.modal.IdEntity;
 import com.cloud.ops.entity.application.LocalLocation;
 import com.cloud.ops.entity.topology.TopologyArchive;
 import com.cloud.ops.toscamodel.INodeTemplate;

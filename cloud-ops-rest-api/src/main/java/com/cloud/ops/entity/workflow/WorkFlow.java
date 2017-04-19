@@ -1,6 +1,6 @@
 package com.cloud.ops.entity.workflow;
 
-import com.cloud.ops.entity.IdEntity;
+import com.cloud.ops.dao.modal.IdEntity;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Builder;
 import lombok.NoArgsConstructor;

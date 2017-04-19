@@ -1,26 +1,18 @@
 package com.cloud.ops.security.modal;
 
+import com.cloud.ops.dao.modal.IdEntity;
+import org.hibernate.annotations.GenericGenerator;
+
 import javax.persistence.*;
+import java.util.List;
 import java.util.Set;
 
 @Entity
 @Table(name = "user")
-public class User {
-    private Long id;
+public class User extends IdEntity{
     private String username;
     private String password;
-    private String passwordConfirm;
-    private Set<Role> roles;
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
+    private List<UserRole> roles;
 
     public String getUsername() {
         return username;
@@ -39,21 +31,11 @@ public class User {
     }
 
     @Transient
-    public String getPasswordConfirm() {
-        return passwordConfirm;
-    }
-
-    public void setPasswordConfirm(String passwordConfirm) {
-        this.passwordConfirm = passwordConfirm;
-    }
-
-    @ManyToMany
-    @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
-    public Set<Role> getRoles() {
+    public List<UserRole> getRoles() {
         return roles;
     }
 
-    public void setRoles(Set<Role> roles) {
+    public void setRoles(List<UserRole> roles) {
         this.roles = roles;
     }
 }

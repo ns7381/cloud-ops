@@ -1,4 +1,4 @@
-package com.cloud.ops.configuration;
+package com.cloud.ops.dao;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
  * The database configuration which enables spring's jpa-auditing for automatically
  * timestamp injection.
  *
- * @author Christian Claus (ch.claus@me.com)
+ * @author Nathan
  */
 @Configuration
 @EnableJpaAuditing

@@ -3,8 +3,8 @@
  */
 package com.cloud.ops.entity.Resource;
 
-import com.cloud.ops.entity.BaseObject;
-import com.cloud.ops.entity.IdEntity;
+import com.cloud.ops.dao.modal.BaseObject;
+import com.cloud.ops.dao.modal.IdEntity;
 import lombok.Getter;
 import lombok.Setter;
 

@@ -3,4 +3,6 @@ include 'cloud-ops-ui'
 include 'cloud-ops-rest-api'
 include 'cloud-ops-tosca'
 include 'cloud-ops-security'
+include 'cloud-ops-dao'
+include 'cloud-ops-common'
 

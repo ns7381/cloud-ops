@@ -1,8 +1,10 @@
-package com.cloud.ops.security.repository;
+package com.cloud.ops.security.users;
 
 import com.cloud.ops.security.modal.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface UserRepository extends JpaRepository<User, Long> {
+import java.io.Serializable;
+
+public interface UserRepository extends JpaRepository<User, Serializable> {
     User findByUsername(String username);
 }

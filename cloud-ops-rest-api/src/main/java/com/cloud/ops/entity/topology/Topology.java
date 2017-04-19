@@ -1,6 +1,6 @@
 package com.cloud.ops.entity.topology;
 
-import com.cloud.ops.entity.BaseObject;
+import com.cloud.ops.dao.modal.BaseObject;
 import com.cloud.ops.entity.application.DeploymentNode;
 import com.cloud.ops.toscamodel.IToscaEnvironment;
 
