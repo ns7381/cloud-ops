@@ -19,7 +19,7 @@ define(['jquery', 'common/ui/modal', 'crypto-js', 'common/ui/pwdmasked', 'jq/for
                         '<img class="signin-logo" alt="IOP Manager" src="' + App.getStyleUrl('img/logo.png') +'"/>' +
                     '</div>' +
                 '</div>' +
-                '<form class="form-horizontal form-signin" onsubmit="return false;" role="form" autocomplete="off">' +
+                '<form class="form-horizontal form-signin" id="login-form" method="post" role="form" action="v1/login" autocomplete="off">' +
                     '<input class="hide">' +
                     '<div class="input-group">' +
                         '<span class="signin-icons signin-icon-input signin-icon-user">' +
@@ -86,10 +86,14 @@ define(['jquery', 'common/ui/modal', 'crypto-js', 'common/ui/pwdmasked', 'jq/for
                     if (!LoginHelper.dialog) {
                         App.go(self.getParam('callback') || "/");
                     }
+                    $btnSubmit.prop('disabled', false).html(btnSubmitText);
+                    $.isFunction(callback) && callback.call(this, statusText);
                 },
                 error: function(response, statusText, error, $form)  {
-                    if(response != null && response.message == "authentication-failure") {
+                    if (statusText == "error" && error == "Forbidden") {
                         LoginHelper.showErrorInfo("用户名或密码错误");
+                        $btnSubmit.prop('disabled', false).html(btnSubmitText);
+                        $.isFunction(callback) && callback.call(this, statusText);
                     }
                 }
             });
@@ -209,8 +213,9 @@ define(['jquery', 'common/ui/modal', 'crypto-js', 'common/ui/pwdmasked', 'jq/for
                             if (dialog.getData('logging')) return false;
                             dialog.setData('logging', true);
                             dialog.enableButtons(false);
-                            LoginHelper.submitForm.call(self, App, function(err) {
-                                if (!err) {
+                            LoginHelper.$form = $("#login-form", dialog.getModalBody());
+                            LoginHelper.submitForm.call(self, App, function(statusText) {
+                                if (statusText == "success") {
                                     dialog.setData('logged', true);
                                     dialog.close();
                                 }

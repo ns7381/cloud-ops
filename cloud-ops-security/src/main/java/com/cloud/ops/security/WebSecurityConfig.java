@@ -18,6 +18,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.Http403ForbiddenEntryPoint;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -54,7 +55,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                     .exceptionHandling()
                     .accessDeniedHandler(accessDeniedHandler())
-                    .authenticationEntryPoint(new Http401AuthenticationEntryPoint("headerValue"))
+                    .authenticationEntryPoint(new Http403ForbiddenEntryPoint())
                 .and()
                     .logout()
                     .permitAll();
