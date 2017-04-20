@@ -1,0 +1,17 @@
+project(':cloud-ops-esc') {
+
+    apply plugin: 'idea'
+    apply plugin: 'java'
+
+    dependencies {
+        compile("org.apache.jclouds.labs:docker:1.9.2")
+        compile("org.apache.jclouds.driver:jclouds-log4j:1.9.2")
+    }
+
+    idea {
+        module {
+            inheritOutputDirs = false
+            outputDir = file("$buildDir/classes/main/")
+        }
+    }
+}

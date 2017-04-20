@@ -90,7 +90,7 @@ define(['jquery', 'common/ui/modal', 'crypto-js', 'common/ui/pwdmasked', 'jq/for
                     $.isFunction(callback) && callback.call(this, statusText);
                 },
                 error: function(response, statusText, error, $form)  {
-                    if (statusText == "error" && error == "Forbidden") {
+                    if (statusText == "error") {
                         LoginHelper.showErrorInfo("用户名或密码错误");
                         $btnSubmit.prop('disabled', false).html(btnSubmitText);
                         $.isFunction(callback) && callback.call(this, statusText);
