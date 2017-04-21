@@ -3,11 +3,14 @@
  */
 package com.cloud.ops.service;
 
+import com.cloud.ops.dao.modal.SortConstant;
 import com.cloud.ops.repository.ApplicationEnvironmentRepository;
 import com.cloud.ops.entity.application.ApplicationEnvironment;
 
 import com.cloud.ops.utils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
+import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -25,8 +28,9 @@ public class ApplicationEnvironmentService {
 		return applicationEnvironmentRepository.findOne(id);
 	}
 
-	public List<ApplicationEnvironment> getAll() {
-		return applicationEnvironmentRepository.findAll();
+    @PostFilter("filterObject.username.equals(principal.username)")
+    public List<ApplicationEnvironment> getAll() {
+		return applicationEnvironmentRepository.findAll(SortConstant.CREATED_AT);
 	}
 
     public ApplicationEnvironment add(ApplicationEnvironment applicationEnvironment) {

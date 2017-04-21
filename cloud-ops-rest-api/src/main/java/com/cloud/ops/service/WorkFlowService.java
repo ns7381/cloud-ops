@@ -5,6 +5,7 @@ import com.cloud.ops.entity.workflow.WorkFlow;
 
 import com.cloud.ops.utils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -30,7 +31,7 @@ public class WorkFlowService {
 	}
 
     public List<WorkFlow> getByObjectId(String objectId) {
-        List<WorkFlow> workFlows = dao.findByObjectId(objectId);
+        List<WorkFlow> workFlows = dao.findByObjectId(objectId, new Sort(Sort.Direction.DESC, "startAt"));
         for (WorkFlow workFlow : workFlows) {
             workFlow.setSteps(workFlowStepService.findByWorkFlowId(workFlow.getId()));
         }

@@ -1,5 +1,6 @@
 package com.cloud.ops.service;
 
+import com.cloud.ops.dao.modal.SortConstant;
 import com.cloud.ops.entity.Resource.ResourcePackage;
 import com.cloud.ops.entity.Resource.ResourcePackageType;
 import com.cloud.ops.entity.topology.Topology;
@@ -26,10 +27,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
+import javax.persistence.LockModeType;
 import java.io.*;
 import java.util.*;
 import java.util.function.Function;
@@ -106,7 +109,7 @@ public class ApplicationService {
     }
 
     public List<Application> findByEnvironmentId(String environmentId) {
-        return dao.findByEnvironmentId(environmentId);
+        return dao.findByEnvironmentId(environmentId, SortConstant.CREATED_AT);
     }
 
     public void delete(String id) {
@@ -121,6 +124,7 @@ public class ApplicationService {
         return db;
     }
 
+    @Lock(LockModeType.READ)
     public Boolean deploy(String id, String nodeId, String packageId) {
         Application application = this.get(id);
         ResourcePackage resourcePackage = resourcePackageService.get(packageId);

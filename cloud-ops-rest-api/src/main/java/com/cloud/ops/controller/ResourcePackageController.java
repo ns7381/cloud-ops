@@ -57,8 +57,8 @@ public class ResourcePackageController {
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public List<ResourcePackage> getList(@RequestParam Map<String, Object> params) {
-        return service.getList(params);
+    public List<ResourcePackage> findByApplicationId(@RequestParam String applicationId) {
+        return service.findByApplicationId(applicationId);
     }
 
     @RequestMapping(value = "/{id}/download", method = RequestMethod.GET)

@@ -1,5 +1,6 @@
 package com.cloud.ops.service;
 
+import com.cloud.ops.dao.modal.SortConstant;
 import com.cloud.ops.entity.application.DeploymentNode;
 import com.cloud.ops.repository.TopologyRepository;
 import com.cloud.ops.entity.topology.Topology;
@@ -51,7 +52,7 @@ public class TopologyService {
     }
 
     public List<Topology> findAll() {
-        return dao.findAll();
+        return dao.findAll(SortConstant.CREATED_AT);
     }
 
     public void delete(String id) {

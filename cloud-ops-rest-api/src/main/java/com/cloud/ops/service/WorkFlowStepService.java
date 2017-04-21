@@ -1,5 +1,6 @@
 package com.cloud.ops.service;
 
+import com.cloud.ops.dao.modal.SortConstant;
 import com.cloud.ops.entity.workflow.WorkFlowStep;
 import com.cloud.ops.repository.WorkFlowStepRepository;
 import com.cloud.ops.utils.BeanUtils;
@@ -27,7 +28,7 @@ public class WorkFlowStepService {
 	}
 
     public List<WorkFlowStep> findByWorkFlowId(String workFlowId) {
-        return dao.findByWorkFlowId(workFlowId);
+        return dao.findByWorkFlowId(workFlowId, SortConstant.CREATED_AT);
     }
 
     public void delete(String id) {

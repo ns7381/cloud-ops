@@ -1,5 +1,6 @@
 package com.cloud.ops.service;
 
+import com.cloud.ops.dao.modal.SortConstant;
 import com.cloud.ops.entity.Resource.ResourcePackageConfig;
 import com.cloud.ops.entity.Resource.ResourcePackageType;
 import com.cloud.ops.repository.ResourcePackageRepository;
@@ -53,8 +54,8 @@ public class ResourcePackageService {
             e.printStackTrace();
         }
     }
-    public List<ResourcePackage> getList(Map<String, Object> params) {
-        return dao.findByApplicationId((String) params.get("applicationId"));
+    public List<ResourcePackage> findByApplicationId(String applicationId) {
+        return dao.findByApplicationId(applicationId, SortConstant.CREATED_AT);
     }
 
     public ResourcePackage update(ResourcePackage version) {
