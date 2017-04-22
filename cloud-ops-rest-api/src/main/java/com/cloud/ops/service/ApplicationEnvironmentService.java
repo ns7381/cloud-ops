@@ -11,6 +11,7 @@ import com.cloud.ops.utils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PostFilter;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -28,7 +29,7 @@ public class ApplicationEnvironmentService {
 		return applicationEnvironmentRepository.findOne(id);
 	}
 
-    @PostFilter("filterObject.username.equals(principal.username)")
+    @PostFilter("hasAuthority('ADMIN') or principal.username.equals(filterObject.username)")
     public List<ApplicationEnvironment> getAll() {
 		return applicationEnvironmentRepository.findAll(SortConstant.CREATED_AT);
 	}

@@ -53,7 +53,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                     .formLogin()
                     .loginPage("/").loginProcessingUrl("/v1/login")
-                    .successHandler()
+                    .successHandler(successHandler())
                     .failureHandler(failureHandler())
                     .permitAll()
                 .and()
@@ -106,7 +106,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             public void handle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse,
                                AccessDeniedException e) throws IOException, ServletException {
                 httpServletResponse.getWriter().append("Access denied");
-                httpServletResponse.setStatus(403);
+                httpServletResponse.setStatus(401);
             }
         };
     }

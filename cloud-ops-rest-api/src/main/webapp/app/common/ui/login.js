@@ -71,60 +71,37 @@ define(['jquery', 'common/ui/modal', 'crypto-js', 'common/ui/pwdmasked', 'jq/for
             if ($btnSubmit.length) {
                 $btnSubmit.text("正在登录...").prop('disabled', true);
             }
-            LoginHelper.$form.ajaxSubmit({
-                success: function(response, statusText, xhr, $form)  {
-                    var encryptedPwd = LoginHelper.encryptPwd($password.val());
-                    LoginHelper.setCookie.call(App, LoginHelper.rememberKey.username, data.name);
-                    if ($bRemember.prop("checked")) {
-                        LoginHelper.setCookie.call(App, LoginHelper.rememberKey.remember, '1');
-                        LoginHelper.setCookie.call(App, LoginHelper.rememberKey.password, encryptedPwd);
-                    } else {
-                        LoginHelper.removeCookie.call(App, LoginHelper.rememberKey.remember);
-                        LoginHelper.removeCookie.call(App, LoginHelper.rememberKey.password);
-                    }
-                    App.setLogin({name: data.name});
-                    if (!LoginHelper.dialog) {
-                        App.go(self.getParam('callback') || "/");
-                    }
-                    $btnSubmit.prop('disabled', false).html(btnSubmitText);
-                    $.isFunction(callback) && callback.call(this, statusText);
-                },
-                error: function(response, statusText, error, $form)  {
-                    if (statusText == "error") {
-                        LoginHelper.showErrorInfo("用户名或密码错误");
+            if ($password.val() && $username.val()) {
+                LoginHelper.$form.ajaxSubmit({
+                    success: function(response, statusText, xhr, $form)  {
+                        var encryptedPwd = LoginHelper.encryptPwd($password.val());
+                        LoginHelper.setCookie.call(App, LoginHelper.rememberKey.username, data.name);
+                        if ($bRemember.prop("checked")) {
+                            LoginHelper.setCookie.call(App, LoginHelper.rememberKey.remember, '1');
+                            LoginHelper.setCookie.call(App, LoginHelper.rememberKey.password, encryptedPwd);
+                        } else {
+                            LoginHelper.removeCookie.call(App, LoginHelper.rememberKey.remember);
+                            LoginHelper.removeCookie.call(App, LoginHelper.rememberKey.password);
+                        }
+                        App.setLogin({name: data.name});
+                        self.ajax.get("v1/auth", function (err, data) {
+                            LoginHelper.setCookie.call(App, "roles", data.roles);
+                        });
+                        if (!LoginHelper.dialog) {
+                            App.go(self.getParam('callback') || "/");
+                        }
                         $btnSubmit.prop('disabled', false).html(btnSubmitText);
                         $.isFunction(callback) && callback.call(this, statusText);
+                    },
+                    error: function(response, statusText, error, $form)  {
+                        if (statusText == "error") {
+                            LoginHelper.showErrorInfo("用户名或密码错误");
+                            $btnSubmit.prop('disabled', false).html(btnSubmitText);
+                            $.isFunction(callback) && callback.call(this, statusText);
+                        }
                     }
-                }
-            });
-           /* self.ajax.postJSON({
-                url: "v1/login",
-                data: data,
-                timeout: 5000
-            }, function(err, resp, xhr) {
-                if (err) {
-                    LoginHelper.showErrorInfo("用户名或密码错误");
-                } else {
-                    // remember login info
-                    var uid = resp.id,
-                        uname = resp.name,
-                        encryptedPwd = LoginHelper.encryptPwd($password.val());
-                    LoginHelper.setCookie.call(App, LoginHelper.rememberKey.username, uname);
-                    if ($bRemember.prop("checked")) {
-                        LoginHelper.setCookie.call(App, LoginHelper.rememberKey.remember, '1');
-                        LoginHelper.setCookie.call(App, LoginHelper.rememberKey.password, encryptedPwd);
-                    } else {
-                        LoginHelper.removeCookie.call(App, LoginHelper.rememberKey.remember);
-                        LoginHelper.removeCookie.call(App, LoginHelper.rememberKey.password);
-                    }
-                    App.setLogin({id: uid, name: uname});
-                    if (!LoginHelper.dialog) {
-                        App.go(self.getParam('callback') || "/");
-                    }
-                }
-                $btnSubmit.prop('disabled', false).html(btnSubmitText);
-                $.isFunction(callback) && callback.apply(this, arguments);
-            });*/
+                });
+            }
         },
         showErrorInfo: function(res, $tar) {
             var msg = "";

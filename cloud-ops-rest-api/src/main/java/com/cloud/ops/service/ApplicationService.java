@@ -26,6 +26,8 @@ import com.google.common.collect.Maps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.stereotype.Service;
@@ -40,6 +42,7 @@ import java.util.stream.Collectors;
 
 @Service
 @Transactional
+@CacheConfig(cacheNames = "applications")
 public class ApplicationService {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
@@ -65,6 +68,7 @@ public class ApplicationService {
     @Autowired
     private ApplicationContext context;
 
+    @Cacheable
     public Application get(String id) {
         Application application = dao.findOne(id);
         IToscaEnvironment toscaEnvironment = Tosca.newEnvironment();

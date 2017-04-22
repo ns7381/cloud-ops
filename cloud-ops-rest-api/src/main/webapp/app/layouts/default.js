@@ -31,7 +31,7 @@ define(['App', 'common/ui/resetpwd', 'bs/collapse', 'jq/nicescroll'], function(A
                 }
             ]
         ],
-		/*data: App.remote('/api/v1/clusters/json'),
+		data: App.remote('v1/auth'),
      	dataFilter: function(err, result) {
 	        if (err) {
 	            // this.onError(err, function(err) {
@@ -40,15 +40,13 @@ define(['App', 'common/ui/resetpwd', 'bs/collapse', 'jq/nicescroll'], function(A
 	            result = [];
 	        }
         	return {result: result};
-        },*/
+        },
         ready: function() {
 			var result = this.getData('result');
            // alert(result)
-			if(result == null||result==""){
-				this.$('#container-li').hide();
-				this.$('#image-li').hide();
-				this.$('#volume-li').hide();
-				this.$('#apigateway-li').hide();
+			if(result == null || result.roles==null || !$.isArray(result.roles) || $.inArray("ADMIN", result.roles)<0){
+				this.$('#topology-li').hide();
+				this.$('#sysmanagement-li').hide();
 			}
             var $aside = this.$('aside:first'),
                 $sideBar = $('#side-bar', $aside);
