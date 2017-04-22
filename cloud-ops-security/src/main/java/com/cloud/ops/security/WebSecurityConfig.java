@@ -1,5 +1,6 @@
 package com.cloud.ops.security;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.Http401AuthenticationEntryPoint;
 import org.springframework.context.annotation.Bean;
@@ -53,7 +54,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                     .formLogin()
                     .loginPage("/").loginProcessingUrl("/v1/login")
-                    .successHandler(successHandler())
+//                    .successHandler(successHandler())
                     .failureHandler(failureHandler())
                     .permitAll()
                 .and()
@@ -84,7 +85,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                                                 Authentication authentication) throws IOException, ServletException {
                 response.setContentType("application/json");
                 PrintWriter out = response.getWriter();
-                out.print(authentication.getPrincipal());
+                ObjectMapper objectMapper = new ObjectMapper();
+                out.print(objectMapper.writeValueAsString(authentication.getPrincipal()));
                 out.flush();
             }
         };

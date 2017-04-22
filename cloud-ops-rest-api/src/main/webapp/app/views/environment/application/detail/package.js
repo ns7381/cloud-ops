@@ -350,7 +350,7 @@ define(['App', 'common/ui/datatables', 'common/ui/modal', 'common/ui/websocket',
             WS.open("package.status", function (event) {
                 var payload = JSON.parse(event.data), isContained = false;
                 var $tr = $('tr[index="' + payload.id + '"]');
-                if ($tr[0]) {
+                if ($tr[0] && self.table) {
                     var row = self.table.row($tr[0]),
                         rowData = row.data();
                     rowData.status = payload.status;
