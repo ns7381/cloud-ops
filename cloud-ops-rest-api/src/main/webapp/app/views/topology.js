@@ -23,7 +23,7 @@ define(['App', 'common/ui/datatables', 'common/ui/modal'], function (App, DataTa
         initTable: function (callback) {
             var self = this;
             DataTables.init(this.$table, {
-                serverSide: true,
+                serverSide: false,
                 ajax: this.tableAjax(),
                 columns: [
                     {

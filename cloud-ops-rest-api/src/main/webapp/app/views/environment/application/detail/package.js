@@ -57,7 +57,7 @@ define(['App', 'common/ui/datatables', 'common/ui/modal', 'common/ui/websocket',
         initTable: function (callback) {
             var self = this;
             self.table = DataTables.init(this.$table, {
-                serverSide: true,
+                serverSide: false,
                 ajax: this.tableAjax(),
                 columns: [
                     {

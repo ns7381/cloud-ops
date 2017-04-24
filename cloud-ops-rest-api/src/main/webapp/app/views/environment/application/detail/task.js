@@ -28,7 +28,7 @@ define(['App', 'common/ui/datatables', 'common/ui/modal'], function (App, DataTa
         initTable: function (callback) {
             var self = this;
             self.table = DataTables.init(this.$table, {
-                serverSide: true,
+                serverSide: false,
                 ajax: this.tableAjax(),
                 columns: [{
                     "width": DataTables.width("check"),

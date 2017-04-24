@@ -24,7 +24,7 @@ define(['App', 'common/ui/datatables', 'common/ui/modal', 'common/ui/validator']
         },
         initTable: function (callback) {
             DataTables.init(this.$table, {
-                serverSide: true,
+                serverSide: false,
                 ajax: this.tableAjax(),
                 columns: [
                     {

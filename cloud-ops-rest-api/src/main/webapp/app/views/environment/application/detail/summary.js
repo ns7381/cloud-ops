@@ -22,7 +22,7 @@ define(['App', 'common/ui/modal', 'common/ui/validator', 'bs/tab'], function (Ap
                 var $that = $(e.currentTarget),
                     node = $that.data("node"),
                     key = $that.data("key");
-                var $input = $('.input-attr[data-node="'+node+'"][data-key="'+key+'"]'), val = $("." + node + key).text();
+                var $input = $('.input-attr[data-node="'+node+'"][data-key="'+key+'"]'), val = $("." + node + key).text().trim();
                 $input.val('').focus().val(val);
             })
         },
@@ -32,7 +32,7 @@ define(['App', 'common/ui/modal', 'common/ui/validator', 'bs/tab'], function (Ap
                 node = $that.data("node"),
                 key = $that.data("key"),
                 value = $("."+node + key).text();
-            var $input = $('.input-attr'), val = $input.val();
+            var $input = $('.input-attr'), val = $input.val().trim();
             if (val == value) return false;
             self.ajax.put("v1/applications/"+self.app_id+"/node/"+node+"/attributes?"+key+"="+val, function (err, data) {
                 if (err) {

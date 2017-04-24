@@ -8,7 +8,7 @@ define(['App', 'common/ui/datatables'], function (App, DataTables) {
         $table: $([]),
         initTable: function(callback) {
             DataTables.init(this.$table, {
-                serverSide: true,
+                serverSide: false,
                 ajax: this.tableAjax(),
                 columns: [
                     {
