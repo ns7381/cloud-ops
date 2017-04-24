@@ -1,8 +1,6 @@
 package com.cloud.ops.entity.application;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.List;
 
@@ -12,6 +10,7 @@ import java.util.List;
 @Getter
 @Setter
 @Builder
+@AllArgsConstructor
 public class LocalLocation {
     List<String> hosts;
     String user;

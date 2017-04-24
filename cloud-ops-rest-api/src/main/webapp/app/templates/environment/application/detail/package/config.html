@@ -4,6 +4,7 @@
 
         <div class="col-sm-7">
             <input type="text" class="form-control" id="gitUrl" name="gitUrl" value="{{gitUrl || 'http://gitserver/iop/xxx.git'}}">
+            <input type="hidden" class="form-control" id="id" name="id" value="{{id}}">
         </div>
     </div>
     <div class="form-group form-required">
@@ -36,7 +37,7 @@
         <label for="build" class="control-label col-sm-3">构建命令：</label>
 
         <div class="col-sm-7">
-            <textarea class="form-control" id="build" name="build">{{build || 'gradlew warForServers -Pstage=pro -Pprofile=xxx -Pdate=201710201 --refresh-dependencies'}}</textarea>
+            <textarea class="form-control" id="build" name="build">{{build || 'gradlew warForServers -Pstage=pro -Pprofile=xxx -Pdate=20170201 --refresh-dependencies'}}</textarea>
         </div>
     </div>
     <div class="form-group form-required">

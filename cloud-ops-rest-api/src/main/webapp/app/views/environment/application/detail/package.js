@@ -205,7 +205,7 @@ define(['App', 'common/ui/datatables', 'common/ui/modal', 'common/ui/websocket',
                         if (!valid) return false;
                         var package = $(".form-horizontal", $modal).serializeObject();
                         package.applicationId = self.app_id;
-                        var keywords = App.highlight(package.type == "WAR" ? "全量包" : "增量包" + package.version, 3);
+                        var keywords = App.highlight((package.type == "WAR" ? "全量包" : "增量包") + package.version, 3);
                         var processor = Modal.processing('正在保存' + keywords + '信息');
                         if ($('#method', $modal).val() == "file" && $("#file").val()) {
                             var $warForm = $("#package-form", $modal);
@@ -232,15 +232,26 @@ define(['App', 'common/ui/datatables', 'common/ui/modal', 'common/ui/websocket',
                             });
                         } else if($('#type', $modal).val() == "WAR" ){
                             self.ajax.putJSON('v1/resource-packages/git', package, function (err, data) {
-                                dialog.close();
-                                processor.success(keywords + '保存成功');
-                                self.$table.reloadTable();
+                                if (err) {
+                                    processor.error(keywords + '保存失败!原因：' + err.message);
+                                } else {
+                                    dialog.close();
+                                    processor.success(keywords + '保存成功');
+                                    self.$table.reloadTable();
+                                }
                             });
                         } else {
+                            delete package.build;
+                            delete package.type;
+                            delete package.version;
                             self.ajax.post('v1/resource-packages/patch' + self.setUrlK(package), function (err, data) {
-                                dialog.close();
-                                processor.success(keywords + '保存成功');
-                                self.$table.reloadTable();
+                                if (err) {
+                                    processor.error(keywords + '保存失败!原因：' + err.message);
+                                } else {
+                                    dialog.close();
+                                    processor.success(keywords + '保存成功');
+                                    self.$table.reloadTable();
+                                }
                             });
                         }
                     }
