@@ -27,6 +27,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.jpa.repository.Lock;
@@ -68,7 +70,7 @@ public class ApplicationService {
     @Autowired
     private ApplicationContext context;
 
-    @Cacheable
+    @Cacheable(key = "#id")
     public Application get(String id) {
         Application application = dao.findOne(id);
         IToscaEnvironment toscaEnvironment = Tosca.newEnvironment();
@@ -121,7 +123,7 @@ public class ApplicationService {
     }
 
     public Application update(Application app) {
-        Assert.notNull(app.getId());
+        Assert.notNull(app.getId(), "app id can not be null");
         Application db = dao.findOne(app.getId());
         BeanUtils.copyNotNullProperties(app, db);
         dao.save(db);
@@ -249,6 +251,7 @@ public class ApplicationService {
                 .password((String) attributes.get("password")).hosts((List<String>) attributes.get("hosts")).build());
     }
 
+    @CacheEvict(key = "#id")
     public Boolean changeApplicationAttributes(String id, String nodeId, Map<String, Object> attributes) {
         String yamlFilePath = dao.getOne(id).getYamlFilePath();
         topologyService.updateAttribute(yamlFilePath, nodeId, attributes);

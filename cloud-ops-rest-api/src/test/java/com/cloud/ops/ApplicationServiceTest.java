@@ -4,6 +4,7 @@ import com.cloud.ops.entity.application.Application;
 import com.cloud.ops.entity.application.LocalLocation;
 import com.cloud.ops.service.ApplicationService;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,6 +15,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static junit.framework.TestCase.assertEquals;
 
@@ -77,7 +79,14 @@ public class ApplicationServiceTest {
     public void testGet() {
 //        Application application = applicationService.get("8a48aca65b56ac30015b56b17c8f0000");
 //        System.out.println(application);
-        applicationService.findByEnvironmentId("8a48aca65b479025015b4b255da30000");
+//        applicationService.findByEnvironmentId("8a48aca65b479025015b4b255da30000");
+        Application application = applicationService.get("8a48aca65b66a399015b66cf2b740000");
+        System.out.println(application);
+        Map<String, Object> map = Maps.newHashMap();
+        map.put("tomcat_home", "/opt/tomcat123456");
+        applicationService.changeApplicationAttributes("8a48aca65b66a399015b66cf2b740000", "tomcat", map);
+        Application application1 = applicationService.get("8a48aca65b66a399015b66cf2b740000");
+        System.out.println(application1);
     }
 
     @Test
