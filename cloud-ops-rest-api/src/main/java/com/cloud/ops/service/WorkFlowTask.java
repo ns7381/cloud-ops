@@ -86,6 +86,7 @@ public class WorkFlowTask extends Thread {
                 }
                 stepService.save(step);
             }
+            workFlow.setEndAt(new Date());
             workFlow.setStatus(WorkFlowStatus.SUCCESS);
             service.save(workFlow);
             webSocketHandler.sendMsg(WebSocketConstants.WORKFLOW_STATUS, workFlow);

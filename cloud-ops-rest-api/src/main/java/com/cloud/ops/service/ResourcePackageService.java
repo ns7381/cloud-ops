@@ -44,12 +44,12 @@ public class ResourcePackageService {
         return version;
     }
     public void delete(String id) {
-        dao.delete(id);
         try {
             String warPath = this.get(id).getWarPath();
             if (StringUtils.isNotBlank(warPath)) {
                 org.apache.commons.io.FileUtils.forceDeleteOnExit(new File(warPath));
             }
+            dao.delete(id);
         } catch (IOException e) {
             e.printStackTrace();
         }

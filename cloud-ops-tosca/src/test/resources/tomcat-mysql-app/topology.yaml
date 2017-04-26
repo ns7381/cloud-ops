@@ -41,11 +41,16 @@ topology_template:
                     patch_deploy:
                         implementation: patch_deploy.sh
                         dependencies:
+                            - tomcat_stop: {do_interface: [SELF, tomcat_stop]}
                             - backup_db: {do_interface: [mysql, backup_db]}
                             - exe_upgrade_sql: {do_interface: [mysql, exe_upgrade_sql]}
                         inputs:
                               tomcat_home: { get_attribute: [ SELF, tomcat_home ] }
                               app_context: { get_attribute: [ SELF, app_context ] }
                               patch_package: { get_artifact: [ SELF, patch_package ] }
+                    tomcat_stop:
+                        implementation: tomcat_stop.sh
+                        inputs:
+                            tomcat_home: { get_attribute: [ SELF, tomcat_home ] }
             requirements:
                 - host: tomcat_host

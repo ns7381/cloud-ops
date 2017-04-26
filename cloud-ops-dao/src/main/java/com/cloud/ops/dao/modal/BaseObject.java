@@ -20,7 +20,7 @@ import java.util.Date;
 @Setter
 @Getter
 @Where(clause = "deleted='0'")
-@SQLDelete(sql = "UPDATE BaseObject SET is_deleted = 1 WHERE id = ? and version = ?")
+@SQLDelete(sql = "UPDATE BaseObject SET is_deleted = 1 WHERE id = ?")
 public abstract class BaseObject extends IdEntity {
 	private static final long serialVersionUID = -192375636795802942L;
 

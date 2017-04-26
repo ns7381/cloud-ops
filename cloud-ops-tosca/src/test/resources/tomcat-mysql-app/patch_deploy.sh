@@ -22,7 +22,7 @@ fi
 unzip -d${patch_package}unzip -o ${patch_package}
 
 #backup war package end
-BACKUP_DIR=/opt/iop-ops/backup/app-package
+BACKUP_DIR=/opt/iop-ops/backup/app-package/`date +%F_%H-%M-%S`
 if [ -d "${BACKUP_DIR}" ]; then
 	rm -rf ${BACKUP_DIR}
 fi

@@ -1,4 +1,4 @@
-define(['App', 'common/ui/datatables', 'common/ui/modal', 'common/ui/websocket', 'common/ui/validator', 'bs/tab', 'jq/form'], function (App, DataTables, Modal, WS) {
+define(['App', 'common/ui/datatables', 'common/ui/modal', 'common/ui/websocket', 'common/ui/validator', 'common/ui/filedownload', 'bs/tab', 'jq/form'], function (App, DataTables, Modal, WS) {
     return App.View({
         app_id: "",
         app_name: "",
@@ -44,6 +44,7 @@ define(['App', 'common/ui/datatables', 'common/ui/modal', 'common/ui/websocket',
                 // self.bind('click', $('.btn-patch', $tableTop), self.patchPackage);
                 self.bind('click', $('.btn-download', self.$table), self.downloadPackage);
                 self.bind('click', $('.btn-deploy', self.$table), self.deploy);
+                self.bind('click', $('.btn-delete', self.$table), self.deletePackage);
             });
             self.initWebsocket();
         },
@@ -89,12 +90,24 @@ define(['App', 'common/ui/datatables', 'common/ui/modal', 'common/ui/websocket',
                                     '</a>',
                                     '<a class="btn-opt btn-deploy" data-toggle="tooltip" href="javascript:void(0)" title="部署">',
                                     '<i class="fa fa-play"></i>',
+                                    '</a>',
+                                    '<a class="btn-opt btn-delete" data-toggle="tooltip" href="javascript:void(0)" title="删除">',
+                                    '<i class="fa fa-trash-o"></i>',
+                                    '</a>'
+                                ].join('');
+                            } else if(data.warPath){
+                                return [
+                                    '<a class="btn-opt btn-download" data-toggle="tooltip" href="javascript:void(0)" title="下载">',
+                                    '<i class="fa fa-cloud-download"></i>',
+                                    '</a>',
+                                    '<a class="btn-opt btn-delete" data-toggle="tooltip" href="javascript:void(0)" title="删除">',
+                                    '<i class="fa fa-trash-o"></i>',
                                     '</a>'
                                 ].join('');
                             } else {
                                 return [
-                                    '<a class="btn-opt btn-download" data-toggle="tooltip" href="javascript:void(0)" title="下载">',
-                                    '<i class="fa fa-cloud-download"></i>',
+                                    '<a class="btn-opt btn-delete" data-toggle="tooltip" href="javascript:void(0)" title="删除">',
+                                    '<i class="fa fa-trash-o"></i>',
                                     '</a>'
                                 ].join('');
                             }
@@ -263,7 +276,7 @@ define(['App', 'common/ui/datatables', 'common/ui/modal', 'common/ui/websocket',
             var row = $(e.currentTarget).data("row.dt"),
                 rowData = row.data(),
                 id = rowData.id,
-                name = rowData.name;
+                name = rowData.version;
             var keywords = App.highlight('程序包' + name, 3);
             Modal.confirm({
                 title: "下载程序包",
@@ -277,6 +290,34 @@ define(['App', 'common/ui/datatables', 'common/ui/modal', 'common/ui/websocket',
                             },
                             failCallback: function (html, url) {
                                 processor.error(keywords + '下载失败');
+                            }
+                        });
+                    }
+                }
+            });
+        },
+        deletePackage: function (e) {
+            var self = this;
+            var row = $(e.currentTarget).data("row.dt"),
+                rowData = row.data(),
+                id = rowData.id,
+                name = rowData.version;
+            var keywords = App.highlight('程序包' + name, 3);
+            Modal.confirm({
+                title: "删除程序包",
+                message: "确定要删除" + keywords + "吗",
+                callback: function (result) {
+                    if (result) {
+                        var processor = Modal.processing("正在删除" + keywords);
+                        self.ajax.delete("v1/resource-packages/" + id, function (err, data) {
+                            if (data) {
+                                processor.success(keywords + '删除成功');
+                                self.$table.reloadTable();
+                            }
+                            if (err) {
+                                self.onError(err, function (err) {
+                                    processor.error(keywords + '删除失败。原因：' + err.message);
+                                })
                             }
                         });
                     }

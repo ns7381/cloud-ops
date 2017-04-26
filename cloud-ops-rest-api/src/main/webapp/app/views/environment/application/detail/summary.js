@@ -31,17 +31,28 @@ define(['App', 'common/ui/modal', 'common/ui/validator', 'bs/tab'], function (Ap
             var self = this,
                 node = $that.data("node"),
                 key = $that.data("key"),
-                value = $("."+node + key).text();
+                value = $("."+node + key).text(),
+                putData = {};
             var $input = $('.input-attr'), val = $input.val().trim();
             if (val == value) return false;
-            self.ajax.put("v1/applications/"+self.app_id+"/node/"+node+"/attributes?"+key+"="+val, function (err, data) {
+            putData[key] = val;
+            $.ajax({
+                url: "v1/applications/" + self.app_id + "/node/" + node + "/attributes",
+                type: 'put',
+                data: putData,
+                success: function (data) {
+                    $('[data-toggle="popover"]').popover('hide');
+                    $("."+node + key).text(val);
+                }
+            });
+            /*self.ajax.put("v1/applications/"+self.app_id+"/node/"+node+"/attributes?" + $.param(putData), function (err, data) {
                 if (err) {
                     Modal.error(App.highlight("属性" + key, 2) + '修改失败!原因：' + err.message);
                 } else {
                     $('[data-toggle="popover"]').popover('hide');
                     $("."+node + key).text(val);
                 }
-            });
+            });*/
         }
     });
 });
