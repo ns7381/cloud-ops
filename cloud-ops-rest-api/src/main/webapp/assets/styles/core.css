@@ -3764,3 +3764,55 @@ aside {
     padding: 0px 0px 0px 0px !important;
     margin: 0px !important;
 }
+
+.service-detail-title {
+    margin-top: 14px;
+    margin-bottom: 5px;
+}
+#tab-service-detail .nav-pills {
+    float: left;
+    width: 15%;
+    padding-top: 7px;
+    /*max-height: 192px;*/
+    /*overflow-x: hidden;*/
+    /*overflow-y: auto;*/
+}
+#tab-service-detail .tab-content {
+    float: left;
+    width: 85%;
+}
+#tab-service-detail .nav-pills>li {
+    float: none;
+}
+#tab-service-detail .nav-pills>li>a {
+    margin-right: 0;
+}
+#tab-service-detail .nav-pills>li+li {
+    margin-left: 0;
+    margin-top: 7px;
+}
+#tab-service-detail .tab-content {
+    margin-top: -23px;
+    padding-top: 0;
+    padding-left: 12px;
+}
+#tab-service-detail .tab-pane {
+    padding: 8px 9px;
+    border: 1px solid #F2F2F2;
+}
+#tab-service-detail .tab-pane .alert {
+    padding: 0 10px;
+    border-color: #F2F2F2;
+    background-color: #f8f6f7;
+    border-radius: 0;
+}
+#tab-service-detail .tab-pane .alert > h5 > em {
+    padding: 0 5px;
+    color: #39b3e2;
+    font-style: normal;
+}
+#tab-service-detail .tab-pane .alert > p {
+    margin-bottom: 10px;
+    font-size: 13px;
+    line-height: 1.8em;
+}

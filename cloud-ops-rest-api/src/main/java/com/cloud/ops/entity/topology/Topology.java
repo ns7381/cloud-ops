@@ -18,6 +18,7 @@ public class Topology extends BaseObject {
     String yamlFilePath;
     IToscaEnvironment toscaEnvironment;
     List<DeploymentNode> nodes;
+    List<String> fileContents;
 
     public String getYamlFilePath() {
         return yamlFilePath;
@@ -43,6 +44,15 @@ public class Topology extends BaseObject {
 
     public void setNodes(List<DeploymentNode> nodes) {
         this.nodes = nodes;
+    }
+
+    @Transient
+    public List<String> getFileContents() {
+        return fileContents;
+    }
+
+    public void setFileContents(List<String> fileContents) {
+        this.fileContents = fileContents;
     }
 }
 

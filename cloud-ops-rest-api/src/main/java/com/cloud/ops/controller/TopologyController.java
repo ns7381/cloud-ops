@@ -4,6 +4,7 @@ import com.cloud.ops.entity.topology.Topology;
 import com.cloud.ops.service.TopologyService;
 import com.cloud.ops.store.FileStore;
 import io.swagger.annotations.Api;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -11,6 +12,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.List;
 
@@ -53,8 +56,10 @@ public class TopologyController {
     }
 
     @GetMapping(value = "/{id}")
-    public Topology get(@PathVariable String id) {
-        return service.get(id);
+    public Topology get(@PathVariable String id) throws IOException {
+        Topology topology = service.get(id);
+        topology.setFileContents(IOUtils.readLines(new FileReader(topology.getYamlFilePath())));
+        return topology;
     }
 
     @GetMapping

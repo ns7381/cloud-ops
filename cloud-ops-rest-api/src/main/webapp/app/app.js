@@ -375,7 +375,14 @@ define(['yfjs/spa', 'common/status_label', 'jquery', 'common/ui/modal', 'common/
             if (loginErrs.length) {
                 this.clearLogin();
                 this.removeError(loginErrs);
-                Login.modal.call(this, this);
+                // Login.modal.call(this, this);
+                var curUrl = this.getState('url'), params;
+                if (/^\/login/.test(curUrl)) {
+                    params = this.getParams();
+                } else if (curUrl) {
+                    params = {callback: curUrl};
+                }
+                this.go(this.getUrl('/login', params));
                 return this;
             }
             var otherErrs = this.getError();

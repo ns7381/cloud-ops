@@ -8,8 +8,9 @@ define(['App', 'common/ui/datatables'], function (App, DataTables) {
         $table: $([]),
         initTable: function(callback) {
             DataTables.init(this.$table, {
-                serverSide: false,
+                serverSide: true,
                 ajax: this.tableAjax(),
+                dataSrc:'content',
                 columns: [
                     {
                         'data': "",
@@ -47,7 +48,7 @@ define(['App', 'common/ui/datatables'], function (App, DataTables) {
             return DataTables.parseAjax(
                 this,
                 this.$table,
-                'v1/audits'
+                'v1/audits/page/{pageNo}/{pageSize}'
             );
         }
     });

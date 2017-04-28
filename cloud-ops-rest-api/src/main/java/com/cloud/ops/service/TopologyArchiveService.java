@@ -35,7 +35,7 @@ public class TopologyArchiveService {
     }
 
 	public TopologyArchive update(TopologyArchive entity){
-        Assert.notNull(entity.getId());
+        Assert.notNull(entity.getId(), "id is required");
         TopologyArchive db = this.get(entity.getId());
         BeanUtils.copyNotNullProperties(entity, db);
         dao.save(db);

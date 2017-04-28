@@ -1,0 +1,48 @@
+<div class="page-breadcrumb">
+    <ol class="breadcrumb">
+        <li><a href="{{getUrl('+/../')}}">模板配置</a></li>
+        <li class="active">{{name}}</li>
+    </ol>
+    <a href="{{getUrl('+/../')}}" class="btn btn-back">返回列表</a></li>
+</div>
+<div class="page-body">
+    <div class="row">
+        <div class="col-sm-4">
+            <h5 class="service-detail-title">请选择您要编辑的文件：</h5>
+        </div>
+        <div class="col-sm-12">
+            <div class="clearfix" id="tab-service-detail">
+                <ul class="nav nav-pills" role="tablist">
+                    <li role="presentation" class="active">
+                        <a href="#topology--yaml" data-toggle="pill" role="tab">topology.yaml</a>
+                    </li>
+                    {{each archives as archive key}}
+                    <li role="presentation">
+                        <a href="#{{archive.name.replace('.', '--')}}" data-toggle="pill" role="tab">{{archive.name}}</a>
+                    </li>
+                    {{/each}}
+                    <div class="form-group" style="margin-top: 10px;">
+                        <input type="file" class="form-control" name="file" id="file">
+                        <div class="btn-browse"></div>
+                    </div>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane" id="topology--yaml" role="tabpanel">
+                        <div class="alert">
+                            <h5>已选定<em>topology.yaml</em>:</h5>
+                        </div>
+                        <textarea name="content" cols="20" rows="10">{{topology.fileContents.join('\n')}}</textarea>
+                    </div>
+                    {{each archives as archive key}}
+                    <div class="tab-pane" id="{{archive.name.replace('.', '--')}}" role="tabpanel">
+                        <div class="alert">
+                            <h5>已选定<em>{{archive.name}}</em>:</h5>
+                        </div>
+                        <textarea name="content" cols="20" rows="10">{{archive.fileContents.join('\n')}}</textarea>
+                    </div>
+                    {{/each}}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

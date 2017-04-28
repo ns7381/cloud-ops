@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.List;
 
 /**
  * Created by Administrator on 2017/1/13.
@@ -15,6 +16,7 @@ public class TopologyArchive extends BaseObject {
     private String topologyId;
     private String filePath;
     private TopologyArchiveType type;
+    List<String> fileContents;
 
     public String getTopologyId() {
         return topologyId;
@@ -39,5 +41,14 @@ public class TopologyArchive extends BaseObject {
 
     public void setType(TopologyArchiveType type) {
         this.type = type;
+    }
+
+    @Transient
+    public List<String> getFileContents() {
+        return fileContents;
+    }
+
+    public void setFileContents(List<String> fileContents) {
+        this.fileContents = fileContents;
     }
 }
