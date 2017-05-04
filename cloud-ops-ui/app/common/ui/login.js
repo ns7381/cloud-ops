@@ -1,10 +1,10 @@
-define(['jquery', 'common/ui/modal', 'crypto-js', 'common/ui/pwdmasked'], function($, Modal, CryptoJS) {
+define(['jquery', 'common/ui/modal', 'crypto-js', 'common/ui/pwdmasked', 'jq/form'], function($, Modal, CryptoJS) {
 
     var LoginHelper = {
         rememberKey: {
-            username: "remember_username_dockerstack",
-            password: "remember_password_dockerstack",
-            remember: "remember_dockerstack"
+            username: "remember_username_ops",
+            password: "remember_password_ops",
+            remember: "remember_ops"
         },
         $form: $([]),
         $username: $([]),
@@ -19,7 +19,7 @@ define(['jquery', 'common/ui/modal', 'crypto-js', 'common/ui/pwdmasked'], functi
                         '<img class="signin-logo" alt="IOP Manager" src="' + App.getStyleUrl('img/logo.png') +'"/>' +
                     '</div>' +
                 '</div>' +
-                '<form class="form-horizontal form-signin" onsubmit="return false;" role="form" autocomplete="off">' +
+                '<form class="form-horizontal form-signin" id="login-form" method="post" role="form" action="v1/login" autocomplete="off">' +
                     '<input class="hide">' +
                     '<div class="input-group">' +
                         '<span class="signin-icons signin-icon-input signin-icon-user">' +
@@ -71,35 +71,35 @@ define(['jquery', 'common/ui/modal', 'crypto-js', 'common/ui/pwdmasked'], functi
             if ($btnSubmit.length) {
                 $btnSubmit.text("正在登录...").prop('disabled', true);
             }
-
-            self.ajax.postJSON({
-                url: "/api/v1/servers/login",
-                data: data,
-                timeout: 5000
-            }, function(err, resp, xhr) {
-                if (err) {
-                    LoginHelper.showErrorInfo("用户名或密码错误");
-                } else {
-                    // remember login info
-                    var uid = resp.id,
-                        uname = resp.name,
-                        encryptedPwd = LoginHelper.encryptPwd($password.val());
-                    LoginHelper.setCookie.call(App, LoginHelper.rememberKey.username, uname);
-                    if ($bRemember.prop("checked")) {
-                        LoginHelper.setCookie.call(App, LoginHelper.rememberKey.remember, '1');
-                        LoginHelper.setCookie.call(App, LoginHelper.rememberKey.password, encryptedPwd);
-                    } else {
-                        LoginHelper.removeCookie.call(App, LoginHelper.rememberKey.remember);
-                        LoginHelper.removeCookie.call(App, LoginHelper.rememberKey.password);
+            if ($password.val() && $username.val()) {
+                LoginHelper.$form.ajaxSubmit({
+                    success: function(response, statusText, xhr, $form)  {
+                        var encryptedPwd = LoginHelper.encryptPwd($password.val());
+                        LoginHelper.setCookie.call(App, LoginHelper.rememberKey.username, data.name);
+                        if ($bRemember.prop("checked")) {
+                            LoginHelper.setCookie.call(App, LoginHelper.rememberKey.remember, '1');
+                            LoginHelper.setCookie.call(App, LoginHelper.rememberKey.password, encryptedPwd);
+                        } else {
+                            LoginHelper.removeCookie.call(App, LoginHelper.rememberKey.remember);
+                            LoginHelper.removeCookie.call(App, LoginHelper.rememberKey.password);
+                        }
+                        App.setLogin({name: data.name});
+                        LoginHelper.setCookie.call(App, "roles", response.authorities);
+                        if (!LoginHelper.dialog) {
+                            App.go(self.getParam('callback') || "/");
+                        }
+                        $btnSubmit.prop('disabled', false).html(btnSubmitText);
+                        $.isFunction(callback) && callback.call(this, statusText);
+                    },
+                    error: function(response, statusText, error, $form)  {
+                        if (statusText == "error") {
+                            LoginHelper.showErrorInfo("用户名或密码错误");
+                            $btnSubmit.prop('disabled', false).html(btnSubmitText);
+                            $.isFunction(callback) && callback.call(this, statusText);
+                        }
                     }
-                    App.setLogin({id: uid, name: uname});
-                    if (!LoginHelper.dialog) {
-                        App.go(self.getParam('callback') || "/");
-                    }
-                }
-                $btnSubmit.prop('disabled', false).html(btnSubmitText);
-                $.isFunction(callback) && callback.apply(this, arguments);
-            });
+                });
+            }
         },
         showErrorInfo: function(res, $tar) {
             var msg = "";
@@ -188,8 +188,9 @@ define(['jquery', 'common/ui/modal', 'crypto-js', 'common/ui/pwdmasked'], functi
                             if (dialog.getData('logging')) return false;
                             dialog.setData('logging', true);
                             dialog.enableButtons(false);
-                            LoginHelper.submitForm.call(self, App, function(err) {
-                                if (!err) {
+                            LoginHelper.$form = $("#login-form", dialog.getModalBody());
+                            LoginHelper.submitForm.call(self, App, function(statusText) {
+                                if (statusText == "success") {
                                     dialog.setData('logged', true);
                                     dialog.close();
                                 }

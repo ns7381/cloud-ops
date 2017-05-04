@@ -10,6 +10,7 @@ define(['App', 'common/ui/datatables'], function (App, DataTables) {
             DataTables.init(this.$table, {
                 serverSide: true,
                 ajax: this.tableAjax(),
+                dataSrc:'content',
                 columns: [
                     {
                         'data': "",
@@ -17,28 +18,28 @@ define(['App', 'common/ui/datatables'], function (App, DataTables) {
                         'defaultContent': '<label><input type="checkbox"></label>'
                     },
                     {
-                        'data': "ObjectId",
+                        'data': "username",
                         'width': DataTables.width("name")
                     },
                     {
-                        'data': "ObjectType",
-                        'width': "4.5em"
+                        'data': "method",
+                        'width': "4em"
                     },
                     {
-                        'data': "OperIp",
-                        'width': DataTables.width("host")
+                        'data': "path",
+                        'width': "30em"
                     },
                     {
-                        'data': "OperType",
-                        'width': "7em"
+                        'data': "responseStatus",
+                        'width': "4em"
                     },
                     {
-                        'data': "OperTime",
-                        'width': DataTables.width("datetime")
+                        'data': "host",
+                        'width': "10em"
                     },
                     {
-                        'data': "OperCmd",
-                        'minWidth': DataTables.width("name")
+                        'data': "createdAt",
+                        'minWidth': "8em"
                     }
                 ]
             }, callback);
@@ -47,7 +48,7 @@ define(['App', 'common/ui/datatables'], function (App, DataTables) {
             return DataTables.parseAjax(
                 this,
                 this.$table,
-                '/api/v1/operation/page/{pageNo}/{pageSize}'
+                'v1/audits/page/{pageNo}/{pageSize}'
             );
         }
     });

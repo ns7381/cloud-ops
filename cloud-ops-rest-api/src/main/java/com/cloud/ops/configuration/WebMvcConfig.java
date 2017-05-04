@@ -22,7 +22,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 @RestController
 public class WebMvcConfig extends WebMvcConfigurerAdapter {
 
-    @Value("classpath:/webapp/index.html")
+    @Value("classpath:ui/index.html")
 //    @Value("classpath:META-INF/resources/webjars/ui/index.html")
     private Resource indexHtml;
 
@@ -43,6 +43,7 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
     public MultipartFilter multipartFilter() {
         return new MultipartFilter();
     }
+
     /*@Override
     public void addFormatters(FormatterRegistry registry) {
         DateTimeFormatterRegistrar registrar = new DateTimeFormatterRegistrar();
@@ -52,9 +53,9 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-//        registry.addResourceHandler("/app/**").addResourceLocations("classpath:META-INF/resources/webjars/ui/app/");
-//        registry.addResourceHandler("/assets/**").addResourceLocations("classpath:META-INF/resources/webjars/ui/assets/");
-//        registry.addResourceHandler("/yfjs-lib/**").addResourceLocations("classpath:META-INF/resources/webjars/ui/yfjs-lib/");
+        registry.addResourceHandler("/app/**").addResourceLocations("classpath:ui/app/");
+        registry.addResourceHandler("/assets/**").addResourceLocations("classpath:ui/assets/");
+        registry.addResourceHandler("/yfjs-lib/**").addResourceLocations("classpath:ui/yfjs-lib/");
     }
 
     @Bean

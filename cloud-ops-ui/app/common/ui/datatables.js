@@ -746,7 +746,7 @@ define([
                                 }
                                 url.args = url.args || {};
                                 url.data = $.extend({}, url.data, DataTables.parseParam($table, param));
-                                url.args = $.extend({pageNo: tableApi.page() + 1, pageSize: tableApi.page.len()}, url.args, url.data);
+                                url.args = $.extend({pageNo: tableApi.page(), pageSize: tableApi.page.len()}, url.args, url.data);
                             }
 
                             return url;
@@ -828,8 +828,8 @@ define([
                 }
             }
 
-            var recordsTotal = data.totalCount || _data.length || 0,
-                recordsFiltered = data.totalCount || _data.length || 0;
+            var recordsTotal = data.totalElements || _data.length || 0,
+                recordsFiltered = data.totalElements || _data.length || 0;
 
             result[dataSrc] = _data;
             result['recordsTotal'] = recordsTotal;

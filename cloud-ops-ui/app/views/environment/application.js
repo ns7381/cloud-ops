@@ -31,7 +31,7 @@ define(['App', 'common/ui/datatables', 'common/ui/modal', 'rq/text!app/templates
             initTable: function (callback) {
                 var self = this;
                 DataTables.init(this.$table, {
-                    serverSide: true,
+                    serverSide: false,
                     ajax: this.tableAjax(),
                     columns: [
                         {
@@ -197,7 +197,7 @@ define(['App', 'common/ui/datatables', 'common/ui/modal', 'rq/text!app/templates
                     }]
                 });
             },
-            deleteApp: function () {
+            deleteApp: function (e) {
                 var self = this;
                 var row = $(e.currentTarget).data("row.dt"),
                     rowData = row.data(),

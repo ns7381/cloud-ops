@@ -4,7 +4,7 @@ define(['App', 'common/ui/login'], function(App, Login) {
         styles: 'login.css',
         ready: function() {
             var $form = this.$("#login-form");
-            // Login.ready.call(this, App, $form);
+            Login.ready.call(this, App, $form);
         }
     });
 });

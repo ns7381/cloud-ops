@@ -6,7 +6,7 @@ project(':cloud-ops-rest-api') {
 
 
     dependencies {
-//        compile project(':cloud-ops-ui')
+        compile project(':cloud-ops-ui')
         compile project(':cloud-ops-dao')
         compile project(':cloud-ops-tosca')
         compile project(':cloud-ops-security')

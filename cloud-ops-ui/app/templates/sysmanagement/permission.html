@@ -4,7 +4,7 @@
         <em>User management</em>
     </div>
     <div class="page-desc">
-        <p></p>
+        <p>对用户及用户所有的权限进行管理</p>
     </div>
 </div>
 <div class="page-body">
@@ -15,19 +15,7 @@
         </div>
         <div class="pull-right">
             <label>
-                <select name="status" class="form-control table-filter">
-                    <option value="">选择一个状态</option>
-                    <option value="normal">正常</option>
-                    <option value="locked">已锁定</option>
-                    <option value="disabled">已禁用</option>
-                    <option value="reset_pwd">密码重置</option>
-                </select>
-            </label>
-            <label>
-                <input type="search" placeholder="登录账号" name="loginName" class="form-control input-sm table-filter">
-            </label>
-            <label>
-                <input type="search" name="trueName" class="form-control input-sm table-filter" placeholder="姓名">
+                <input type="search" name="username" class="form-control input-sm table-filter" placeholder="姓名">
                 <a class="btn btn-search"></a>
             </label>
         </div>
@@ -38,11 +26,8 @@
             <th>
                 <label><input type="checkbox" class="selectAll"></label>
             </th>
-            <th>登录账号</th>
             <th>姓名</th>
-            <th>手机号</th>
-            <th>邮箱</th>
-            <th>状态</th>
+            <th>角色</th>
             <th>操作</th>
         </tr>
         </thead>

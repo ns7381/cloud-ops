@@ -15,9 +15,6 @@ import org.jclouds.sshj.config.SshjSshClientModule;
 import java.util.Properties;
 import java.util.Set;
 
-/**
- * Created by shelan on 1/25/16.
- */
 public class DockerLauncher {
     // get a context with docker that offers the portable ComputeService api
     public static void main(String[] args) throws RunNodesException {

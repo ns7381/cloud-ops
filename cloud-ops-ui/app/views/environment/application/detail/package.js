@@ -1,4 +1,4 @@
-define(['App', 'common/ui/datatables', 'common/ui/modal', 'common/ui/websocket', 'common/ui/validator', 'bs/tab', 'jq/form'], function (App, DataTables, Modal, WS) {
+define(['App', 'common/ui/datatables', 'common/ui/modal', 'common/ui/websocket', 'common/ui/validator', 'common/ui/filedownload', 'bs/tab', 'jq/form'], function (App, DataTables, Modal, WS) {
     return App.View({
         app_id: "",
         app_name: "",
@@ -44,6 +44,7 @@ define(['App', 'common/ui/datatables', 'common/ui/modal', 'common/ui/websocket',
                 // self.bind('click', $('.btn-patch', $tableTop), self.patchPackage);
                 self.bind('click', $('.btn-download', self.$table), self.downloadPackage);
                 self.bind('click', $('.btn-deploy', self.$table), self.deploy);
+                self.bind('click', $('.btn-delete', self.$table), self.deletePackage);
             });
             self.initWebsocket();
         },
@@ -57,7 +58,7 @@ define(['App', 'common/ui/datatables', 'common/ui/modal', 'common/ui/websocket',
         initTable: function (callback) {
             var self = this;
             self.table = DataTables.init(this.$table, {
-                serverSide: true,
+                serverSide: false,
                 ajax: this.tableAjax(),
                 columns: [
                     {
@@ -89,12 +90,24 @@ define(['App', 'common/ui/datatables', 'common/ui/modal', 'common/ui/websocket',
                                     '</a>',
                                     '<a class="btn-opt btn-deploy" data-toggle="tooltip" href="javascript:void(0)" title="部署">',
                                     '<i class="fa fa-play"></i>',
+                                    '</a>',
+                                    '<a class="btn-opt btn-delete" data-toggle="tooltip" href="javascript:void(0)" title="删除">',
+                                    '<i class="fa fa-trash-o"></i>',
+                                    '</a>'
+                                ].join('');
+                            } else if(data.warPath){
+                                return [
+                                    '<a class="btn-opt btn-download" data-toggle="tooltip" href="javascript:void(0)" title="下载">',
+                                    '<i class="fa fa-cloud-download"></i>',
+                                    '</a>',
+                                    '<a class="btn-opt btn-delete" data-toggle="tooltip" href="javascript:void(0)" title="删除">',
+                                    '<i class="fa fa-trash-o"></i>',
                                     '</a>'
                                 ].join('');
                             } else {
                                 return [
-                                    '<a class="btn-opt btn-download" data-toggle="tooltip" href="javascript:void(0)" title="下载">',
-                                    '<i class="fa fa-cloud-download"></i>',
+                                    '<a class="btn-opt btn-delete" data-toggle="tooltip" href="javascript:void(0)" title="删除">',
+                                    '<i class="fa fa-trash-o"></i>',
                                     '</a>'
                                 ].join('');
                             }
@@ -165,7 +178,7 @@ define(['App', 'common/ui/datatables', 'common/ui/modal', 'common/ui/websocket',
                         url: "+/add.html",
                         data: App.remote('v1/package-configs?applicationId=' + self.app_id),
                         dataFilter: function (err, data) {
-                            return {config: data, rows: self.table.data("row.dt").data()};
+                            return {config: data, rows: self.table.data("row.dt").data(), appId: self.app_id};
                         },
                         callback: function (err, html) {
                             def.resolve(html);
@@ -205,7 +218,7 @@ define(['App', 'common/ui/datatables', 'common/ui/modal', 'common/ui/websocket',
                         if (!valid) return false;
                         var package = $(".form-horizontal", $modal).serializeObject();
                         package.applicationId = self.app_id;
-                        var keywords = App.highlight(package.type == "WAR" ? "全量包" : "增量包" + package.version, 3);
+                        var keywords = App.highlight((package.type == "WAR" ? "全量包" : "增量包") + package.version, 3);
                         var processor = Modal.processing('正在保存' + keywords + '信息');
                         if ($('#method', $modal).val() == "file" && $("#file").val()) {
                             var $warForm = $("#package-form", $modal);
@@ -232,15 +245,26 @@ define(['App', 'common/ui/datatables', 'common/ui/modal', 'common/ui/websocket',
                             });
                         } else if($('#type', $modal).val() == "WAR" ){
                             self.ajax.putJSON('v1/resource-packages/git', package, function (err, data) {
-                                dialog.close();
-                                processor.success(keywords + '保存成功');
-                                self.$table.reloadTable();
+                                if (err) {
+                                    processor.error(keywords + '保存失败!原因：' + err.message);
+                                } else {
+                                    dialog.close();
+                                    processor.success(keywords + '保存成功');
+                                    self.$table.reloadTable();
+                                }
                             });
                         } else {
+                            delete package.build;
+                            delete package.type;
+                            delete package.version;
                             self.ajax.post('v1/resource-packages/patch' + self.setUrlK(package), function (err, data) {
-                                dialog.close();
-                                processor.success(keywords + '保存成功');
-                                self.$table.reloadTable();
+                                if (err) {
+                                    processor.error(keywords + '保存失败!原因：' + err.message);
+                                } else {
+                                    dialog.close();
+                                    processor.success(keywords + '保存成功');
+                                    self.$table.reloadTable();
+                                }
                             });
                         }
                     }
@@ -252,7 +276,7 @@ define(['App', 'common/ui/datatables', 'common/ui/modal', 'common/ui/websocket',
             var row = $(e.currentTarget).data("row.dt"),
                 rowData = row.data(),
                 id = rowData.id,
-                name = rowData.name;
+                name = rowData.version;
             var keywords = App.highlight('程序包' + name, 3);
             Modal.confirm({
                 title: "下载程序包",
@@ -266,6 +290,34 @@ define(['App', 'common/ui/datatables', 'common/ui/modal', 'common/ui/websocket',
                             },
                             failCallback: function (html, url) {
                                 processor.error(keywords + '下载失败');
+                            }
+                        });
+                    }
+                }
+            });
+        },
+        deletePackage: function (e) {
+            var self = this;
+            var row = $(e.currentTarget).data("row.dt"),
+                rowData = row.data(),
+                id = rowData.id,
+                name = rowData.version;
+            var keywords = App.highlight('程序包' + name, 3);
+            Modal.confirm({
+                title: "删除程序包",
+                message: "确定要删除" + keywords + "吗",
+                callback: function (result) {
+                    if (result) {
+                        var processor = Modal.processing("正在删除" + keywords);
+                        self.ajax.delete("v1/resource-packages/" + id, function (err, data) {
+                            if (data) {
+                                processor.success(keywords + '删除成功');
+                                self.$table.reloadTable();
+                            }
+                            if (err) {
+                                self.onError(err, function (err) {
+                                    processor.error(keywords + '删除失败。原因：' + err.message);
+                                })
                             }
                         });
                     }
@@ -350,7 +402,7 @@ define(['App', 'common/ui/datatables', 'common/ui/modal', 'common/ui/websocket',
             WS.open("package.status", function (event) {
                 var payload = JSON.parse(event.data), isContained = false;
                 var $tr = $('tr[index="' + payload.id + '"]');
-                if ($tr[0]) {
+                if ($tr[0] && self.table) {
                     var row = self.table.row($tr[0]),
                         rowData = row.data();
                     rowData.status = payload.status;

@@ -23,7 +23,7 @@ define(['App', 'common/ui/datatables', 'common/ui/modal'], function (App, DataTa
         initTable: function (callback) {
             var self = this;
             DataTables.init(this.$table, {
-                serverSide: true,
+                serverSide: false,
                 ajax: this.tableAjax(),
                 columns: [
                     {
@@ -34,7 +34,7 @@ define(['App', 'common/ui/datatables', 'common/ui/modal'], function (App, DataTa
                         "data": {},
                         "width": DataTables.width("name"),
                         "render": function (data) {
-                            return '<a href="' + self.getUrl('+/detail', {'id': data.id}) + '">' + data.name + '</a>';
+                            return '<a href="' + self.getUrl('+/detail', {'id': data.id, 'name': data.name}) + '">' + data.name + '</a>'
                         }
                     },
                     {

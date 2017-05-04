@@ -1,0 +1,56 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+topology_template:
+    node_templates:
+        tomcat_host:
+            type: tosca.nodes.Compute.Local
+        mysql_host:
+            type: tosca.nodes.Compute.Local
+        mysql:
+            type: tosca.nodes.deploy.MySQL
+            attributes:
+                port: 3306
+                db_name: iop_dev
+                db_user: root
+                db_password: 123456a?
+            interfaces:
+                Configure:
+                    exe_upgrade_sql:
+                        implementation: exe_upgrade_sql.sh
+                        inputs:
+                            db_name: { get_attribute: [ SELF, db_name ] }
+                            db_user: { get_attribute: [ SELF, db_user ] }
+                            db_password: { get_attribute: [ SELF, db_password ] }
+                            sql_file: { get_artifact: [ tomcat, patch_package ] }
+                    backup_db:
+                        implementation: backup_db.sh
+                        inputs:
+                            db_password: { get_attribute: [ SELF, db_password ] }
+            requirements:
+                - host: mysql_host
+        tomcat:
+            type: tosca.nodes.deploy.Tomcat
+            attributes:
+                tomcat_home: /opt/tomcat-cloud-web
+                app_context: cloud-web
+            artifacts:
+                patch_package:
+                    file: patch_package.zip
+                    type: tosca.artifacts.PatchFile
+            interfaces:
+                Configure:
+                    patch_deploy:
+                        implementation: patch_deploy.sh
+                        dependencies:
+                            - tomcat_stop: {do_interface: [SELF, tomcat_stop]}
+                            - backup_db: {do_interface: [mysql, backup_db]}
+                            - exe_upgrade_sql: {do_interface: [mysql, exe_upgrade_sql]}
+                        inputs:
+                              tomcat_home: { get_attribute: [ SELF, tomcat_home ] }
+                              app_context: { get_attribute: [ SELF, app_context ] }
+                              patch_package: { get_artifact: [ SELF, patch_package ] }
+                    tomcat_stop:
+                        implementation: tomcat_stop.sh
+                        inputs:
+                            tomcat_home: { get_attribute: [ SELF, tomcat_home ] }
+            requirements:
+                - host: tomcat_host

@@ -49,12 +49,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .csrf().disable()
                 .authorizeRequests()
-                    .antMatchers("/webappp/**", "/yfjs-lib/**", "/app/**", "/assets/**", "/v1/login").permitAll()
+                    .antMatchers("/yfjs-lib/**", "/app/**", "/assets/**", "/v1/login").permitAll()
                     .anyRequest().authenticated()
                 .and()
                     .formLogin()
                     .loginPage("/").loginProcessingUrl("/v1/login")
-//                    .successHandler(successHandler())
+                    .successHandler(successHandler())
                     .failureHandler(failureHandler())
                     .permitAll()
                 .and()
@@ -68,9 +68,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(WebSecurity web) throws Exception {
-        web
+        /*web
                 .ignoring()
-                .antMatchers("/webappp/**");
+                .antMatchers("/ui*//**");*/
     }
 
     @Autowired
