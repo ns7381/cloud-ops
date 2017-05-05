@@ -10,10 +10,10 @@ var apiProxy = proxy("localhost:8080", {
         return req._parsedUrl.path
     }
 });
-app.use("/v1/*",apiProxy);
-app.use(express.static(__dirname));
+app.use("/cloud-ops/v1/*",apiProxy);
+app.use("/cloud-ops/", express.static(__dirname));
 
-app.get('/', function(req, res) {
+app.get('/cloud-ops', function(req, res) {
     res.sendfile('./index.html');
 });
 app.listen(3000, function () {

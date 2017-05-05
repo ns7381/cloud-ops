@@ -11,7 +11,8 @@ project(':cloud-ops-rest-api') {
         compile project(':cloud-ops-tosca')
         compile project(':cloud-ops-security')
         compile("org.springframework.boot:spring-boot-devtools")
-        providedRuntime("org.springframework.boot:spring-boot-starter-tomcat")
+//        providedRuntime("org.springframework.boot:spring-boot-starter-tomcat")
+        compile("org.springframework.boot:spring-boot-starter-tomcat")
         compile ('org.springframework.boot:spring-boot-starter-web:1.5.2.RELEASE'){
             exclude group: 'org.springframework.boot', module: 'spring-boot-starter-tomcat'
         }

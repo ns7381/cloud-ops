@@ -44,8 +44,13 @@ define(['App', 'common/ui/resetpwd', 'bs/collapse', 'jq/nicescroll'], function(A
         ready: function() {
 			var result = this.getData('result');
            // alert(result)
-            debugger
-			if(App.cookie.get("roles") == null || result.roles==null || !$.isArray(result.roles) || $.inArray("ADMIN", result.roles)<0){
+            var isAdmin = false;
+            $.each(App.cookie.get("roles") || [], function (k, role) {
+                if (role.authority == "ADMIN") {
+                    isAdmin = true;
+                }
+            });
+			if(!isAdmin){
 				this.$('#topology-li').hide();
 				this.$('#sysmanagement-li').hide();
 			}

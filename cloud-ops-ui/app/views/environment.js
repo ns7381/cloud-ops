@@ -108,7 +108,7 @@ define(['App', 'common/ui/datatables', 'common/ui/modal'], function (App, DataTa
                             } else {
                                 dialog.close();
                                 processor.success(keywords + '创建成功');
-                                self.go();
+                                App.go();
                             }
                         });
                     }

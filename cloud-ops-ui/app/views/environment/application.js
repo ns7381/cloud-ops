@@ -55,9 +55,9 @@ define(['App', 'common/ui/datatables', 'common/ui/modal', 'rq/text!app/templates
                             "width": DataTables.width("opt"),
                             "render": function (data) {
                                 return [
-                                    '<a class="btn-opt btn-edit" data-toggle="tooltip" href="javascript:void(0)" title="编辑">',
+                                    /*'<a class="btn-opt btn-edit" data-toggle="tooltip" href="javascript:void(0)" title="编辑">',
                                     '<i class="fa fa-pencil"></i>',
-                                    '</a>',
+                                    '</a>',*/
                                     '<a class="btn-opt btn-delete" data-toggle="tooltip" href="javascript:void(0)" title="删除">',
                                     '<i class="fa fa-trash-o"></i>',
                                     '</a>'
