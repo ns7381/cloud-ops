@@ -50,10 +50,13 @@ define(['App', 'common/ui/resetpwd', 'bs/collapse', 'jq/nicescroll'], function(A
                     isAdmin = true;
                 }
             });
-			if(!isAdmin){
-				this.$('#topology-li').hide();
-				this.$('#sysmanagement-li').hide();
-			}
+			if(isAdmin){
+				this.$('#topology-li').show();
+				this.$('#sysmanagement-li').show();
+			} else {
+                this.$('#topology-li').hide();
+                this.$('#sysmanagement-li').hide();
+            }
             var $aside = this.$('aside:first'),
                 $sideBar = $('#side-bar', $aside);
 

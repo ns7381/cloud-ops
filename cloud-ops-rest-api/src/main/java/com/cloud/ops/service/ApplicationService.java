@@ -2,6 +2,7 @@ package com.cloud.ops.service;
 
 import com.cloud.ops.dao.modal.SortConstant;
 import com.cloud.ops.entity.Resource.ResourcePackage;
+import com.cloud.ops.entity.Resource.ResourcePackageConfig;
 import com.cloud.ops.entity.Resource.ResourcePackageType;
 import com.cloud.ops.entity.topology.Topology;
 import com.cloud.ops.entity.topology.TopologyArchive;
@@ -62,6 +63,8 @@ public class ApplicationService {
     @Autowired
     private ResourcePackageService resourcePackageService;
     @Autowired
+    private ResourcePackageConfigService resourcePackageConfigService;
+    @Autowired
     private TopologyService topologyService;
     @Autowired
     private TopologyArchiveService topologyArchiveService;
@@ -119,6 +122,13 @@ public class ApplicationService {
     }
 
     public void delete(String id) {
+        for (ResourcePackage resourcePackage : resourcePackageService.findByApplicationId(id)) {
+            resourcePackageService.delete(resourcePackage.getId());
+        }
+        ResourcePackageConfig resourcePackageConfig = resourcePackageConfigService.findByApplicationId(id);
+        if (resourcePackageConfig != null) {
+            resourcePackageConfigService.delete(resourcePackageConfig.getId());
+        }
         dao.delete(id);
     }
 

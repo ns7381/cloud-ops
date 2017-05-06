@@ -148,7 +148,7 @@ define(['App', 'common/ui/datatables', 'common/ui/modal'], function (App, DataTa
                 }]
             });
         },
-        deleteTopology: function () {
+        deleteTopology: function (e) {
             var self = this;
             var row = $(e.currentTarget).data("row.dt"),
                 rowData = row.data(),

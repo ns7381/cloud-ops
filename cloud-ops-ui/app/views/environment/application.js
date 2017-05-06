@@ -210,7 +210,7 @@ define(['App', 'common/ui/datatables', 'common/ui/modal', 'rq/text!app/templates
                     callback: function (result) {
                         if (result) {
                             var processor = Modal.processing("正在删除" + keywords);
-                            self.ajax.delete("v1/topology/" + id, function (err, data) {
+                            self.ajax.delete("v1/applications/" + id, function (err, data) {
                                 if (data) {
                                     processor.success(keywords + '删除成功');
                                     self.$table.reloadTable();
