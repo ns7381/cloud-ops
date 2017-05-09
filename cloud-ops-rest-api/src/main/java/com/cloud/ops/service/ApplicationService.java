@@ -107,7 +107,7 @@ public class ApplicationService {
         }
         try {
             String fileName = fileStore.makeFile(fileStore.TOPOLOGY_FILE_PATH +
-                    topology.getName() + File.separator + application.getName() + File.separator) + "topology.yaml";
+                    application.getEnvironmentId() + File.separator + application.getName() + File.separator) + "topology.yaml";
             toscaEnvironment.writeFile(new FileWriter(fileName));
             application.setYamlFilePath(fileName);
         } catch (IOException e) {
