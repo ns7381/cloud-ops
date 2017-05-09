@@ -20,7 +20,6 @@ import com.cloud.ops.configuration.ws.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -140,13 +139,13 @@ public class ResourcePackageService {
 
     public void updateDeployStatus(String packageId) {
         for (ResourcePackage resourcePackage : dao.findAll()) {
-            if (ResourcePackageStatus.DEPLOY.equals(resourcePackage.getStatus())) {
+            if (ResourcePackageStatus.DEPLOYED.equals(resourcePackage.getStatus())) {
                 resourcePackage.setStatus(ResourcePackageStatus.FINISH);
                 dao.save(resourcePackage);
             }
         }
         ResourcePackage db = dao.findOne(packageId);
-        db.setStatus(ResourcePackageStatus.DEPLOY);
+        db.setStatus(ResourcePackageStatus.DEPLOYED);
         dao.save(db);
     }
 }

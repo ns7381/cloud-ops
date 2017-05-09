@@ -10,5 +10,5 @@ public enum ResourcePackageStatus {
     SAVING,
     FINISH,
     FAIL,
-    DEPLOY
+    DEPLOYED
 }
