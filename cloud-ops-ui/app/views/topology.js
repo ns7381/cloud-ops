@@ -88,7 +88,7 @@ define(['App', 'common/ui/datatables', 'common/ui/modal'], function (App, DataTa
                         var topology = $(".form-horizontal", $modal).serializeObject();
                         var keywords = App.highlight("模板配置" + topology.name, 4);
                         var processor = Modal.processing('正在保存' + keywords + '信息');
-                        self.ajax.post("v1/topologies", topology, function (err, data) {
+                        self.ajax.postJSON("v1/topologies", topology, function (err, data) {
                             if (err) {
                                 processor.error(keywords + '创建失败!原因：' + err.message);
                             } else {
@@ -135,7 +135,7 @@ define(['App', 'common/ui/datatables', 'common/ui/modal'], function (App, DataTa
                         if (!valid) return false;
                         var topology = $(".form-horizontal", $modal).serializeObject();
                         var processor = Modal.processing('正在保存' + keywords + '信息');
-                        self.ajax.post("v1/topologies/"+id, topology, function (err, data) {
+                        self.ajax.putJSON("v1/topologies/"+id, topology, function (err, data) {
                             if (err) {
                                 processor.error(keywords + '创建失败!原因：' + err.message);
                             } else {
