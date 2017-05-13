@@ -122,13 +122,22 @@ public class ResourcePackageController {
         resourcePackage.setType(ResourcePackageType.valueOf(type));
         resourcePackage.setVersion(version);
         resourcePackage.setApplicationId(applicationId);
-        resourcePackage.setStatus(ResourcePackageStatus.SAVING);
+//        resourcePackage.setStatus(ResourcePackageStatus.SAVING);
         if (file != null && !file.getOriginalFilename().trim().equals("")) {
-            service.create(resourcePackage);
+//            service.create(resourcePackage);
             String uploadPath = fileStore.makeFile(FileStore.PACKAGE_FILE_PATH + UUID.randomUUID().toString() + File.separator);
             String fileName = file.getOriginalFilename();
             final String filePath = uploadPath + fileName;
-            new ThreadWithEntity<ResourcePackage>(resourcePackage) {
+            File destination = new File(filePath);
+            try {
+                FileUtils.copyInputStreamToFile(file.getInputStream(), destination);
+            } catch (IOException e) {
+                throw new RuntimeException("保存war包失败！", e);
+            }
+            resourcePackage.setWarPath(destination.getAbsolutePath());
+            resourcePackage.setStatus(ResourcePackageStatus.FINISH);
+            service.create(resourcePackage);
+            /*new ThreadWithEntity<ResourcePackage>(resourcePackage) {
                 @Override
                 public void run(ResourcePackage entity) {
                     File destination = new File(filePath);
@@ -142,7 +151,7 @@ public class ResourcePackageController {
                     service.create(entity);
                     webSocketHandler.sendMsg(WebSocketConstants.PACKAGE_STATUS, entity);
                 }
-            }.start();
+            }.start();*/
         } else {
             throw new RuntimeException("war包为空！");
         }

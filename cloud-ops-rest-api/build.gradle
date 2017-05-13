@@ -47,6 +47,7 @@ project(':cloud-ops-rest-api') {
     }*/
 
     war {
-        baseName = 'cloud-ops'
+        archiveName = 'cloud-ops.war'
+        destinationDir = file "docker-dir"
     }
 }

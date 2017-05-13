@@ -14,5 +14,5 @@ spring:
 logging:
     path: /var/log
     file: cloud-ops.log
-    level:
-        com.cloud.ops.service: DEBUG
+    level: DEBUG
+#        com.cloud.ops.service: DEBUG

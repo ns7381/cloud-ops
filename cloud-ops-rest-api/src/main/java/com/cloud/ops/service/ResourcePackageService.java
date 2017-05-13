@@ -104,7 +104,7 @@ public class ResourcePackageService {
 
                     String uploadPath = FileStore.PACKAGE_FILE_PATH + UUID.randomUUID().toString();
                     FileUtils.forceMkdir(new File(uploadPath));
-                    List<File> files = (List<File>) FileUtils.listFiles(new File(dir + File.separator + config.getBuildDir()), new String[]{"war"}, false);
+                    List<File> files = (List<File>) FileUtils.listFiles(new File(dir + File.separator + config.getBuildDir()), new String[]{"war","zip"}, false);
                     assert files.size() > 0;
                     File destFile = new File(uploadPath);
                     FileUtils.copyFileToDirectory(files.get(0), destFile);
