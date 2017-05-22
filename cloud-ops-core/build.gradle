@@ -1,0 +1,14 @@
+project(':cloud-ops-core') {
+
+    apply plugin: 'java'
+    apply plugin: 'idea'
+
+
+    dependencies {
+        compile project(':cloud-ops-dao')
+        compile project(':cloud-ops-tosca')
+        compile 'org.springframework.boot:spring-boot-starter-websocket:1.5.2.RELEASE'
+        testCompile("org.springframework.boot:spring-boot-starter-test:1.5.2.RELEASE")
+    }
+
+}

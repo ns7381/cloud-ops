@@ -19,7 +19,7 @@ fi
 if [ -d "${patch_package}unzip" ]; then
 	rm -rf ${patch_package}unzip
 fi
-unzip -d${patch_package}unzip -o ${patch_package}
+unzip -d${patch_package}unzip -o -qq ${patch_package}
 
 #backup war package end
 BACKUP_DIR=/opt/iop-ops/backup/app-package/`date +%F_%H-%M-%S`

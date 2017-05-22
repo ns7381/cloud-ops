@@ -24,11 +24,14 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
  */
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 public class ToscaEnvironment implements IToscaEnvironment {
 
     public Object relationshipTemplate = null;
+    public List<DeploymentNode> deploymentNodes = new ArrayList<>();
     private final TypeManager typeManager = new TypeManager(this);
     //private final ToscaTopology topology = new ToscaTopology(this);
     private static final String relName = "normative_types.yaml";
@@ -45,6 +48,7 @@ public class ToscaEnvironment implements IToscaEnvironment {
     public void readFile(Reader input, boolean hideTypes) {
         final Parser parser = new Parser(this, hideTypes);
         parser.Parse(input);
+        this.deploymentNodes = this.getDeploymentNodes();
     }
 
     @Override
@@ -99,6 +103,18 @@ public class ToscaEnvironment implements IToscaEnvironment {
     public Iterable<INodeTemplate> getNodeTemplatesOfType(INodeType rootType) {
         //return topology.getNodeTemplatesOfType(INodeType rootType);
         return typeManager.getNodeTemplatesOfType(rootType);
+    }
+
+
+    @Override
+    public List<DeploymentNode> getDeploymentNodes() {
+        INodeType rootNode = (INodeType) this.getNamedEntity("tosca.nodes.Root");
+        Iterable<INodeTemplate> rootNodeTemplate = this.getNodeTemplatesOfType(rootNode);
+        List<DeploymentNode> nodes = new ArrayList<>();
+        for (INodeTemplate nodeTemplate : rootNodeTemplate) {
+            nodes.add(DeploymentNode.convert(nodeTemplate));
+        }
+        return nodes;
     }
 
     @Override

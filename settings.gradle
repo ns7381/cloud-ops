@@ -6,4 +6,5 @@ include 'cloud-ops-security'
 include 'cloud-ops-dao'
 include 'cloud-ops-common'
 include 'cloud-ops-esc'
+include 'cloud-ops-core'
 
