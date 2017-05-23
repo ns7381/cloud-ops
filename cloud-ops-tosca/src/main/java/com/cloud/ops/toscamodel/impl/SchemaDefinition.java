@@ -18,7 +18,9 @@ package com.cloud.ops.toscamodel.impl;
 
 import com.cloud.ops.toscamodel.*;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by pq on 20/04/2015.
@@ -28,7 +30,7 @@ abstract public class SchemaDefinition implements ISchemaDefinition {
     final ISchemaDefinition baseType;
     final Map<String,IProperty> allProperties;
     final Map<String,IProperty> declaredProperties;
-    SchemaDefinition(ISchemaDefinition baseType,String description, Map<String,IProperty> properties ){
+    SchemaDefinition(ISchemaDefinition baseType, String description, Map<String,IProperty> properties ){
         assert(baseType == null || baseType instanceof INamedEntity);
 
         this.baseType = baseType;
@@ -47,7 +49,7 @@ abstract public class SchemaDefinition implements ISchemaDefinition {
 
     @Override
     public boolean isCompatible(ISchemaDefinition otherType) {
-        if(!(otherType instanceof  ISchemaDefinition))
+        if(!(otherType instanceof ISchemaDefinition))
             return false;
         ISchemaDefinition o = (ISchemaDefinition) otherType;
         if(!this.allProperties.equals(o.allProperties()))
@@ -60,7 +62,7 @@ abstract public class SchemaDefinition implements ISchemaDefinition {
     public boolean equals(Object obj) {
         if(this == obj)
             return true;
-        if(!(obj instanceof  ISchemaDefinition))
+        if(!(obj instanceof ISchemaDefinition))
             return false;
         ISchemaDefinition o = (ISchemaDefinition) obj;
         if( (this.baseType == null && o.baseType() != null) || (this.baseType != null && o.baseType() == null))

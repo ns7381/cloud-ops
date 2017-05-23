@@ -17,12 +17,13 @@
 package com.cloud.ops.toscamodel.impl;
 
 import com.cloud.ops.toscamodel.*;
+
 import java.util.Map;
 
 /**
  * Created by pq on 20/04/2015.
  */
-public class TypeStruct  extends  SchemaDefinition implements ITypeStruct {
+public class TypeStruct  extends SchemaDefinition implements ITypeStruct {
     public TypeStruct(ITypeStruct baseType, String description, Map<String, IProperty> properties) {
         super(baseType, description, properties);
     }
@@ -79,7 +80,7 @@ public class TypeStruct  extends  SchemaDefinition implements ITypeStruct {
     }
 
     @Override
-    public ITypeStruct addProperty(String propName, IType propType,Object propValue) {
+    public ITypeStruct addProperty(String propName, IType propType, Object propValue) {
         return new TypeStruct(baseType(),description,extendSchema(propName, propType, propValue));
     }
 

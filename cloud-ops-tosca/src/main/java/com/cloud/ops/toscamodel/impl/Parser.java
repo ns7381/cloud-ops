@@ -19,7 +19,8 @@ package com.cloud.ops.toscamodel.impl;
 import com.cloud.ops.toscamodel.*;
 import com.google.common.collect.ImmutableMap;
 import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.events.*;
+import org.yaml.snakeyaml.events.Event;
+import org.yaml.snakeyaml.events.ScalarEvent;
 
 import java.io.Reader;
 import java.util.*;

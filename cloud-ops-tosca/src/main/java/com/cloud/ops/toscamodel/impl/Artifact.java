@@ -1,6 +1,5 @@
 package com.cloud.ops.toscamodel.impl;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

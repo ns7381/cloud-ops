@@ -17,25 +17,25 @@
 package com.cloud.ops.toscamodel.impl;
 
 import com.cloud.ops.toscamodel.*;
+import com.cloud.ops.toscamodel.wf.WorkFlowBuilder;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
+import java.io.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by pq on 05/04/15.
  */
 
-import java.io.*;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 public class ToscaEnvironment implements IToscaEnvironment {
 
     public Object relationshipTemplate = null;
-    public List<DeploymentNode> deploymentNodes = new ArrayList<>();
     private final TypeManager typeManager = new TypeManager(this);
-    //private final ToscaTopology topology = new ToscaTopology(this);
+    private Topology topology = null;
     private static final String relName = "normative_types.yaml";
-    private static final String absName = "/com/cloud/ops/toscamodel/impl/normative_types.yaml";
+//    private static final String absName = "/com/cloud/ops/toscamodel/impl/normative_types.yaml";
 
     public ToscaEnvironment() {
         //ResourceBundle bundle = ResourceBundle.getBundle("seaclouds.utils.toscamodel.impl");
@@ -48,7 +48,6 @@ public class ToscaEnvironment implements IToscaEnvironment {
     public void readFile(Reader input, boolean hideTypes) {
         final Parser parser = new Parser(this, hideTypes);
         parser.Parse(input);
-        this.deploymentNodes = this.getDeploymentNodes();
     }
 
     @Override
@@ -107,14 +106,29 @@ public class ToscaEnvironment implements IToscaEnvironment {
 
 
     @Override
-    public List<DeploymentNode> getDeploymentNodes() {
-        INodeType rootNode = (INodeType) this.getNamedEntity("tosca.nodes.Root");
-        Iterable<INodeTemplate> rootNodeTemplate = this.getNodeTemplatesOfType(rootNode);
-        List<DeploymentNode> nodes = new ArrayList<>();
-        for (INodeTemplate nodeTemplate : rootNodeTemplate) {
-            nodes.add(DeploymentNode.convert(nodeTemplate));
+    public Topology getTopology() {
+        if (this.topology == null) {
+            INodeType rootNode = (INodeType) this.getNamedEntity("tosca.nodes.Root");
+            Iterable<INodeTemplate> rootNodeTemplate = this.getNodeTemplatesOfType(rootNode);
+            Map<String, NodeTemplateDto> nodeTemplateDtoMap = new HashMap<>();
+            for (INodeTemplate nodeTemplate : rootNodeTemplate) {
+                nodeTemplateDtoMap.put(nodeTemplate.toString(), NodeTemplateDto.convert(nodeTemplate));
+            }
+            this.topology = Topology.builder().nodeTemplateMap(nodeTemplateDtoMap).build();
         }
-        return nodes;
+        return this.topology;
+    }
+
+
+    @Override
+    public Topology getTopologyWithWorkFlows() {
+        if (this.topology == null) {
+            this.getTopology();
+        }
+        if (this.topology.getWorkFlowMap() == null) {
+            WorkFlowBuilder.initWorkFlows(this.topology);
+        }
+        return this.topology;
     }
 
     @Override

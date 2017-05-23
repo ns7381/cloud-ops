@@ -20,7 +20,9 @@ import com.cloud.ops.toscamodel.*;
 import com.cloud.ops.toscamodel.basictypes.impl.*;
 import com.google.common.collect.Iterables;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by pq on 13/04/2015.

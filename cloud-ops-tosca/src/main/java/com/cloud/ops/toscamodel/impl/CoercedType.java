@@ -16,13 +16,15 @@
 
 package com.cloud.ops.toscamodel.impl;
 
-import com.google.common.collect.Sets;
 import com.cloud.ops.toscamodel.ICoercedType;
 import com.cloud.ops.toscamodel.IConstraint;
 import com.cloud.ops.toscamodel.IType;
 import com.cloud.ops.toscamodel.IValue;
+import com.google.common.collect.Sets;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by pq on 20/04/2015.

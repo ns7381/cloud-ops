@@ -150,7 +150,7 @@ class StructValue implements IValueStruct {
 
         @Override
         public Set<Entry<String, IValue>> entrySet() {
-            Map<String,IValue> m = Maps.transformEntries(type.allProperties(),(p,t)->get(p));
+            Map<String,IValue> m = Maps.transformEntries(type.allProperties(),(p, t)->get(p));
             return m.entrySet();
         }
 

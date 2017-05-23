@@ -19,7 +19,7 @@ import java.util.Map;
 @Getter
 @Setter
 @Builder
-public class DeploymentNode {
+public class NodeTemplateDto {
     String name;
     String type;
     Map<String, Object> attributes;
@@ -27,7 +27,7 @@ public class DeploymentNode {
     Map<String, Artifact> artifacts;
     Map<String, Interface> interfaces;
 
-    public static DeploymentNode convert(INodeTemplate nodeTemplate) {
+    public static NodeTemplateDto convert(INodeTemplate nodeTemplate) {
         Map<String, Object> attr = new HashMap<>();
         List<String> strList = new ArrayList<>();
         for (Map.Entry<String, IValue> entry : nodeTemplate.declaredAttributes().entrySet()) {

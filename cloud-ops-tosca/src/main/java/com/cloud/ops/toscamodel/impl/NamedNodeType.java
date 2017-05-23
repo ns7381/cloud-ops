@@ -25,7 +25,7 @@ import java.util.Collections;
 /**
  * Created by pq on 20/04/2015.
  */
-public class NamedNodeType extends  NodeType implements INamedEntity {
+public class NamedNodeType extends NodeType implements INamedEntity {
     private String name;
     public boolean hidden = false;
 

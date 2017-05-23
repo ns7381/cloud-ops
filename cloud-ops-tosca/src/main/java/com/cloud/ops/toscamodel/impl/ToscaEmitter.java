@@ -19,8 +19,8 @@ package com.cloud.ops.toscamodel.impl;
 import com.cloud.ops.toscamodel.*;
 import com.cloud.ops.toscamodel.basictypes.*;
 import org.yaml.snakeyaml.DumperOptions;
-import org.yaml.snakeyaml.events.*;
 import org.yaml.snakeyaml.emitter.Emitter;
+import org.yaml.snakeyaml.events.*;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.IOException;
