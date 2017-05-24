@@ -1,7 +1,7 @@
 package com.cloud.ops.configuration.ws;
 
+import com.cloud.ops.common.utils.QueryStringParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.cloud.ops.utils.QueryStringParser;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

@@ -23,7 +23,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 public class WebMvcConfig extends WebMvcConfigurerAdapter {
 
     @Value("classpath:ui/index.html")
-//    @Value("classpath:META-INF/resources/webjars/ui/index.html")
     private Resource indexHtml;
 
     @Bean
@@ -35,7 +34,10 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
 
     @Bean
     public CommonsMultipartResolver filterMultipartResolver() {
-        return new CommonsMultipartResolver();
+        CommonsMultipartResolver commonsMultipartResolver = new CommonsMultipartResolver();
+        commonsMultipartResolver.setMaxInMemorySize(102400000);
+        commonsMultipartResolver.setMaxUploadSize(102400000);
+        return commonsMultipartResolver;
     }
 
     @Bean
@@ -43,13 +45,6 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
     public MultipartFilter multipartFilter() {
         return new MultipartFilter();
     }
-
-    /*@Override
-    public void addFormatters(FormatterRegistry registry) {
-        DateTimeFormatterRegistrar registrar = new DateTimeFormatterRegistrar();
-        registrar.setUseIsoFormat(true);
-        registrar.registerFormatters(registry);
-    }*/
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
