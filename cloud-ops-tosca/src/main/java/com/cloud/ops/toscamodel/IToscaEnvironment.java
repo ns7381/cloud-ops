@@ -16,7 +16,7 @@
 
 package com.cloud.ops.toscamodel;
 
-import com.cloud.ops.toscamodel.impl.DeploymentNode;
+import com.cloud.ops.toscamodel.impl.Topology;
 
 import java.io.Reader;
 import java.io.Writer;
@@ -43,7 +43,9 @@ public interface IToscaEnvironment {
 
     public Iterable<INodeTemplate> getNodeTemplatesOfType(INodeType rootType);
 
-    List<DeploymentNode> getDeploymentNodes();
+    Topology getTopology();
+
+    Topology getTopologyWithWorkFlows();
 
     public Iterable<INodeType> getNodeTypesDerivingFrom(INodeType rootType);
     public Iterable<ITypeStruct> getTypesDerivingFrom(ITypeStruct rootType);
