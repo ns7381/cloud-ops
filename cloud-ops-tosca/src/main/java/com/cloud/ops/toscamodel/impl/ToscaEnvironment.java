@@ -17,25 +17,25 @@
 package com.cloud.ops.toscamodel.impl;
 
 import com.cloud.ops.toscamodel.*;
+import com.cloud.ops.toscamodel.basictypes.impl.TypeList;
+import com.cloud.ops.toscamodel.basictypes.impl.TypeString;
 import com.cloud.ops.toscamodel.wf.WorkFlowBuilder;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.*;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-
-/**
- * Created by pq on 05/04/15.
- */
 
 public class ToscaEnvironment implements IToscaEnvironment {
 
     public Object relationshipTemplate = null;
     private final TypeManager typeManager = new TypeManager(this);
-    private Topology topology = null;
+    private TopologyContext topologyContext = null;
     private static final String relName = "normative_types.yaml";
-//    private static final String absName = "/com/cloud/ops/toscamodel/impl/normative_types.yaml";
+    //    private static final String absName = "/com/cloud/ops/toscamodel/impl/normative_types.yaml";
+    private String yamlFilePath = "";
 
     public ToscaEnvironment() {
         //ResourceBundle bundle = ResourceBundle.getBundle("seaclouds.utils.toscamodel.impl");
@@ -44,10 +44,16 @@ public class ToscaEnvironment implements IToscaEnvironment {
         readFile(new InputStreamReader(stream), true);
     }
 
-    @Override
-    public void readFile(Reader input, boolean hideTypes) {
+    private void readFile(Reader input, boolean hideTypes) {
         final Parser parser = new Parser(this, hideTypes);
         parser.Parse(input);
+    }
+
+    @Override
+    public void readFile(String yamlFilePath, boolean hideTypes) throws FileNotFoundException {
+        this.yamlFilePath = yamlFilePath;
+        final Parser parser = new Parser(this, hideTypes);
+        parser.Parse(new FileReader(yamlFilePath));
     }
 
     @Override
@@ -105,30 +111,29 @@ public class ToscaEnvironment implements IToscaEnvironment {
     }
 
 
-    @Override
-    public Topology getTopology() {
-        if (this.topology == null) {
+    public TopologyContext getTopologyContext() {
+        if (this.topologyContext == null) {
             INodeType rootNode = (INodeType) this.getNamedEntity("tosca.nodes.Root");
             Iterable<INodeTemplate> rootNodeTemplate = this.getNodeTemplatesOfType(rootNode);
             Map<String, NodeTemplateDto> nodeTemplateDtoMap = new HashMap<>();
             for (INodeTemplate nodeTemplate : rootNodeTemplate) {
                 nodeTemplateDtoMap.put(nodeTemplate.toString(), NodeTemplateDto.convert(nodeTemplate));
             }
-            this.topology = Topology.builder().nodeTemplateMap(nodeTemplateDtoMap).build();
+            this.topologyContext = TopologyContext.builder().nodeTemplateMap(nodeTemplateDtoMap).build();
         }
-        return this.topology;
+        return this.topologyContext;
     }
 
 
     @Override
-    public Topology getTopologyWithWorkFlows() {
-        if (this.topology == null) {
-            this.getTopology();
+    public TopologyContext getTopologyWithWorkFlows() {
+        if (this.topologyContext == null) {
+            this.getTopologyContext();
         }
-        if (this.topology.getWorkFlowMap() == null) {
-            WorkFlowBuilder.initWorkFlows(this.topology);
+        if (this.topologyContext.getWorkFlowMap() == null) {
+            WorkFlowBuilder.initWorkFlows(this.topologyContext);
         }
-        return this.topology;
+        return this.topologyContext;
     }
 
     @Override
@@ -174,5 +179,29 @@ public class ToscaEnvironment implements IToscaEnvironment {
     @Override
     public INodeTemplate newTemplate(INodeType type) {
         return new NodeTemplate((NamedNodeType) type, "", Collections.emptyMap(), Collections.emptyMap());
+    }
+
+    public void updateAttribute(String nodeId, Map<String, Object> attributes) {
+        try {
+            INodeType nodeTypes = (INodeType) this.getNamedEntity("tosca.nodes.Root");
+            Iterable<INodeTemplate> nodes = this.getNodeTemplatesOfType(nodeTypes);
+            for (INodeTemplate node : nodes) {
+                if (nodeId.equals(node.toString())) {
+                    for (Map.Entry<String, Object> attribute : attributes.entrySet()) {
+                        Object value = attribute.getValue();
+                        if (value instanceof String) {
+                            node.declaredAttributes().put(attribute.getKey(), TypeString.instance().instantiate(value));
+                        } else if (value instanceof List) {
+                            node.declaredAttributes().put(attribute.getKey(), TypeList.instance(TypeString.instance()).instantiate(value));
+                        }
+                    }
+                }
+            }
+            this.writeFile(new FileWriter(yamlFilePath));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 };

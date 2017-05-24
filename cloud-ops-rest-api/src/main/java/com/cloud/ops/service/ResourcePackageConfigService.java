@@ -1,8 +1,8 @@
 package com.cloud.ops.service;
 
+import com.cloud.ops.common.utils.BeanUtils;
 import com.cloud.ops.entity.Resource.ResourcePackageConfig;
 import com.cloud.ops.repository.ResourcePackageConfigRepository;
-import com.cloud.ops.utils.*;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

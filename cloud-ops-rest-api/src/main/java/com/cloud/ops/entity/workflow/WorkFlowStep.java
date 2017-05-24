@@ -1,19 +1,9 @@
 package com.cloud.ops.entity.workflow;
 
 import com.cloud.ops.dao.modal.BaseObject;
-import com.cloud.ops.dao.modal.IdEntity;
-import com.cloud.ops.entity.application.LocalLocation;
+import com.cloud.ops.entity.location.LocalLocation;
 import com.cloud.ops.entity.topology.TopologyArchive;
-import com.cloud.ops.toscamodel.INodeTemplate;
-import com.cloud.ops.toscamodel.IValue;
-import com.cloud.ops.toscamodel.basictypes.IValueList;
-import com.cloud.ops.toscamodel.basictypes.IValueString;
-import com.cloud.ops.toscamodel.impl.Artifact;
-import com.cloud.ops.toscamodel.impl.Interface;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.*;

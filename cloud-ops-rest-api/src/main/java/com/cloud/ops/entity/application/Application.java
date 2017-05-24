@@ -1,12 +1,12 @@
 package com.cloud.ops.entity.application;
 
 import com.cloud.ops.dao.modal.BaseObject;
-import com.cloud.ops.toscamodel.IToscaEnvironment;
+import com.cloud.ops.entity.location.LocalLocation;
+import com.cloud.ops.toscamodel.impl.TopologyContext;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -18,10 +18,9 @@ public class Application extends BaseObject {
     String yamlFilePath;
     Map<String, LocalLocation> locations;
     String topologyId;
-    String topologyName;//TODO KVMapping
+    String topologyName;
     String environmentId;
-    IToscaEnvironment toscaEnvironment;
-    List<DeploymentNode> nodes;
+    TopologyContext topologyContext;
 
     public String getYamlFilePath() {
         return yamlFilePath;
@@ -57,12 +56,12 @@ public class Application extends BaseObject {
     }
 
     @Transient
-    public IToscaEnvironment getToscaEnvironment() {
-        return toscaEnvironment;
+    public TopologyContext getTopologyContext() {
+        return topologyContext;
     }
 
-    public void setToscaEnvironment(IToscaEnvironment toscaEnvironment) {
-        this.toscaEnvironment = toscaEnvironment;
+    public void setTopologyContext(TopologyContext topologyContext) {
+        this.topologyContext = topologyContext;
     }
 
     public String getTopologyName() {
@@ -71,14 +70,5 @@ public class Application extends BaseObject {
 
     public void setTopologyName(String topologyName) {
         this.topologyName = topologyName;
-    }
-
-    @Transient
-    public List<DeploymentNode> getNodes() {
-        return nodes;
-    }
-
-    public void setNodes(List<DeploymentNode> nodes) {
-        this.nodes = nodes;
     }
 }

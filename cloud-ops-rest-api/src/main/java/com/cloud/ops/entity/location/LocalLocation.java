@@ -1,4 +1,4 @@
-package com.cloud.ops.entity.application;
+package com.cloud.ops.entity.location;
 
 import lombok.*;
 

@@ -5,6 +5,7 @@ import com.cloud.ops.dao.modal.SortConstant;
 import com.cloud.ops.entity.Resource.ResourcePackage;
 import com.cloud.ops.entity.Resource.ResourcePackageConfig;
 import com.cloud.ops.entity.Resource.ResourcePackageType;
+import com.cloud.ops.entity.location.LocalLocation;
 import com.cloud.ops.entity.topology.Topology;
 import com.cloud.ops.entity.topology.TopologyArchive;
 import com.cloud.ops.entity.topology.TopologyArchiveType;
@@ -29,7 +30,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.jpa.repository.Lock;
@@ -55,8 +55,6 @@ public class ApplicationService {
     @Autowired
     private ApplicationRepository dao;
     @Autowired
-    private CustomWebSocketHandler webSocketHandler;
-    @Autowired
     private WorkFlowService workFlowService;
     @Autowired
     private WorkFlowStepService workFlowStepService;
@@ -78,15 +76,8 @@ public class ApplicationService {
         Application application = dao.findOne(id);
         IToscaEnvironment toscaEnvironment = Tosca.newEnvironment();
         try {
-            toscaEnvironment.readFile(new FileReader(application.getYamlFilePath()), false);
-            application.setToscaEnvironment(toscaEnvironment);
-            INodeType rootNode = (INodeType) toscaEnvironment.getNamedEntity("tosca.nodes.Root");
-            Iterable<INodeTemplate> rootNodeTemplate = toscaEnvironment.getNodeTemplatesOfType(rootNode);
-            List<DeploymentNode> nodes = new ArrayList<>();
-            for (INodeTemplate nodeTemplate : rootNodeTemplate) {
-                nodes.add(DeploymentNode.convert(nodeTemplate));
-            }
-            application.setNodes(nodes);
+            toscaEnvironment.readFile(application.getYamlFilePath(), false);
+            application.setTopologyContext(toscaEnvironment.getTopologyContext());
         } catch (FileNotFoundException e) {
             logger.error("yaml file not find. ", e);
         }

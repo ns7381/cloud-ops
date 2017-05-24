@@ -3,7 +3,7 @@ package com.cloud.ops.toscamodel.wf;
 import com.cloud.ops.toscamodel.impl.Artifact;
 import com.cloud.ops.toscamodel.impl.Interface;
 import com.cloud.ops.toscamodel.impl.NodeTemplateDto;
-import com.cloud.ops.toscamodel.impl.Topology;
+import com.cloud.ops.toscamodel.impl.TopologyContext;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -19,35 +19,35 @@ import static com.cloud.ops.toscamodel.wf.WorkFlow.PATCH_DEPLOY_WF;
 public class WorkFlowBuilder {
 
 
-    public static Topology initWorkFlows(Topology topology) {
-        Map<String, WorkFlow> wfs = topology.getWorkFlowMap();
+    public static TopologyContext initWorkFlows(TopologyContext topologyContext) {
+        Map<String, WorkFlow> wfs = topologyContext.getWorkFlowMap();
         if (wfs == null) {
             wfs = Maps.newLinkedHashMap();
-            topology.setWorkFlowMap(wfs);
+            topologyContext.setWorkFlowMap(wfs);
         }
-        deployPatchFilter(topology);
+        deployPatchFilter(topologyContext);
 
-        return topology;
+        return topologyContext;
     }
 
-    private static void deployPatchFilter(Topology topology) {
-        for (Map.Entry<String, NodeTemplateDto> nodeMap : topology.getNodeTemplateMap().entrySet()) {
+    private static void deployPatchFilter(TopologyContext topologyContext) {
+        for (Map.Entry<String, NodeTemplateDto> nodeMap : topologyContext.getNodeTemplateMap().entrySet()) {
             for (Map.Entry<String, Interface> interfaceMap : nodeMap.getValue().getInterfaces().entrySet()) {
                 if (interfaceMap.getKey().equals(PATCH_DEPLOY_WF)) {
                     WorkFlow wf = new WorkFlow();
                     wf.setName(PATCH_DEPLOY_WF);
-                    wf.setSteps(processInterface(topology, nodeMap.getKey(), interfaceMap.getKey()));
-                    topology.getWorkFlowMap().put(PATCH_DEPLOY_WF, wf);
+                    wf.setSteps(processInterface(topologyContext, nodeMap.getKey(), interfaceMap.getKey()));
+                    topologyContext.getWorkFlowMap().put(PATCH_DEPLOY_WF, wf);
                 }
             }
         }
     }
 
-    static List<WorkFlowStep> processInterface(Topology topology, String nodeName, String interfaceName) {
+    static List<WorkFlowStep> processInterface(TopologyContext topologyContext, String nodeName, String interfaceName) {
         List<WorkFlowStep> workFlowSteps = Lists.newArrayList();
         WorkFlowStep workFlowStep = new WorkFlowStep();
         workFlowStep.setName(interfaceName);
-        Map<String, NodeTemplateDto> nodeMap = topology.getNodeTemplateMap();
+        Map<String, NodeTemplateDto> nodeMap = topologyContext.getNodeTemplateMap();
         NodeTemplateDto doNode = nodeMap.get(nodeName);
         assert doNode != null;
         Interface doInterface = doNode.getInterfaces().get(interfaceName);
@@ -62,7 +62,7 @@ public class WorkFlowBuilder {
                     doNodeName = doNodeName.equals("SELF") ? nodeName : doNodeName;
                     String doInterfaceName = (String) doInterfaces.get(1);
                     //process interface recursively
-                    workFlowSteps.addAll(processInterface(topology, doNodeName, doInterfaceName));
+                    workFlowSteps.addAll(processInterface(topologyContext, doNodeName, doInterfaceName));
                 });
             }
         }

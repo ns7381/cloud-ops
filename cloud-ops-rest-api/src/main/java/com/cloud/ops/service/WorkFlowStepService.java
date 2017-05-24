@@ -1,9 +1,9 @@
 package com.cloud.ops.service;
 
+import com.cloud.ops.common.utils.BeanUtils;
 import com.cloud.ops.dao.modal.SortConstant;
 import com.cloud.ops.entity.workflow.WorkFlowStep;
 import com.cloud.ops.repository.WorkFlowStepRepository;
-import com.cloud.ops.utils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,7 +36,7 @@ public class WorkFlowStepService {
     }
 
 	public WorkFlowStep update(WorkFlowStep entity){
-        Assert.notNull(entity.getId());
+        Assert.notNull(entity.getId(), "id can not be null");
         WorkFlowStep db = this.get(entity.getId());
         BeanUtils.copyNotNullProperties(entity, db);
         dao.save(db);

@@ -16,11 +16,11 @@
 
 package com.cloud.ops.toscamodel;
 
-import com.cloud.ops.toscamodel.impl.Topology;
+import com.cloud.ops.toscamodel.impl.TopologyContext;
 
+import java.io.FileNotFoundException;
 import java.io.Reader;
 import java.io.Writer;
-import java.util.List;
 
 /**
  * Created by pq on 16/04/2015.
@@ -43,26 +43,23 @@ public interface IToscaEnvironment {
 
     public Iterable<INodeTemplate> getNodeTemplatesOfType(INodeType rootType);
 
-    Topology getTopology();
+    TopologyContext getTopologyContext();
 
-    Topology getTopologyWithWorkFlows();
+    TopologyContext getTopologyWithWorkFlows();
 
     public Iterable<INodeType> getNodeTypesDerivingFrom(INodeType rootType);
     public Iterable<ITypeStruct> getTypesDerivingFrom(ITypeStruct rootType);
 
+    void readFile(String yamlFilePath, boolean hideTypes) throws FileNotFoundException;
+    default public void readFile(String yamlFilePath) throws FileNotFoundException { readFile(yamlFilePath,false); }
     public void renameEntity(String entityName, String newEntityName);
 
 
     public void hideEntity(String entityName);
     public void unhideEntity(String entityName);
 
-    /**
-     *
-     * @param input a reader containing the string to parse as tosca
-     * @param hideTypes if true, types imported this way will not be written to the output file
-     */
-    public void readFile(Reader input, boolean hideTypes);
-    default public void readFile(Reader input) { readFile(input,false); }
+//    public void readFile(Reader input, boolean hideTypes);
+//    default public void readFile(Reader input) { readFile(input,false); }
 
     public void writeFile(Writer output);
 

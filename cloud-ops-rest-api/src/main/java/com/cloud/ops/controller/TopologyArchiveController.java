@@ -56,33 +56,18 @@ public class TopologyArchiveController {
         return service.update(archive);
     }
 
-    /**
-     * 删除
-     *
-     * @return
-     */
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     public Boolean delete(@PathVariable String topologyId, @PathVariable String id) {
         service.delete(id);
         return Boolean.TRUE;
     }
 
-    /**
-     * 编辑
-     *
-     * @return
-     */
     @RequestMapping(method = RequestMethod.PUT)
     public TopologyArchive update(@PathVariable String topologyId, @RequestBody TopologyArchive entity) {
         entity.setId(topologyId);
         return service.update(entity);
     }
 
-    /**
-     * 获取所有数据
-     *
-     * @return
-     */
     @RequestMapping(method = RequestMethod.GET)
     public List<TopologyArchive> getByTopologyId(@PathVariable String topologyId) throws IOException {
         List<TopologyArchive> archives = service.findByTopologyId(topologyId);

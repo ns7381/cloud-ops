@@ -13,7 +13,7 @@ import java.util.Map;
 @Getter
 @Setter
 @Builder
-public class Topology {
+public class TopologyContext {
     private Map<String, NodeTemplateDto> nodeTemplateMap;
     private Map<String, WorkFlow> workFlowMap;
 }
