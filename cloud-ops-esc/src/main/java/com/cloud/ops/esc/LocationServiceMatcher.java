@@ -1,5 +1,6 @@
 package com.cloud.ops.esc;
 
+import com.cloud.ops.common.exception.NotFoundException;
 import com.cloud.ops.esc.docker.DockerLocationServiceImpl;
 import com.cloud.ops.esc.local.LocalLocationServiceImpl;
 import com.cloud.ops.toscamodel.impl.TopologyContext;
@@ -16,6 +17,6 @@ public class LocationServiceMatcher {
         } else if ("docker".equals(location.getLocationType())) {
             this.locationService = new DockerLocationServiceImpl();
         }
-        throw new RuntimeException("not find "+ location.getLocationType() +"location");
+        throw new NotFoundException("not find "+ location.getLocationType() +"location");
     }
 }

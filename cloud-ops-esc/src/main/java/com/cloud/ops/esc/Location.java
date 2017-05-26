@@ -12,5 +12,5 @@ import java.util.Map;
 @Setter
 public class Location {
     private String locationType;
-    private Map<String, String> metaProperties;
+    private Map<String, Object> metaProperties;
 }
