@@ -1,25 +1,11 @@
-/*
- * Copyright 2015 Universita' di Pisa
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package com.cloud.ops.toscamodel.impl;
 
 import com.cloud.ops.toscamodel.*;
 import com.cloud.ops.toscamodel.basictypes.impl.TypeList;
 import com.cloud.ops.toscamodel.basictypes.impl.TypeString;
+import com.cloud.ops.toscamodel.wf.WorkFlow;
 import com.cloud.ops.toscamodel.wf.WorkFlowBuilder;
+import com.google.common.collect.Maps;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.*;
@@ -110,32 +96,6 @@ public class ToscaEnvironment implements IToscaEnvironment {
         return typeManager.getNodeTemplatesOfType(rootType);
     }
 
-
-    public TopologyContext getTopologyContext() {
-        if (this.topologyContext == null) {
-            INodeType rootNode = (INodeType) this.getNamedEntity("tosca.nodes.Root");
-            Iterable<INodeTemplate> rootNodeTemplate = this.getNodeTemplatesOfType(rootNode);
-            Map<String, NodeTemplateDto> nodeTemplateDtoMap = new HashMap<>();
-            for (INodeTemplate nodeTemplate : rootNodeTemplate) {
-                nodeTemplateDtoMap.put(nodeTemplate.toString(), NodeTemplateDto.convert(nodeTemplate));
-            }
-            this.topologyContext = TopologyContext.builder().nodeTemplateMap(nodeTemplateDtoMap).build();
-        }
-        return this.topologyContext;
-    }
-
-
-    @Override
-    public TopologyContext getTopologyWithWorkFlows() {
-        if (this.topologyContext == null) {
-            this.getTopologyContext();
-        }
-        if (this.topologyContext.getWorkFlowMap() == null) {
-            WorkFlowBuilder.initWorkFlows(this.topologyContext);
-        }
-        return this.topologyContext;
-    }
-
     @Override
     public Iterable<INodeType> getNodeTypesDerivingFrom(INodeType rootType) {
         return typeManager.getNodeTypesDerivingFrom(rootType);
@@ -181,12 +141,49 @@ public class ToscaEnvironment implements IToscaEnvironment {
         return new NodeTemplate((NamedNodeType) type, "", Collections.emptyMap(), Collections.emptyMap());
     }
 
-    public void updateAttribute(String nodeId, Map<String, Object> attributes) {
+    public TopologyContext getTopologyContext() {
+        if (this.topologyContext == null) {
+            INodeType rootNode = (INodeType) this.getNamedEntity("tosca.nodes.Root");
+            Iterable<INodeTemplate> rootNodeTemplate = this.getNodeTemplatesOfType(rootNode);
+            Map<String, NodeTemplateDto> nodeTemplateDtoMap = new HashMap<>();
+            for (INodeTemplate nodeTemplate : rootNodeTemplate) {
+                nodeTemplateDtoMap.put(nodeTemplate.toString(), NodeTemplateDto.convert(nodeTemplate));
+            }
+            this.topologyContext = TopologyContext.builder().nodeTemplateMap(nodeTemplateDtoMap).build();
+        }
+        return this.topologyContext;
+    }
+
+    @Override
+    public WorkFlow getWorkFlow(String workFlowName) {
+        return WorkFlowBuilder.buildWorkFlow(this.topologyContext, workFlowName);
+    }
+
+
+    @Override
+    public TopologyContext getTopologyWithWorkFlow(String workFlowName) {
+        if (this.topologyContext == null) {
+            this.getTopologyContext();
+        }
+        if (this.topologyContext.getWorkFlowMap() == null) {
+            Map<String, WorkFlow> wfs = topologyContext.getWorkFlowMap();
+            if (wfs == null) {
+                wfs = Maps.newLinkedHashMap();
+                topologyContext.setWorkFlowMap(wfs);
+            }
+            WorkFlow workFlow = WorkFlowBuilder.buildWorkFlow(this.topologyContext, workFlowName);
+            topologyContext.getWorkFlowMap().put(workFlowName, workFlow);
+        }
+        return this.topologyContext;
+    }
+
+    @Override
+    public void updateAttribute(String nodeName, Map<String, Object> attributes) {
         try {
             INodeType nodeTypes = (INodeType) this.getNamedEntity("tosca.nodes.Root");
             Iterable<INodeTemplate> nodes = this.getNodeTemplatesOfType(nodeTypes);
             for (INodeTemplate node : nodes) {
-                if (nodeId.equals(node.toString())) {
+                if (nodeName.equals(node.toString())) {
                     for (Map.Entry<String, Object> attribute : attributes.entrySet()) {
                         Object value = attribute.getValue();
                         if (value instanceof String) {
@@ -198,8 +195,6 @@ public class ToscaEnvironment implements IToscaEnvironment {
                 }
             }
             this.writeFile(new FileWriter(yamlFilePath));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }

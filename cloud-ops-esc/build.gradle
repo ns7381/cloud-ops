@@ -4,6 +4,8 @@ project(':cloud-ops-esc') {
     apply plugin: 'java'
 
     dependencies {
+        compile project(':cloud-ops-common')
+        compile project(':cloud-ops-tosca')
         compile("org.apache.jclouds.labs:docker:1.9.2")
         compile("org.apache.jclouds.driver:jclouds-log4j:1.9.2")
     }

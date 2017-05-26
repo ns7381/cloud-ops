@@ -17,50 +17,58 @@
 package com.cloud.ops.toscamodel;
 
 import com.cloud.ops.toscamodel.impl.TopologyContext;
+import com.cloud.ops.toscamodel.wf.WorkFlow;
 
 import java.io.FileNotFoundException;
-import java.io.Reader;
 import java.io.Writer;
+import java.util.Map;
 
 /**
  * Created by pq on 16/04/2015.
  */
 public interface IToscaEnvironment {
-    public INamedEntity getNamedEntity(String entityName);
+    INamedEntity getNamedEntity(String entityName);
 
-    public INamedEntity registerType(String entityName, IType t);
-    public INamedEntity registerNodeType(String entityName, INodeType t);
-    public INamedEntity registerNodeTemplate(String entityName, INodeTemplate t);
+    INamedEntity registerType(String entityName, IType t);
+
+    INamedEntity registerNodeType(String entityName, INodeType t);
+
+    INamedEntity registerNodeTemplate(String entityName, INodeTemplate t);
 
     /***
      *  Imports a named entity from another environment, with all its supertypes and used data types.
      *  When an entity with the same name is present it is assumed to be consistent and used without importing a new one
      * @param entity the named entity to be imported
      */
-    public INamedEntity importWithSupertypes(INamedEntity entity);
+    INamedEntity importWithSupertypes(INamedEntity entity);
 
     INodeTemplate newTemplate(INodeType type);
 
-    public Iterable<INodeTemplate> getNodeTemplatesOfType(INodeType rootType);
+    Iterable<INodeTemplate> getNodeTemplatesOfType(INodeType rootType);
 
     TopologyContext getTopologyContext();
 
-    TopologyContext getTopologyWithWorkFlows();
+    WorkFlow getWorkFlow(String workFlowName);
 
-    public Iterable<INodeType> getNodeTypesDerivingFrom(INodeType rootType);
-    public Iterable<ITypeStruct> getTypesDerivingFrom(ITypeStruct rootType);
+    TopologyContext getTopologyWithWorkFlow(String workFlowName);
+
+    Iterable<INodeType> getNodeTypesDerivingFrom(INodeType rootType);
+
+    Iterable<ITypeStruct> getTypesDerivingFrom(ITypeStruct rootType);
 
     void readFile(String yamlFilePath, boolean hideTypes) throws FileNotFoundException;
-    default public void readFile(String yamlFilePath) throws FileNotFoundException { readFile(yamlFilePath,false); }
-    public void renameEntity(String entityName, String newEntityName);
 
+    default void readFile(String yamlFilePath) throws FileNotFoundException {
+        readFile(yamlFilePath, false);
+    }
 
-    public void hideEntity(String entityName);
-    public void unhideEntity(String entityName);
+    void renameEntity(String entityName, String newEntityName);
 
-//    public void readFile(Reader input, boolean hideTypes);
-//    default public void readFile(Reader input) { readFile(input,false); }
+    void hideEntity(String entityName);
 
-    public void writeFile(Writer output);
+    void unhideEntity(String entityName);
 
+    void writeFile(Writer output);
+
+    void updateAttribute(String nodeId, Map<String, Object> attributes);
 }

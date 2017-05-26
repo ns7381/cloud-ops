@@ -1,24 +1,22 @@
 package com.cloud.ops.esc.docker;
 
 
+import com.cloud.ops.esc.LocationService;
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Module;
 import org.jclouds.ContextBuilder;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.RunNodesException;
-import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.Template;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.sshj.config.SshjSshClientModule;
 
 import java.util.Properties;
-import java.util.Set;
 
-public class DockerLauncher {
+public class DockerLocationServiceImpl implements LocationService {
     private static final String PATH = "E:\\iop\\cloud-ops\\cloud-ops-esc\\src\\main\\resources\\";
     // get a context with docker that offers the portable ComputeService api
-    public static void main(String[] args) throws RunNodesException {
+    public static void connect(String[] args) throws RunNodesException {
 
         String email = "cert.pem";
         String password = "key.pem";
@@ -46,6 +44,16 @@ public class DockerLauncher {
 
 //        release resources
         context.close();
+
+    }
+
+    @Override
+    public void install() {
+
+    }
+
+    @Override
+    public void doWorkFlow() {
 
     }
 }

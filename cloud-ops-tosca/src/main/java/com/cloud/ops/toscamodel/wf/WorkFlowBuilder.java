@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Map;
 
 import static com.cloud.ops.toscamodel.wf.WorkFlow.ARTIFACT_PATH;
-import static com.cloud.ops.toscamodel.wf.WorkFlow.PATCH_DEPLOY_WF;
 
 /**
  * Created by Nathan on 2017/5/23.
@@ -19,28 +18,18 @@ import static com.cloud.ops.toscamodel.wf.WorkFlow.PATCH_DEPLOY_WF;
 public class WorkFlowBuilder {
 
 
-    public static TopologyContext initWorkFlows(TopologyContext topologyContext) {
-        Map<String, WorkFlow> wfs = topologyContext.getWorkFlowMap();
-        if (wfs == null) {
-            wfs = Maps.newLinkedHashMap();
-            topologyContext.setWorkFlowMap(wfs);
-        }
-        deployPatchFilter(topologyContext);
-
-        return topologyContext;
-    }
-
-    private static void deployPatchFilter(TopologyContext topologyContext) {
+    public static WorkFlow buildWorkFlow(TopologyContext topologyContext, String workflowName) {
         for (Map.Entry<String, NodeTemplateDto> nodeMap : topologyContext.getNodeTemplateMap().entrySet()) {
             for (Map.Entry<String, Interface> interfaceMap : nodeMap.getValue().getInterfaces().entrySet()) {
-                if (interfaceMap.getKey().equals(PATCH_DEPLOY_WF)) {
+                if (interfaceMap.getKey().equals(workflowName)) {
                     WorkFlow wf = new WorkFlow();
-                    wf.setName(PATCH_DEPLOY_WF);
+                    wf.setName(workflowName);
                     wf.setSteps(processInterface(topologyContext, nodeMap.getKey(), interfaceMap.getKey()));
-                    topologyContext.getWorkFlowMap().put(PATCH_DEPLOY_WF, wf);
+                    return wf;
                 }
             }
         }
+        throw new RuntimeException("not have " + workflowName + " workflow");
     }
 
     static List<WorkFlowStep> processInterface(TopologyContext topologyContext, String nodeName, String interfaceName) {
