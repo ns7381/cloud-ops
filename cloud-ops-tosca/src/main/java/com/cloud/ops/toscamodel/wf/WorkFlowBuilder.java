@@ -10,13 +10,11 @@ import com.google.common.collect.Maps;
 import java.util.List;
 import java.util.Map;
 
-import static com.cloud.ops.toscamodel.wf.WorkFlow.ARTIFACT_PATH;
-
 /**
  * Created by Nathan on 2017/5/23.
  */
 public class WorkFlowBuilder {
-
+    public static final String ARTIFACT_PATH = "/opt/iop-ops/artifact";
 
     public static WorkFlow buildWorkFlow(TopologyContext topologyContext, String workflowName) {
         for (Map.Entry<String, NodeTemplateDto> nodeMap : topologyContext.getNodeTemplateMap().entrySet()) {

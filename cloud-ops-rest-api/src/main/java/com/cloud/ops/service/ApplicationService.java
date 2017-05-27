@@ -10,19 +10,17 @@ import com.cloud.ops.entity.topology.Topology;
 import com.cloud.ops.entity.topology.TopologyArchive;
 import com.cloud.ops.entity.topology.TopologyArchiveType;
 import com.cloud.ops.entity.workflow.WorkFlowStep;
+import com.cloud.ops.esc.LocationServiceProvider;
+import com.cloud.ops.esc.local.Location;
 import com.cloud.ops.repository.ApplicationRepository;
 import com.cloud.ops.entity.workflow.WorkFlow;
 import com.cloud.ops.entity.application.*;
 import com.cloud.ops.store.FileStore;
-import com.cloud.ops.toscamodel.INodeTemplate;
-import com.cloud.ops.toscamodel.INodeType;
 import com.cloud.ops.toscamodel.IToscaEnvironment;
 import com.cloud.ops.toscamodel.Tosca;
-import com.cloud.ops.toscamodel.basictypes.impl.TypeList;
-import com.cloud.ops.toscamodel.basictypes.impl.TypeString;
 import com.cloud.ops.toscamodel.impl.Artifact;
 import com.cloud.ops.toscamodel.impl.Interface;
-import com.cloud.ops.configuration.ws.*;
+import com.cloud.ops.toscamodel.impl.TopologyContext;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.slf4j.Logger;
@@ -42,6 +40,8 @@ import java.io.*;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import static com.cloud.ops.store.FileStore.TOPOLOGY_FILE_PATH;
 
 @Service
 @Transactional
@@ -70,6 +70,10 @@ public class ApplicationService {
     private FileStore fileStore;
     @Autowired
     private ApplicationContext context;
+    @Autowired
+    private LocationServiceProvider locationServiceProvider;
+    @Autowired
+    private ApplicationEnvironmentService applicationEnvironmentService;
 
     @Cacheable(key = "#id")
     public Application get(String id) {
@@ -77,6 +81,7 @@ public class ApplicationService {
         IToscaEnvironment toscaEnvironment = Tosca.newEnvironment();
         try {
             toscaEnvironment.readFile(application.getYamlFilePath(), false);
+            application.setToscaEnvironment(toscaEnvironment);
             application.setTopologyContext(toscaEnvironment.getTopologyContext());
         } catch (FileNotFoundException e) {
             logger.error("yaml file not find. ", e);
@@ -84,28 +89,32 @@ public class ApplicationService {
         return application;
     }
 
-    public Application create(Application application) {
-        Topology topology = topologyService.get(application.getTopologyId());
-        IToscaEnvironment toscaEnvironment = topology.getToscaEnvironment();
-        INodeType rootNode = (INodeType) toscaEnvironment.getNamedEntity("tosca.nodes.Compute");
-        Iterable<INodeTemplate> rootNodeTemplate = toscaEnvironment.getNodeTemplatesOfType(rootNode);
-        for (INodeTemplate nodeTemplate : rootNodeTemplate) {
-            LocalLocation localLocation = application.getLocations().get(nodeTemplate.toString());
-            assert localLocation != null;
-            nodeTemplate.declaredAttributes().put("hosts", TypeList.instance(TypeString.instance()).instantiate(localLocation.getHosts()));
-            nodeTemplate.declaredAttributes().put("user", TypeString.instance().instantiate(localLocation.getUser()));
-            nodeTemplate.declaredAttributes().put("password", TypeString.instance().instantiate(localLocation.getPassword()));
-        }
+    public Application create(Application app) {
+        Topology topology = topologyService.get(app.getTopologyId());
+        ApplicationEnvironment appEnv = applicationEnvironmentService.get(app.getEnvironmentId());
+        TopologyContext topologyContext = locationServiceProvider.install(topology.getTopologyContext(),
+                generateLocation(appEnv, app.getLocation()));
+
         try {
-            String fileName = fileStore.makeFile(fileStore.TOPOLOGY_FILE_PATH +
-                    application.getEnvironmentId() + File.separator + application.getName() + File.separator) + "topology.yaml";
-            toscaEnvironment.writeFile(new FileWriter(fileName));
-            application.setYamlFilePath(fileName);
+            String fileName = fileStore.makeFile(TOPOLOGY_FILE_PATH + app.getEnvironmentId()
+                    + File.separator + app.getName() + File.separator) + "topology.yaml";
+            topology.getToscaEnvironment().writeFile(new FileWriter(fileName));
+            app.getToscaEnvironment().updateAttribute(topologyContext, fileName);
+            app.setYamlFilePath(fileName);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        dao.save(application);
-        return application;
+        dao.save(app);
+        return app;
+    }
+
+    private Location generateLocation(ApplicationEnvironment appEnvironment, Location location) {
+        if ("local".equals(appEnvironment.getType())) {
+            location.setLocationType("local");
+            return location;
+        }
+        //TODO docker location generate
+        return null;
     }
 
     public List<Application> findByEnvironmentId(String environmentId) {
@@ -134,9 +143,13 @@ public class ApplicationService {
     @Lock(LockModeType.READ)
     public Boolean deploy(String id, String nodeId, String packageId) {
         Application application = this.get(id);
-        ResourcePackage resourcePackage = resourcePackageService.get(packageId);
+        ApplicationEnvironment appEnv = applicationEnvironmentService.get(application.getEnvironmentId());
         List<TopologyArchive> archives = topologyArchiveService.findByTopologyId(application.getTopologyId());
         Map<String, String> archiveMap = archives.stream().collect(Collectors.toMap(TopologyArchive::getName, TopologyArchive::getFilePath));
+        Location location = generateLocation(appEnv, application.getLocation());
+        location.getMetaProperties().putAll(archiveMap);
+        locationServiceProvider.executeWorkFlow(application.getTopologyContext(), location);
+        ResourcePackage resourcePackage = resourcePackageService.get(packageId);
         archiveMap.put(TopologyArchiveType.PATCH_PACKAGE.name(), resourcePackage.getWarPath());
         String interfaceName = (resourcePackage.getType().equals(ResourcePackageType.PATCH) ?
                 DeploymentType.PATCH_DEPLOY : DeploymentType.WAR_DEPLOY).toString();
@@ -248,14 +261,14 @@ public class ApplicationService {
         }
         assert hostNodeName != null;
         Map<String, Object> attributes = nodeMap.get(hostNodeName).getAttributes();
-        doInterfaceTemplate.setLocation(LocalLocation.builder().user((String) attributes.get("user"))
+        doInterfaceTemplate.setLocation(Location.builder().user((String) attributes.get("user"))
                 .password((String) attributes.get("password")).hosts((List<String>) attributes.get("hosts")).build());
     }
 
     @CacheEvict(key = "#id")
     public Boolean changeApplicationAttributes(String id, String nodeId, Map<String, Object> attributes) {
-        String yamlFilePath = dao.getOne(id).getYamlFilePath();
-        topologyService.updateAttribute(yamlFilePath, nodeId, attributes);
+        Application application = this.get(id);
+        application.getToscaEnvironment().updateAttribute(nodeId, attributes, application.getYamlFilePath());
         return Boolean.TRUE;
     }
 }

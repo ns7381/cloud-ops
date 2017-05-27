@@ -1,13 +1,13 @@
 package com.cloud.ops.entity.application;
 
 import com.cloud.ops.dao.modal.BaseObject;
-import com.cloud.ops.entity.location.LocalLocation;
+import com.cloud.ops.esc.local.Location;
+import com.cloud.ops.toscamodel.IToscaEnvironment;
 import com.cloud.ops.toscamodel.impl.TopologyContext;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import java.util.Map;
 
 /**
  * Created by Administrator on 2017/1/13.
@@ -15,12 +15,13 @@ import java.util.Map;
 @Entity
 @Table(name="application")
 public class Application extends BaseObject {
-    String yamlFilePath;
-    Map<String, LocalLocation> locations;
-    String topologyId;
-    String topologyName;
-    String environmentId;
-    TopologyContext topologyContext;
+    private String yamlFilePath;
+    private String topologyId;
+    private String topologyName;
+    private String environmentId;
+    private Location location;
+    private IToscaEnvironment toscaEnvironment;
+    private TopologyContext topologyContext;
 
     public String getYamlFilePath() {
         return yamlFilePath;
@@ -31,12 +32,21 @@ public class Application extends BaseObject {
     }
 
     @Transient
-    public Map<String, LocalLocation> getLocations() {
-        return locations;
+    public Location getLocation() {
+        return location;
     }
 
-    public void setLocations(Map<String, LocalLocation> locations) {
-        this.locations = locations;
+    public void setLocation(Location location) {
+        this.location = location;
+    }
+
+    @Transient
+    public IToscaEnvironment getToscaEnvironment() {
+        return toscaEnvironment;
+    }
+
+    public void setToscaEnvironment(IToscaEnvironment toscaEnvironment) {
+        this.toscaEnvironment = toscaEnvironment;
     }
 
     public String getTopologyId() {

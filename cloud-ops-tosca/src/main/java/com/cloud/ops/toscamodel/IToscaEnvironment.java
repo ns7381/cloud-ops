@@ -70,5 +70,7 @@ public interface IToscaEnvironment {
 
     void writeFile(Writer output);
 
-    void updateAttribute(String nodeId, Map<String, Object> attributes);
+    void updateAttribute(TopologyContext context, String yamlFilePath);
+
+    void updateAttribute(String nodeId, Map<String, Object> attributes, String yamlFilePath);
 }

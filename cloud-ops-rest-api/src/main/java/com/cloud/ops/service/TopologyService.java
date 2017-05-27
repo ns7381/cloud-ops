@@ -35,6 +35,7 @@ public class TopologyService {
             try {
                 toscaEnvironment.readFile(topology.getYamlFilePath(), false);
                 topology.setTopologyContext(toscaEnvironment.getTopologyContext());
+                topology.setToscaEnvironment(toscaEnvironment);
             } catch (FileNotFoundException e) {
                 logger.error("yaml file not find. ", e);
             }

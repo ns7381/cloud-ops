@@ -21,7 +21,6 @@ public class ToscaEnvironment implements IToscaEnvironment {
     private TopologyContext topologyContext = null;
     private static final String relName = "normative_types.yaml";
     //    private static final String absName = "/com/cloud/ops/toscamodel/impl/normative_types.yaml";
-    private String yamlFilePath = "";
 
     public ToscaEnvironment() {
         //ResourceBundle bundle = ResourceBundle.getBundle("seaclouds.utils.toscamodel.impl");
@@ -37,7 +36,6 @@ public class ToscaEnvironment implements IToscaEnvironment {
 
     @Override
     public void readFile(String yamlFilePath, boolean hideTypes) throws FileNotFoundException {
-        this.yamlFilePath = yamlFilePath;
         final Parser parser = new Parser(this, hideTypes);
         parser.Parse(new FileReader(yamlFilePath));
     }
@@ -178,7 +176,14 @@ public class ToscaEnvironment implements IToscaEnvironment {
     }
 
     @Override
-    public void updateAttribute(String nodeName, Map<String, Object> attributes) {
+    public void updateAttribute(TopologyContext context, String yamlFilePath) {
+        context.getNodeTemplateMap().forEach((name, node) -> {
+            this.updateAttribute(name, node.getAttributes(), yamlFilePath);
+        });
+    }
+
+    @Override
+    public void updateAttribute(String nodeName, Map<String, Object> attributes, String yamlFilePath) {
         try {
             INodeType nodeTypes = (INodeType) this.getNamedEntity("tosca.nodes.Root");
             Iterable<INodeTemplate> nodes = this.getNodeTemplatesOfType(nodeTypes);

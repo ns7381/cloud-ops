@@ -1,7 +1,9 @@
 package com.cloud.ops.esc.docker;
 
 
+import com.cloud.ops.esc.Location;
 import com.cloud.ops.esc.LocationService;
+import com.cloud.ops.toscamodel.impl.TopologyContext;
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Module;
 import org.jclouds.ContextBuilder;
@@ -48,12 +50,12 @@ public class DockerLocationServiceImpl implements LocationService {
     }
 
     @Override
-    public void install() {
-
+    public TopologyContext install(TopologyContext topologyContext, Location location) {
+        return topologyContext;
     }
 
     @Override
-    public void doWorkFlow() {
-
+    public TopologyContext executeWorkFlow(TopologyContext topologyContext, Location location) {
+        return topologyContext;
     }
 }

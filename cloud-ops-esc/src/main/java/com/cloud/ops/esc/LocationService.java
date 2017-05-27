@@ -1,11 +1,13 @@
 package com.cloud.ops.esc;
 
+import com.cloud.ops.toscamodel.impl.TopologyContext;
+
 /**
  * Created by ningsheng on 2017/5/26.
  */
 public interface LocationService {
 
-    void install();
+    TopologyContext install(TopologyContext topologyContext, Location location);
 
-    void doWorkFlow();
+    TopologyContext executeWorkFlow(TopologyContext topologyContext, Location location);
 }

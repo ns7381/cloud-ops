@@ -8,7 +8,6 @@ project(':cloud-ops-rest-api') {
 
     dependencies {
         compile project(':cloud-ops-ui')
-        compile project(':cloud-ops-dao')
         compile project(':cloud-ops-security')
         compile project(':cloud-ops-esc')
 //        compile("org.springframework.boot:spring-boot-devtools")
