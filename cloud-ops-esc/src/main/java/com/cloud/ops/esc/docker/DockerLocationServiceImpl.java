@@ -12,9 +12,11 @@ import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.RunNodesException;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.sshj.config.SshjSshClientModule;
+import org.springframework.stereotype.Service;
 
 import java.util.Properties;
 
+@Service
 public class DockerLocationServiceImpl implements LocationService {
     private static final String PATH = "E:\\iop\\cloud-ops\\cloud-ops-esc\\src\\main\\resources\\";
     // get a context with docker that offers the portable ComputeService api

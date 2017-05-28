@@ -1,8 +1,7 @@
 package com.cloud.ops.entity.application;
 
 import com.cloud.ops.dao.modal.BaseObject;
-import com.cloud.ops.esc.local.Location;
-import com.cloud.ops.toscamodel.IToscaEnvironment;
+import com.cloud.ops.esc.local.LocalLocation;
 import com.cloud.ops.toscamodel.impl.TopologyContext;
 
 import javax.persistence.Entity;
@@ -19,8 +18,7 @@ public class Application extends BaseObject {
     private String topologyId;
     private String topologyName;
     private String environmentId;
-    private Location location;
-    private IToscaEnvironment toscaEnvironment;
+    private LocalLocation location;
     private TopologyContext topologyContext;
 
     public String getYamlFilePath() {
@@ -32,21 +30,12 @@ public class Application extends BaseObject {
     }
 
     @Transient
-    public Location getLocation() {
+    public LocalLocation getLocation() {
         return location;
     }
 
-    public void setLocation(Location location) {
+    public void setLocation(LocalLocation location) {
         this.location = location;
-    }
-
-    @Transient
-    public IToscaEnvironment getToscaEnvironment() {
-        return toscaEnvironment;
-    }
-
-    public void setToscaEnvironment(IToscaEnvironment toscaEnvironment) {
-        this.toscaEnvironment = toscaEnvironment;
     }
 
     public String getTopologyId() {

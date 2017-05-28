@@ -16,7 +16,7 @@ import java.io.*;
 public class ToscaEnvironmentTest {
     @Test
     public void testParse() throws FileNotFoundException {
-        IToscaEnvironment tyaml = Tosca.newEnvironment();
+        IToscaEnvironment tyaml = Tosca.newEnvironment("");
 //        tyaml.readFile(new InputStreamReader(this.getClass().getResourceAsStream("test.yaml")), false);
         tyaml.readFile("test123.yaml");
         INodeType rootNode = (INodeType) tyaml.getNamedEntity("tosca.nodes.Compute");
@@ -26,7 +26,7 @@ public class ToscaEnvironmentTest {
     }
     @Test
     public void testWrite() throws IOException {
-        IToscaEnvironment environment = Tosca.newEnvironment();
+        IToscaEnvironment environment = Tosca.newEnvironment("");
 //        environment.readFile(new InputStreamReader(this.getClass().getResourceAsStream("test.yaml")), false);
         environment.readFile("test123.yaml");
         environment.writeFile(new FileWriter("test1234.yaml"));

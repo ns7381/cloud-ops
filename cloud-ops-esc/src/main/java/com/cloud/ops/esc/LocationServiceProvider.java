@@ -4,6 +4,7 @@ import com.cloud.ops.common.exception.NotFoundException;
 import com.cloud.ops.esc.docker.DockerLocationServiceImpl;
 import com.cloud.ops.esc.local.LocalLocationServiceImpl;
 import com.cloud.ops.toscamodel.impl.TopologyContext;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -12,12 +13,18 @@ import org.springframework.stereotype.Service;
 @Service
 public class LocationServiceProvider {
 
+    @Autowired
+    private DockerLocationServiceImpl dockerLocationService;
+
+    @Autowired
+    private LocalLocationServiceImpl localLocationService;
+
     private LocationService match(TopologyContext topologyContext, Location location) {
         //TODO check topology and location is or not related
         if ("local".equals(location.getLocationType())) {
-            return new LocalLocationServiceImpl();
+            return localLocationService;
         } else if ("docker".equals(location.getLocationType())) {
-            return new DockerLocationServiceImpl();
+            return dockerLocationService;
         }
         throw new NotFoundException("not find "+ location.getLocationType() +"location");
     }

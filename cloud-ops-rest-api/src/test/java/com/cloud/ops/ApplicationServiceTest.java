@@ -1,7 +1,6 @@
 package com.cloud.ops;
 
 import com.cloud.ops.entity.application.Application;
-import com.cloud.ops.entity.location.LocalLocation;
 import com.cloud.ops.service.ApplicationService;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -12,11 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static junit.framework.TestCase.assertEquals;
 
 /**
  * Test to validate the correctness of the soft-delete implementation.
@@ -40,14 +36,14 @@ public class ApplicationServiceTest {
         application.setTopologyId("9e35f0ca450e42a3904e5d24a4e38833");
         List<String> hosts = Lists.newArrayList();
         hosts.add("10.110.20.147");
-        LocalLocation localLocation = LocalLocation.builder()
+        /*LocalLocation localLocation = LocalLocation.builder()
                 .hosts(hosts)
                 .user("root")
                 .password("123456a?").build();
         HashMap<String, LocalLocation> map = new HashMap<>();
         map.put("mysql_host", localLocation);
         map.put("java_host", localLocation);
-        application.setLocations(map);
+        application.setLocations(map);*/
         application.setEnvironmentId("123");
         applicationService.create(application);
     }
@@ -61,8 +57,8 @@ public class ApplicationServiceTest {
         application.setTopologyId("9e35f0ca450e42a3904e5d24a4e38833");
         List<String> hosts = Lists.newArrayList();
         hosts.add("10.110.20.147");
-        LocalLocation localLocation = LocalLocation.builder()
-                .hosts(hosts)
+        /*LocalLocation localLocation = LocalLocation.builder()
+                .host(hosts)
                 .user("root")
                 .password("123456a?").build();
         HashMap<String, LocalLocation> map = new HashMap<>();
@@ -71,7 +67,7 @@ public class ApplicationServiceTest {
         application.setEnvironmentId("8a48aca65b479025015b4b255da30000");
         applicationService.create(application);
         long endTime=System.currentTimeMillis();
-        System.out.println("程序运行时间： "+(endTime-startTime)+"ms");
+        System.out.println("程序运行时间： "+(endTime-startTime)+"ms");*/
     }
 
     @Test

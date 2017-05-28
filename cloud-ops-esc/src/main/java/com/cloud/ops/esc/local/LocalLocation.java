@@ -13,7 +13,7 @@ import java.util.Map;
 @Getter
 @Setter
 @Builder
-public class Location extends com.cloud.ops.esc.Location {
+public class LocalLocation extends Location {
     private Map<String, Host> host;
 }
 

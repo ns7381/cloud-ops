@@ -17,6 +17,7 @@
 package com.cloud.ops.toscamodel;
 
 import com.cloud.ops.toscamodel.impl.TopologyContext;
+import com.cloud.ops.toscamodel.impl.ToscaEnvironment;
 import com.cloud.ops.toscamodel.wf.WorkFlow;
 
 import java.io.FileNotFoundException;
@@ -56,10 +57,10 @@ public interface IToscaEnvironment {
 
     Iterable<ITypeStruct> getTypesDerivingFrom(ITypeStruct rootType);
 
-    void readFile(String yamlFilePath, boolean hideTypes) throws FileNotFoundException;
+    ToscaEnvironment readFile(String yamlFilePath, boolean hideTypes) throws FileNotFoundException;
 
-    default void readFile(String yamlFilePath) throws FileNotFoundException {
-        readFile(yamlFilePath, false);
+    default ToscaEnvironment readFile(String yamlFilePath) throws FileNotFoundException {
+        return readFile(yamlFilePath, false);
     }
 
     void renameEntity(String entityName, String newEntityName);

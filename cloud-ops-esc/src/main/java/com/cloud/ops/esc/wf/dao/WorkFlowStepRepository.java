@@ -1,10 +1,9 @@
 /**
  * 
  */
-package com.cloud.ops.repository;
+package com.cloud.ops.esc.wf.dao;
 
-import com.cloud.ops.entity.workflow.WorkFlow;
-import com.cloud.ops.entity.workflow.WorkFlowStep;
+import com.cloud.ops.toscamodel.wf.WorkFlowStep;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

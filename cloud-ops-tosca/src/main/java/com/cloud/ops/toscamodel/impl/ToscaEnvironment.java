@@ -6,6 +6,8 @@ import com.cloud.ops.toscamodel.basictypes.impl.TypeString;
 import com.cloud.ops.toscamodel.wf.WorkFlow;
 import com.cloud.ops.toscamodel.wf.WorkFlowBuilder;
 import com.google.common.collect.Maps;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.*;
@@ -20,13 +22,21 @@ public class ToscaEnvironment implements IToscaEnvironment {
     private final TypeManager typeManager = new TypeManager(this);
     private TopologyContext topologyContext = null;
     private static final String relName = "normative_types.yaml";
-    //    private static final String absName = "/com/cloud/ops/toscamodel/impl/normative_types.yaml";
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     public ToscaEnvironment() {
-        //ResourceBundle bundle = ResourceBundle.getBundle("seaclouds.utils.toscamodel.impl");
-        //this.getClass().getResourceAsStream(absName);
         InputStream stream = this.getClass().getResourceAsStream(relName);
         readFile(new InputStreamReader(stream), true);
+    }
+
+    public ToscaEnvironment(String yamlFileName) {
+        InputStream stream = this.getClass().getResourceAsStream(relName);
+        readFile(new InputStreamReader(stream), true);
+        try {
+            readFile(yamlFileName, false);
+        } catch (FileNotFoundException e) {
+            logger.error(e.getMessage(), e);
+        }
     }
 
     private void readFile(Reader input, boolean hideTypes) {
@@ -35,9 +45,10 @@ public class ToscaEnvironment implements IToscaEnvironment {
     }
 
     @Override
-    public void readFile(String yamlFilePath, boolean hideTypes) throws FileNotFoundException {
+    public ToscaEnvironment readFile(String yamlFilePath, boolean hideTypes) throws FileNotFoundException {
         final Parser parser = new Parser(this, hideTypes);
         parser.Parse(new FileReader(yamlFilePath));
+        return this;
     }
 
     @Override
@@ -201,7 +212,7 @@ public class ToscaEnvironment implements IToscaEnvironment {
             }
             this.writeFile(new FileWriter(yamlFilePath));
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
         }
     }
 };

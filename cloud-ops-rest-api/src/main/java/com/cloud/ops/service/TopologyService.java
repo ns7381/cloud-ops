@@ -2,9 +2,9 @@ package com.cloud.ops.service;
 
 import com.cloud.ops.common.utils.BeanUtils;
 import com.cloud.ops.dao.modal.SortConstant;
-import com.cloud.ops.repository.TopologyRepository;
 import com.cloud.ops.entity.topology.Topology;
-import com.cloud.ops.toscamodel.*;
+import com.cloud.ops.repository.TopologyRepository;
+import com.cloud.ops.toscamodel.Tosca;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
-import java.io.FileNotFoundException;
+
 import java.util.List;
 
 
@@ -31,14 +31,7 @@ public class TopologyService {
 
     private void setTopologyContext(Topology topology) {
         if (StringUtils.isNotBlank(topology.getYamlFilePath())) {
-            IToscaEnvironment toscaEnvironment = Tosca.newEnvironment();
-            try {
-                toscaEnvironment.readFile(topology.getYamlFilePath(), false);
-                topology.setTopologyContext(toscaEnvironment.getTopologyContext());
-                topology.setToscaEnvironment(toscaEnvironment);
-            } catch (FileNotFoundException e) {
-                logger.error("yaml file not find. ", e);
-            }
+            topology.setTopologyContext(Tosca.newEnvironment(topology.getYamlFilePath()).getTopologyContext());
         }
     }
 

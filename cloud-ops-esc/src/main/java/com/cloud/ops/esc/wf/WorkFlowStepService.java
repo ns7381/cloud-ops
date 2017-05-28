@@ -1,9 +1,9 @@
-package com.cloud.ops.service;
+package com.cloud.ops.esc.wf;
 
 import com.cloud.ops.common.utils.BeanUtils;
 import com.cloud.ops.dao.modal.SortConstant;
-import com.cloud.ops.entity.workflow.WorkFlowStep;
-import com.cloud.ops.repository.WorkFlowStepRepository;
+import com.cloud.ops.esc.wf.dao.WorkFlowStepRepository;
+import com.cloud.ops.toscamodel.wf.WorkFlowStep;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
