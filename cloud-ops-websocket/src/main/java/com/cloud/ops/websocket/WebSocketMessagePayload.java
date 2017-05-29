@@ -1,4 +1,4 @@
-package com.cloud.ops.websocket.ws;
+package com.cloud.ops.websocket;
 
 public class WebSocketMessagePayload {
 

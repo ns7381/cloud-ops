@@ -1,7 +1,5 @@
 package com.cloud.ops.websocket;
 
-import com.cloud.ops.websocket.ws.CustomWebSocketHandler;
-import com.cloud.ops.websocket.ws.HandshakeInterceptor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;

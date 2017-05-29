@@ -1,4 +1,4 @@
-package com.cloud.ops.websocket.ws;
+package com.cloud.ops.websocket;
 
 import com.cloud.ops.common.utils.QueryStringParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
