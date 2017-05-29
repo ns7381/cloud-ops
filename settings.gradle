@@ -7,4 +7,5 @@ include 'cloud-ops-dao'
 include 'cloud-ops-common'
 include 'cloud-ops-esc'
 include 'cloud-ops-core'
+include 'cloud-ops-websocket'
 

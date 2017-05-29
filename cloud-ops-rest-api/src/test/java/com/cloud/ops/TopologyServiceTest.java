@@ -1,6 +1,6 @@
 package com.cloud.ops;
 
-import com.cloud.ops.service.TopologyService;
+import com.cloud.ops.core.topology.TopologyService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

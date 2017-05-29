@@ -52,6 +52,7 @@ public class LocalFileStore implements FileStore{
 
     @Override
     public String compareWar(String oldWarPath, String newWarPath, String outPath) {
+        makeFile(outPath);
         long startTime = System.currentTimeMillis();  //获取开始时间
         System.out.println("---------------------------------------");
         System.out.println("===> 程序已启动");
@@ -234,8 +235,4 @@ public class LocalFileStore implements FileStore{
 
         return destPath + File.separator + zipFileName;
     }
-    public static void main(String[] args) {
-        System.out.println(TOPOLOGY_FILE_PATH);
-    }
-
 }

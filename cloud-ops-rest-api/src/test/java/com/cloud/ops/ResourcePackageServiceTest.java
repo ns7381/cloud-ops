@@ -1,8 +1,6 @@
 package com.cloud.ops;
 
-import com.cloud.ops.entity.Resource.ResourcePackage;
-import com.cloud.ops.entity.Resource.ResourcePackageConfig;
-import com.cloud.ops.service.ResourcePackageService;
+import com.cloud.ops.core.resource.ResourcePackageService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

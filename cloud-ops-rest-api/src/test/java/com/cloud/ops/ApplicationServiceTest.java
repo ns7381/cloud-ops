@@ -1,7 +1,6 @@
 package com.cloud.ops;
 
-import com.cloud.ops.entity.application.Application;
-import com.cloud.ops.service.ApplicationService;
+import com.cloud.ops.core.application.ApplicationService;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.junit.Ignore;
@@ -31,7 +30,7 @@ public class ApplicationServiceTest {
 
     @Test
     public void testCreate() throws Exception {
-        Application application = new Application();
+        com.cloud.ops.core.model.application.Application application = new com.cloud.ops.core.model.application.Application();
         application.setName("test");
         application.setTopologyId("9e35f0ca450e42a3904e5d24a4e38833");
         List<String> hosts = Lists.newArrayList();
@@ -51,7 +50,7 @@ public class ApplicationServiceTest {
     @Test
     public void testUpdate() throws Exception {
         long startTime=System.currentTimeMillis();
-        Application application = new Application();
+        com.cloud.ops.core.model.application.Application application = new com.cloud.ops.core.model.application.Application();
         application.setId("8a48aca65b517c12015b517c29ed0000");
         application.setName("test");
         application.setTopologyId("9e35f0ca450e42a3904e5d24a4e38833");
@@ -75,12 +74,12 @@ public class ApplicationServiceTest {
 //        Application application = applicationService.get("8a48aca65b56ac30015b56b17c8f0000");
 //        System.out.println(application);
 //        applicationService.findByEnvironmentId("8a48aca65b479025015b4b255da30000");
-        Application application = applicationService.get("8a48aca65b66a399015b66cf2b740000");
+        com.cloud.ops.core.model.application.Application application = applicationService.get("8a48aca65b66a399015b66cf2b740000");
         System.out.println(application);
         Map<String, Object> map = Maps.newHashMap();
         map.put("tomcat_home", "/opt/tomcat123456");
         applicationService.changeApplicationAttributes("8a48aca65b66a399015b66cf2b740000", "tomcat", map);
-        Application application1 = applicationService.get("8a48aca65b66a399015b66cf2b740000");
+        com.cloud.ops.core.model.application.Application application1 = applicationService.get("8a48aca65b66a399015b66cf2b740000");
         System.out.println(application1);
     }
 

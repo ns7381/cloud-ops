@@ -1,8 +1,7 @@
 package com.cloud.ops;
 
-import com.cloud.ops.entity.Resource.ResourcePackageConfig;
-import com.cloud.ops.service.ResourcePackageConfigService;
-import com.cloud.ops.service.TopologyService;
+import com.cloud.ops.core.model.Resource.ResourcePackageConfig;
+import com.cloud.ops.core.resource.ResourcePackageConfigService;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;

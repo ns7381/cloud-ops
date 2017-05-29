@@ -1,0 +1,22 @@
+spring:
+    profiles:
+        active: dev
+    datasource:
+        driver-class-name: com.mysql.jdbc.Driver
+        url: jdbc:mysql://10.110.20.20:3306/cloud_ops
+        username: root
+        password: 123456a?
+    jpa:
+        properties:
+            hibernate:
+                dialect: org.hibernate.dialect.MySQL5Dialect
+logging:
+    path: /var/log
+    file: cloud-ops.log
+    level: DEBUG
+#        com.cloud.ops.service: DEBUG
+cloud-ops:
+    file:
+        topology: /opt/iop-ops/topology
+        package: /opt/iop-ops/package
+        remote: /opt/iop-ops/artifact

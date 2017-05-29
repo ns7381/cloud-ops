@@ -1,7 +1,6 @@
 package com.cloud.ops;
 
-import com.cloud.ops.repository.ApplicationRepository;
-import com.cloud.ops.entity.application.Application;
+import com.cloud.ops.core.application.repository.ApplicationRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,10 +30,10 @@ public class DeleteRepositoryTest {
 //        assertEquals(0, applicationRepository.countDeletedEntries());
 
         // Creates a new application and saves it.
-        com.cloud.ops.entity.application.Application application = new Application();
+        com.cloud.ops.core.model.application.Application application = new com.cloud.ops.core.model.application.Application();
         application.setName("foo");
         application.setDescription("bar");
-        Application db = applicationRepository.saveAndFlush(application);
+        com.cloud.ops.core.model.application.Application db = applicationRepository.saveAndFlush(application);
 
         // Now there is one application in the Database.
         assertEquals(1, applicationRepository.count());

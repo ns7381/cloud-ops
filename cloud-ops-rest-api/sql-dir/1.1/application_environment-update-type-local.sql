@@ -1,0 +1,1 @@
+UPDATE application_environment SET type = "local";
