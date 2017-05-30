@@ -10,7 +10,7 @@
 <div class="page-body">
     <div class="row home-summaries-row">
         {{each locations as applicationEnvironment}}
-        <a class="roundedSummary viewLocation" href="{{getUrl('+/application', {'id': applicationEnvironment.id, 'name': applicationEnvironment.name})}}">
+        <a class="roundedSummary viewLocation" href="{{getUrl('+/application', {'id': applicationEnvironment.id, 'name': applicationEnvironment.name, 'type': applicationEnvironment.type})}}">
             <div class="roundedSummaryText">
                 <span class="big" id="numApps"></span>
                 {{applicationEnvironment.name}}<br/>

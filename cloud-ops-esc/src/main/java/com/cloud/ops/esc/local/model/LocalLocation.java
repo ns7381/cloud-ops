@@ -1,7 +1,6 @@
-package com.cloud.ops.esc.local;
+package com.cloud.ops.esc.local.model;
 
 import com.cloud.ops.esc.Location;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,7 +11,6 @@ import java.util.Map;
  */
 @Getter
 @Setter
-@Builder
 public class LocalLocation extends Location {
     private Map<String, Host> host;
 }

@@ -1,7 +1,7 @@
 package com.cloud.ops.core.model.application;
 
 import com.cloud.ops.dao.modal.BaseObject;
-import com.cloud.ops.esc.local.LocalLocation;
+import com.cloud.ops.esc.local.model.LocalLocation;
 import com.cloud.ops.toscamodel.impl.TopologyContext;
 
 import javax.persistence.Entity;

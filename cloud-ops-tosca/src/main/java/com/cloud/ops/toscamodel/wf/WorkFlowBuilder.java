@@ -27,7 +27,7 @@ public class WorkFlowBuilder {
                 }
             }
         }
-        throw new RuntimeException("not have " + workflowName + " workflow");
+        return null;
     }
 
     static List<WorkFlowStep> processInterface(TopologyContext topologyContext, String nodeName, String interfaceName) {

@@ -1,4 +1,4 @@
-package com.cloud.ops.store;
+package com.cloud.ops.common.store;
 
 import java.io.InputStream;
 
@@ -9,9 +9,5 @@ public interface FileStore {
     String storeFile(InputStream data, String filePath);
 
     void delete(String filePath);
-
-    String makeFile(String filePath);
-
-    String compareWar(String oldWarPath, String newWarPath, String outPath);
 
 }

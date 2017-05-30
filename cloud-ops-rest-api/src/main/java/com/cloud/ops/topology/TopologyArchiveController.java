@@ -3,7 +3,7 @@ package com.cloud.ops.topology;
 import com.cloud.ops.core.model.topology.TopologyArchive;
 import com.cloud.ops.core.topology.TopologyArchiveService;
 import com.cloud.ops.core.topology.TopologyService;
-import com.cloud.ops.store.FileStore;
+import com.cloud.ops.common.store.FileStore;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Authorization;
 import org.apache.commons.io.IOUtils;

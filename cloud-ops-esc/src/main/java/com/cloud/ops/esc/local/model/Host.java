@@ -1,6 +1,5 @@
-package com.cloud.ops.esc.local;
+package com.cloud.ops.esc.local.model;
 
-import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,7 +10,6 @@ import java.util.List;
  */
 @Getter
 @Setter
-@Builder
 public class Host {
     List<String> ips;
     String user;

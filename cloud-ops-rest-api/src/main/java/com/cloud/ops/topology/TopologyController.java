@@ -1,8 +1,8 @@
 package com.cloud.ops.topology;
 
+import com.cloud.ops.common.store.FileStore;
 import com.cloud.ops.core.model.topology.Topology;
 import com.cloud.ops.core.topology.TopologyService;
-import com.cloud.ops.store.FileStore;
 import io.swagger.annotations.Api;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -70,9 +70,9 @@ public class TopologyController {
         return service.findAll();
     }
 
-    @GetMapping(value = "/computes")
-    public List<Topology> getListWithComputes() {
-        return service.getListWithComputes();
+    @GetMapping(value = "/list-with-context")
+    public List<Topology> getListWithContext() {
+        return service.getListWithContext();
     }
 
 }

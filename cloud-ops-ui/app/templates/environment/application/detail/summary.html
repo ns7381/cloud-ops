@@ -39,7 +39,7 @@
             <h3 class="panel-title">主机信息</h3>
         </div>
         <div class="panel-body">
-            {{each topology.nodes as node}}
+            {{each topology.topologyContext.nodeTemplateMap as node k}}
             {{if node.type == "tosca.nodes.Compute.Local"}}
             <div class="form-inline">
                 <div class="form-group">
@@ -82,7 +82,7 @@
             {{/each}}
         </div>
     </div>
-    {{each topology.nodes as node}}
+    {{each topology.topologyContext.nodeTemplateMap as node k}}
     {{if node.type.indexOf("tosca.nodes.deploy")>=0}}
     <div class="panel panel-default">
         <div class="panel-heading">

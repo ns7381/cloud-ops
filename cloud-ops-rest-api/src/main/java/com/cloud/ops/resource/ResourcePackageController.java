@@ -1,6 +1,7 @@
 package com.cloud.ops.resource;
 
 import com.cloud.ops.common.cmd.LocalExecuteCommand;
+import com.cloud.ops.common.utils.FileHelper;
 import com.cloud.ops.common.utils.ThreadWithEntity;
 import com.cloud.ops.core.model.Resource.ResourcePackage;
 import com.cloud.ops.core.model.Resource.ResourcePackageConfig;
@@ -8,7 +9,7 @@ import com.cloud.ops.core.model.Resource.ResourcePackageStatus;
 import com.cloud.ops.core.model.Resource.ResourcePackageType;
 import com.cloud.ops.core.resource.ResourcePackageConfigService;
 import com.cloud.ops.core.resource.ResourcePackageService;
-import com.cloud.ops.store.FileStore;
+import com.cloud.ops.common.store.FileStore;
 import com.cloud.ops.websocket.CustomWebSocketHandler;
 import com.cloud.ops.websocket.WebSocketConstants;
 import org.apache.commons.io.FileUtils;
@@ -106,7 +107,7 @@ public class ResourcePackageController {
         new ThreadWithEntity<ResourcePackage>(patchPackage) {
             @Override
             public void run(ResourcePackage entity) {
-                String patchPath = fileStore.compareWar(prePackage.getWarPath(), nextPackage.getWarPath(), uploadPath);
+                String patchPath = FileHelper.compareWar(prePackage.getWarPath(), nextPackage.getWarPath(), uploadPath);
                 entity.setWarPath(patchPath);
                 entity.setStatus(ResourcePackageStatus.FINISH);
                 service.update(entity);

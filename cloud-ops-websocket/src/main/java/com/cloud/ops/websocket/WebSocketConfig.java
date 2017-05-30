@@ -3,7 +3,6 @@ package com.cloud.ops.websocket;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
@@ -16,7 +15,7 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
 @EnableScheduling
 public class WebSocketConfig implements WebSocketConfigurer {
     @Bean
-    public WebSocketHandler customWebSocketHandler() {
+    public CustomWebSocketHandler customWebSocketHandler() {
         return new CustomWebSocketHandler();
     }
 

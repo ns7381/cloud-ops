@@ -1,6 +1,7 @@
 package com.cloud.ops.core.application;
 
 import com.cloud.ops.common.utils.BeanUtils;
+import com.cloud.ops.common.utils.FileHelper;
 import com.cloud.ops.core.application.repository.ApplicationRepository;
 import com.cloud.ops.core.model.Resource.ResourcePackage;
 import com.cloud.ops.core.model.Resource.ResourcePackageConfig;
@@ -14,7 +15,7 @@ import com.cloud.ops.core.topology.TopologyArchiveService;
 import com.cloud.ops.core.topology.TopologyService;
 import com.cloud.ops.dao.modal.SortConstant;
 import com.cloud.ops.esc.LocationServiceProvider;
-import com.cloud.ops.esc.local.LocalLocation;
+import com.cloud.ops.esc.local.model.LocalLocation;
 import com.cloud.ops.toscamodel.Tosca;
 import com.cloud.ops.toscamodel.impl.TopologyContext;
 import com.cloud.ops.toscamodel.wf.WorkFlow;
@@ -79,7 +80,10 @@ public class ApplicationService {
         TopologyContext topologyContext = locationServiceProvider.install(topology.getTopologyContext(),
                 generateLocation(appEnv, app.getLocation()));
 
-        String fileName = TOPOLOGY_FILE_PATH + UUID.randomUUID() + File.separator + "topology.yaml";
+        String fileName = TOPOLOGY_FILE_PATH + File.separator + UUID.randomUUID() + File.separator + "topology.yaml";
+        if (!FileHelper.createFile(fileName)) {
+            throw new RuntimeException("yaml file create error");
+        }
         Tosca.newEnvironment(topology.getYamlFilePath()).updateAttribute(topologyContext, fileName);
         app.setYamlFilePath(fileName);
 

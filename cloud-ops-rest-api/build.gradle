@@ -22,7 +22,6 @@ project(':cloud-ops-rest-api') {
         /*compile("com.inspur.cloudframework:spring-side:4.1.0-SNAPSHOT"){
             exclude group: 'javax.servlet', module: 'servlet-api'
         }*/
-//        compile "mysql:mysql-connector-java:5.1.21"
         compile("io.springfox:springfox-swagger2:2.2.2")
         compile("io.springfox:springfox-swagger-ui:2.2.2")
 

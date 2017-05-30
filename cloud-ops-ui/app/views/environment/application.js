@@ -4,6 +4,7 @@ define(['App', 'common/ui/datatables', 'common/ui/modal', 'rq/text!app/templates
             $table: $([]),
             environmentId: '',
             environmentName: '',
+            environmentType: '',
             data: function () {
                 return {"name": App.getParam('name'), id : App.getParam("id")};
             },
@@ -11,6 +12,7 @@ define(['App', 'common/ui/datatables', 'common/ui/modal', 'rq/text!app/templates
                 var self = this;
                 self.environmentId = App.getParam('id');
                 self.environmentName = App.getParam('name');
+                self.environmentType = App.getParam('type');
                 self.$table = $('#appTable');
 
                 this.initTable(function () {
@@ -43,7 +45,8 @@ define(['App', 'common/ui/datatables', 'common/ui/modal', 'rq/text!app/templates
                             "width": DataTables.width("name"),
                             "render": function (data) {
                                 return '<a href="' + self.getUrl('+/detail', {'id': data.id, 'name': data.name,
-                                        'environmentId': self.environmentId, 'environmentName': self.environmentName}) + '">' + data.name + '</a>';
+                                        'environmentId': self.environmentId, 'environmentName': self.environmentName,
+                                        'environmentType': self.environmentType}) + '">' + data.name + '</a>';
                             }
                         },
                         {
@@ -68,7 +71,7 @@ define(['App', 'common/ui/datatables', 'common/ui/modal', 'rq/text!app/templates
                 }, callback);
             },
             addApp: function () {
-                var self = this, topologies = [], topology = {};
+                var self = this, topologies = [], topologyChoose = {}, nodes = [];
                 Modal.show({
                     title: "新建应用",
                     size: {
@@ -78,10 +81,24 @@ define(['App', 'common/ui/datatables', 'common/ui/modal', 'rq/text!app/templates
                         var def = $.Deferred();
                         self.render({
                             url: '+/add.html',
-                            data: App.remote("/v1/topologies/computes"),
-                            dataFilter: function (err, data) {
-                                topologies = data;
-                                return {topologies: data};
+                            data: App.remote("/v1/topologies/list-with-context"),
+                            dataFilter: function (err, topoList) {
+                                $.each(topoList, function (k, topo) {
+                                    var isEnv = false, topology={};
+                                    topology.id = topo.id;
+                                    topology.name = topo.name;
+                                    topology.nodes = [];
+                                    $.each(topo.topologyContext.nodeTemplateMap, function (name, node) {
+                                        if (node.type == "tosca.nodes.Compute.Local" && self.environmentType == "local") {
+                                            isEnv = true;
+                                            topology.nodes.push(node);
+                                        }
+                                    });
+                                    if (isEnv) {
+                                        topologies.push(topology);
+                                    }
+                                });
+                                return {topologies: topologies};
                             },
                             callback: function (err, html, data) {
                                 def.resolve(html);
@@ -99,7 +116,7 @@ define(['App', 'common/ui/datatables', 'common/ui/modal', 'rq/text!app/templates
                             $location.empty();
                             $.each(topologies, function (k, topo) {
                                 if (topo.id == topologyId) {
-                                    topology = topo;
+                                    topologyChoose = topo;
                                     $location.append(self.template.render(LocationTpl, topo));
                                     dialog.setPosition();
                                 }
@@ -120,21 +137,24 @@ define(['App', 'common/ui/datatables', 'common/ui/modal', 'rq/text!app/templates
                             var valid = $(".form-horizontal", $modal).valid();
                             if (!valid) return false;
                             var app = $(".form-horizontal", $modal).serializeObject();
-                            var locations = {};
-                            $.each(topology.nodes, function (k, node) {
+                            if (self.environmentType == "local") {
                                 var location = {};
-                                location.user = app[node.name + "user"];
-                                location.password = app[node.name + "password"];
-                                var hosts = app[node.name + "hosts"];
-                                location.hosts = hosts.trim().split(",");
-                                locations[node.name] = location;
-                                delete app[node.name + "user"];
-                                delete app[node.name + "password"];
-                                delete app[node.name + "hosts"];
-                            });
-                            app.locations = locations;
+                                location.host = {};
+                                $.each(topologyChoose.nodes, function (k, node) {
+                                    var host = {};
+                                    host.user = app[node.name + "user"];
+                                    host.password = app[node.name + "password"];
+                                    var hosts = app[node.name + "hosts"];
+                                    host.ips = hosts.trim().split(",");
+                                    location.host[node.name] = host;
+                                    delete app[node.name + "user"];
+                                    delete app[node.name + "password"];
+                                    delete app[node.name + "hosts"];
+                                });
+                                app.location = location;
+                            }
                             app.environmentId = self.environmentId;
-                            app.topologyName = topology.name;
+                            app.topologyName = topologyChoose.name;
                             var keywords = App.highlight("应用" + app.name, 2);
                             var processor = Modal.processing('正在保存' + keywords + '信息');
                             self.ajax.postJSON("v1/applications", app, function (err, data) {

@@ -49,14 +49,14 @@ public class TopologyService {
     }
 
     public Topology update(String id, Topology topology) {
-        Assert.notNull(id, "id is required");
+        Assert.notNull(id, "id can not be null");
         Topology db = this.get(id);
         BeanUtils.copyNotNullProperties(topology, db);
         dao.save(db);
         return db;
     }
 
-    public List<Topology> getListWithComputes() {
+    public List<Topology> getListWithContext() {
         List<Topology> topologies = dao.findAll();
         for (Topology topology : topologies) {
             setTopologyContext(topology);

@@ -27,51 +27,6 @@ define(['App', 'common/ui/datatables', 'common/ui/modal'], function (App, DataTa
                 "v1/environments"
             );
         },
-        initTable: function (callback) {
-            var self = this;
-            DataTables.init(this.$table, {
-                serverSide: true,
-                ajax: this.tableAjax(),
-                columns: [
-                    {
-                        "width": DataTables.width("check"),
-                        "defaultContent": "<label><input type='checkbox'></label>"
-                    },
-                    {
-                        "data": {},
-                        "width": DataTables.width("name"),
-                        "render": function (data) {
-                            return '<a href="' + self.getUrl('+/detail', {'id': data.id}) + '">' + data.name + '</a>';
-                        }
-                    },
-                    {
-                        "data": "type",
-                        "width": DataTables.width("name"),
-                        "render": function (data) {
-                            return data.type == "dev" ? "开发环境" : data.type == "test" ? "测试环境" : "生产环境";
-                        }
-                    },
-                    {
-                        "data": "description",
-                        "width": DataTables.width("name")
-                    },
-                    {
-                        "data": {},
-                        "width": DataTables.width("opt"),
-                        "render": function (data) {
-                            return [
-                                '<a class="btn-opt btn-edit" data-toggle="tooltip" href="javascript:void(0)" title="编辑">',
-                                '<i class="fa fa-pencil"></i>',
-                                '</a>',
-                                '<a class="btn-opt btn-delete" data-toggle="tooltip" href="javascript:void(0)" title="删除">',
-                                '<i class="fa fa-trash-o"></i>',
-                                '</a>'
-                            ].join('');
-                        }
-                    }
-                ]
-            }, callback);
-        },
         addLocation: function () {
             var self = this;
             Modal.show({
