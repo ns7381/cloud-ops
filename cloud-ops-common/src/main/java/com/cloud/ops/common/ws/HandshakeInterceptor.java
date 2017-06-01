@@ -1,4 +1,4 @@
-package com.cloud.ops.websocket;
+package com.cloud.ops.common.ws;
 
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;

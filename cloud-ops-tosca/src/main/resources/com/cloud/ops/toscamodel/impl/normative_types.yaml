@@ -139,8 +139,11 @@ node_types:
 #    tosca.nodes.Compute.Amazon:
 #      derived_from: tosca.nodes.Compute
 
-    tosca.nodes.Compute.HP:
+    tosca.nodes.Compute.Docker:
       derived_from: tosca.nodes.Compute
+      properties:
+              image:
+                type: string
 
     tosca.nodes.Compute.Local:
       derived_from: tosca.nodes.Compute

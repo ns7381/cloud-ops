@@ -10,8 +10,8 @@ import com.cloud.ops.core.model.Resource.ResourcePackageType;
 import com.cloud.ops.core.resource.ResourcePackageConfigService;
 import com.cloud.ops.core.resource.ResourcePackageService;
 import com.cloud.ops.common.store.FileStore;
-import com.cloud.ops.websocket.CustomWebSocketHandler;
-import com.cloud.ops.websocket.WebSocketConstants;
+import com.cloud.ops.common.ws.CustomWebSocketHandler;
+import com.cloud.ops.common.ws.WebSocketConstants;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.jgit.api.Git;
@@ -131,12 +131,6 @@ public class ResourcePackageController {
             String uploadPath = PACKAGE_FILE_PATH + File.separator + UUID.randomUUID().toString() + File.separator;
             String fileName = file.getOriginalFilename();
             final String filePath = uploadPath + fileName;
-            try {
-                fileStore.storeFile(file.getInputStream(), filePath);
-            } catch (IOException e) {
-                throw new RuntimeException("保存war包失败！", e);
-            }
-            resourcePackage.setWarPath((new File(filePath)).getAbsolutePath());
             resourcePackage.setStatus(ResourcePackageStatus.SAVING);
             service.create(resourcePackage);
             new ThreadWithEntity<ResourcePackage>(resourcePackage) {
@@ -144,7 +138,7 @@ public class ResourcePackageController {
                 public void run(ResourcePackage entity) {
                     File destination = new File(filePath);
                     try {
-                        FileUtils.copyInputStreamToFile(file.getInputStream(), destination);
+                        fileStore.storeFile(file.getInputStream(), filePath);
                     } catch (IOException e) {
                         throw new RuntimeException("保存war包失败！", e);
                     }

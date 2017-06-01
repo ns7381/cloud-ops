@@ -6,7 +6,7 @@ import java.util.Map;
 /**
  * Created by ningsheng on 2017/5/26.
  */
-public abstract class Location {
+public class Location {
     private String locationType;
     private Map<String, Object> metaProperties;
 

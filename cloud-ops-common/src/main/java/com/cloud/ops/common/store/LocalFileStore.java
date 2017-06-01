@@ -15,12 +15,12 @@ public class LocalFileStore implements FileStore{
 
     @Override
     public String storeFile(InputStream data, String filePath) {
-        File path = new File(filePath);
-        if (!path.exists()) {
-            path.mkdirs();
+        File file = new File(filePath);
+        if(!file.getParentFile().exists()) {
+            file.getParentFile().mkdirs();
         }
         try {
-            FileUtils.copyInputStreamToFile(data, path);
+            FileUtils.copyInputStreamToFile(data, file);
         } catch (IOException e) {
             logger.error("store file error: ", e);
         }

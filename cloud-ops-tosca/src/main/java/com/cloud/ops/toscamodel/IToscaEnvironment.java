@@ -24,9 +24,6 @@ import java.io.FileNotFoundException;
 import java.io.Writer;
 import java.util.Map;
 
-/**
- * Created by pq on 16/04/2015.
- */
 public interface IToscaEnvironment {
     INamedEntity getNamedEntity(String entityName);
 

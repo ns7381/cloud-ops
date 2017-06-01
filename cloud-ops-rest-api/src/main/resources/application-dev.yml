@@ -1,6 +1,4 @@
 spring:
-    profiles:
-        active: dev
     datasource:
         driver-class-name: com.mysql.jdbc.Driver
         url: jdbc:mysql://10.110.20.20:3306/cloud_ops_init

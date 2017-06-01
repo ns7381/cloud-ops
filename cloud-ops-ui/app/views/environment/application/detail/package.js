@@ -24,7 +24,7 @@ define(['App', 'common/ui/datatables', 'common/ui/modal', 'common/ui/websocket',
             self.patch_containers = [];
             self.app_id = App.getParam('id');
             self.$table = $('#packageTable');
-            $.each(self.topology.nodes || [], function (k, node) {
+            $.each(self.topology.topologyContext.nodeTemplateMap || [], function (k, node) {
                 if (node.type == "tosca.nodes.deploy.Tomcat") {
                     $.each(node.artifacts || [], function (name, artifact) {
                         if (artifact.type == "tosca.artifacts.PatchFile") {
@@ -405,6 +405,7 @@ define(['App', 'common/ui/datatables', 'common/ui/modal', 'common/ui/websocket',
                 if ($tr[0] && self.table) {
                     var row = self.table.row($tr[0]),
                         rowData = row.data();
+                    rowData.warPath = payload.warPath;
                     rowData.status = payload.status;
                     row.data(rowData);
                 }

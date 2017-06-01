@@ -43,6 +43,7 @@ public class LocalLocationWorkFlowExecutor extends Thread {
 
         topologyContext.getWorkFlowMap().forEach((name, wf) -> {
             WorkFlowStep currentStep = null;
+            wf.setStartAt(new Date());
             service.save(wf);
             //save step information in database at first
             List<WorkFlowStep> steps = Lists.newArrayList();
@@ -54,13 +55,13 @@ public class LocalLocationWorkFlowExecutor extends Thread {
                     BeanUtils.copyNotNullProperties(step, stepDb);
                     stepDb.setHostIp(hostIp.trim());
                     stepDb.setWorkFlowId(wf.getId());
-                    stepDb.setStartAt(new Date());
                     stepService.save(stepDb);
                     steps.add(stepDb);
                 });
             });
             //execute workflow
             for (WorkFlowStep step : steps) {
+                step.setStartAt(new Date());
                 currentStep = step;
                 Map<String, Object> hostInfo = topologyContext.getNodeTemplateMap().get(step.getHost()).getAttributes();
                 String user = (String) hostInfo.get("user");
@@ -84,7 +85,7 @@ public class LocalLocationWorkFlowExecutor extends Thread {
                     shellContent.append("sh " + ARTIFACT_PATH + "/").append(step.getShellScript());
                     RemoteExecuteResult executeResult = ssh.execute(shellContent.toString());
                     message = executeResult.getMessage();
-                    if (message.length() > 65534) {
+                    if (message != null && message.length() > 65534) {
                         message = message.substring(message.length() - 65534);
                     }
                     step.setEndAt(new Date());

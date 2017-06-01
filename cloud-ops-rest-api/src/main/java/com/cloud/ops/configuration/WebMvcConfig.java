@@ -35,8 +35,8 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
     @Bean
     public CommonsMultipartResolver filterMultipartResolver() {
         CommonsMultipartResolver commonsMultipartResolver = new CommonsMultipartResolver();
-        commonsMultipartResolver.setMaxInMemorySize(102400000);
-        commonsMultipartResolver.setMaxUploadSize(102400000);
+        commonsMultipartResolver.setMaxInMemorySize(1024 * 1024 * 1024);
+        commonsMultipartResolver.setMaxUploadSize(1024 * 1024 * 1024);
         return commonsMultipartResolver;
     }
 
@@ -60,8 +60,8 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
         bean.setName("api-v1");
         return bean;
     }
-
     @RequestMapping("/")
+
     public Object index() {
         return ResponseEntity.ok().body(indexHtml);
     }

@@ -22,21 +22,6 @@ import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.util.*;
 
-/**
- * 原来是处理Loushang平台中的bean工具类
- * 现用于处理在卫生平台下的bean赋值
- * 已测试能够处理的属性类型包括：基本类型、enum
- * @author wanggang
- * @version 1.0
- * @date 2012-2-15 上午9:04:52
- */
-
-/**
- * 功能: 调用apache的bean组件实现对bean的赋值
- * 
- * @author yaoxm mailto:yaoxm@langchao.com.cn $log$
- * 
- */
 public final class BeanUtils {
 
 	private static Logger log = LoggerFactory

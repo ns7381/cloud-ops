@@ -4,19 +4,14 @@ import ch.ethz.ssh2.ChannelCondition;
 import ch.ethz.ssh2.Connection;
 import ch.ethz.ssh2.Session;
 import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 
-/**
- * 远程执行linux的shell script
- *
- * @author Ickes
- * @since V0.1
- */
 public class RemoteExecuteCommand {
-    //字符编码默认是utf-8
+    private static final Logger LOGGER = LoggerFactory.getLogger(RemoteExecuteCommand.class);
     private static String DEFAULTCHART = "UTF-8";
     private Connection conn;
     private String ip;
@@ -33,10 +28,10 @@ public class RemoteExecuteCommand {
         boolean flg = false;
         try {
             conn = new Connection(ip);
-            conn.connect();//连接
-            flg = conn.authenticateWithPassword(userName, userPwd);//认证
+            conn.connect();
+            flg = conn.authenticateWithPassword(userName, userPwd);
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e.getMessage(), e);
         }
         return flg;
     }
@@ -44,13 +39,13 @@ public class RemoteExecuteCommand {
     public RemoteExecuteResult execute(String cmd) throws IOException {
         RemoteExecuteResult result = new RemoteExecuteResult();
         if (login()) {
-            System.out.println(ip + " login success.then exe " + cmd);
-            Session session = conn.openSession();//打开一个会话
-            session.execCommand(cmd);//执行命令
+            LOGGER.debug(ip + " login success.then exe " + cmd);
+            Session session = conn.openSession();
+            session.execCommand(cmd);
             result.setMessage(getSessionOut(session));
             result.setExitCode(session.getExitStatus());
             if (session.getExitStatus()!=null) {
-                System.out.println("session exit status null-------");
+                LOGGER.debug("session exit status null");
                 conn.close();
                 session.close();
             }
@@ -118,7 +113,7 @@ public class RemoteExecuteCommand {
                     System.err.write(buffer, 0, len);
             }
         }
-        return IOUtils.toString(buffer, String.valueOf(StandardCharsets.UTF_8));
+        return IOUtils.toString(buffer, "GBK");
     }
 
     public static void setCharset(String charset) {

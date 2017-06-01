@@ -1,4 +1,4 @@
-package com.cloud.ops.websocket;
+package com.cloud.ops.common.ws;
 
 /**
  * Created by Administrator on 2017/2/5.

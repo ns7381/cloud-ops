@@ -7,6 +7,7 @@ import com.cloud.ops.core.model.Resource.ResourcePackage;
 import com.cloud.ops.core.model.Resource.ResourcePackageConfig;
 import com.cloud.ops.core.model.application.Application;
 import com.cloud.ops.core.model.application.ApplicationEnvironment;
+import com.cloud.ops.core.model.application.EnvironmentMetadata;
 import com.cloud.ops.core.model.topology.Topology;
 import com.cloud.ops.core.model.topology.TopologyArchive;
 import com.cloud.ops.core.resource.ResourcePackageConfigService;
@@ -14,8 +15,8 @@ import com.cloud.ops.core.resource.ResourcePackageService;
 import com.cloud.ops.core.topology.TopologyArchiveService;
 import com.cloud.ops.core.topology.TopologyService;
 import com.cloud.ops.dao.modal.SortConstant;
+import com.cloud.ops.esc.Location;
 import com.cloud.ops.esc.LocationServiceProvider;
-import com.cloud.ops.esc.local.model.LocalLocation;
 import com.cloud.ops.toscamodel.Tosca;
 import com.cloud.ops.toscamodel.impl.TopologyContext;
 import com.cloud.ops.toscamodel.wf.WorkFlow;
@@ -61,6 +62,8 @@ public class ApplicationService {
     private LocationServiceProvider locationServiceProvider;
     @Autowired
     private ApplicationEnvironmentService applicationEnvironmentService;
+    @Autowired
+    private EnvironmentMetadataService environmentMetadataService;
 
     @Cacheable(key = "#id")
     public Application get(String id) {
@@ -91,12 +94,17 @@ public class ApplicationService {
         return app;
     }
 
-    private LocalLocation generateLocation(ApplicationEnvironment appEnvironment, LocalLocation location) {
+    private Location generateLocation(ApplicationEnvironment appEnvironment, Location location) {
+        if (location == null) {
+            location = new Location();
+        }
+        List<EnvironmentMetadata> metadataList = environmentMetadataService.findByEnvId(appEnvironment.getId());
+        location.getMetaProperties().putAll(metadataList.stream().collect(Collectors.toMap(EnvironmentMetadata::getName,
+                EnvironmentMetadata::getValue)));
         if ("local".equals(appEnvironment.getType())) {
             location.setLocationType("local");
             return location;
         }
-        //TODO docker location generate
         return null;
     }
 
@@ -131,13 +139,15 @@ public class ApplicationService {
         Map<String, WorkFlow> workFlows = Maps.newHashMap();
         workFlows.put("patch_deploy", patch_deploy);
         application.getTopologyContext().setWorkFlowMap(workFlows);
+
         ApplicationEnvironment appEnv = applicationEnvironmentService.get(application.getEnvironmentId());
         List<TopologyArchive> archives = topologyArchiveService.findByTopologyId(application.getTopologyId());
         Map<String, String> archiveMap = archives.stream().collect(Collectors.toMap(TopologyArchive::getName, TopologyArchive::getFilePath));
         ResourcePackage resourcePackage = resourcePackageService.get(packageId);
         archiveMap.put("patch_package.zip", resourcePackage.getWarPath());
-        LocalLocation location = generateLocation(appEnv, application.getLocation());
+        Location location = generateLocation(appEnv, application.getLocation());
         location.getMetaProperties().putAll(archiveMap);
+
         locationServiceProvider.executeWorkFlow(application.getTopologyContext(), location);
 
         return Boolean.TRUE;

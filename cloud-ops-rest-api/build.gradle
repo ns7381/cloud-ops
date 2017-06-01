@@ -8,7 +8,6 @@ project(':cloud-ops-rest-api') {
 
     dependencies {
         compile project(':cloud-ops-ui')
-        compile project(':cloud-ops-websocket')
         compile project(':cloud-ops-core')
 //        compile("org.springframework.boot:spring-boot-devtools")
 //        providedRuntime("org.springframework.boot:spring-boot-starter-tomcat")
@@ -43,9 +42,9 @@ project(':cloud-ops-rest-api') {
     /*springBoot {
         executable = true
     }*/
-
     war {
         archiveName = 'cloud-ops.war'
         destinationDir = file "docker-dir"
+//        new File("config-tpls/application.yml")
     }
 }

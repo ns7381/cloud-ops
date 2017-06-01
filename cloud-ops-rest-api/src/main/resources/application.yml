@@ -2,4 +2,4 @@ server:
     contextPath: /cloud-ops
 spring:
     profiles:
-        active: dev
+        active: test
