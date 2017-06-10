@@ -2,9 +2,13 @@ tosca_definitions_version: tosca_simple_yaml_1_0_0
 topology_template:
     node_templates:
         tomcat_host:
-            type: tosca.nodes.Compute.Local
+            type: tosca.nodes.Compute.Docker
+            attributes:
+                image: sha256:1f6eab5f63d36f66115d723f85e3140b1b5068ffe3c66a5e83a727d836990394
         mysql_host:
-            type: tosca.nodes.Compute.Local
+            type: tosca.nodes.Compute.Docker
+            attributes:
+                image: sha256:1f6eab5f63d36f66115d723f85e3140b1b5068ffe3c66a5e83a727d836990394
         mysql:
             type: tosca.nodes.deploy.MySQL
             attributes:

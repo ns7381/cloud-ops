@@ -101,11 +101,8 @@ public class ApplicationService {
         List<EnvironmentMetadata> metadataList = environmentMetadataService.findByEnvId(appEnvironment.getId());
         location.getMetaProperties().putAll(metadataList.stream().collect(Collectors.toMap(EnvironmentMetadata::getName,
                 EnvironmentMetadata::getValue)));
-        if ("local".equals(appEnvironment.getType())) {
-            location.setLocationType("local");
-            return location;
-        }
-        return null;
+        location.setLocationType(appEnvironment.getType());
+        return location;
     }
 
     public List<Application> findByEnvironmentId(String environmentId) {

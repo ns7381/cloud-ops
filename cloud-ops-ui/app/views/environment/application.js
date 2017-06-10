@@ -92,6 +92,8 @@ define(['App', 'common/ui/datatables', 'common/ui/modal', 'rq/text!app/templates
                                         if (node.type == "tosca.nodes.Compute.Local" && self.environmentType == "local") {
                                             isEnv = true;
                                             topology.nodes.push(node);
+                                        } else if (node.type == "tosca.nodes.Compute.Docker" && self.environmentType == "docker") {
+                                            isEnv = true;
                                         }
                                     });
                                     if (isEnv) {
