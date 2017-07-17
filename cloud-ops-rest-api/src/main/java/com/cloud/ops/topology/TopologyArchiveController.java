@@ -35,7 +35,7 @@ public class TopologyArchiveController {
     @PostMapping(headers = "content-type=multipart/form-data")
     @PreAuthorize("hasAuthority('ADMIN')")
     @ResponseBody
-    public TopologyArchive create(@RequestParam("file") final MultipartFile file, @PathVariable String topologyId) throws IOException {
+    public TopologyArchive create(@RequestParam("file") MultipartFile file, @PathVariable String topologyId) throws IOException {
         String name = topologyService.get(topologyId).getName();
         String filePath = TOPOLOGY_FILE_PATH + File.separator + name + File.separator + file.getOriginalFilename();
         fileStore.storeFile(file.getInputStream(), filePath);

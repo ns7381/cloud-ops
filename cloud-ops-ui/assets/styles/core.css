@@ -3080,6 +3080,7 @@ aside {
     }
 }
 .sidebar-nav {
+    margin-top: 6px;
     padding: 11px 0 0;
 }
 .sidebar-nav > li {
@@ -3173,10 +3174,11 @@ aside {
     top: 0.11em;
 }
 .aside-title .header-logo {
+    padding-top: 10px;
     display: block;
     margin: 0 auto;
     width: 88%;
-    height: 49px;
+    height: 59px;
     color: #f6f7f9;
     font-size: 21px;
     text-align: center;
@@ -3184,6 +3186,11 @@ aside {
     border-bottom: 1px solid #435060;
     /*background: url("img/logo.png") no-repeat center;*/
     background-size: contain;
+    text-decoration: none;
+}
+.aside-title .header-logo:hover {
+    color: #37b3e0;
+    text-decoration: none;
 }
 
 /*page页面公共部分样式*/

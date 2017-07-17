@@ -53,7 +53,7 @@
 <div id="page-main">
     <aside>
         <h2 class="aside-title">
-            <a class="header-logo" href="javascript:;">云海IOP升级中心</a>
+            <a class="header-logo" href="{{getUrl('/environment')}}">云海IOP升级中心</a>
         </h2>
         <ul id="side-bar" class="sidebar-nav nav" role="navigation" tabindex="1">
             <!--<li index="1" class="active">
@@ -71,13 +71,23 @@
                     <i class="fa fa-cubes"></i>模板配置
                 </a>
             </li>
+            <li index="71">
+                <a href="{{getUrl('/sysmanagement/permission')}}" data-reload="true">
+                    <i class="fa fa-users"></i>用户管理
+                </a>
+            </li>
+            <li index="72">
+                <a href="{{getUrl('/sysmanagement/logs')}}" data-reload="true">
+                    <i class="fa fa-cogs"></i>审计日志
+                </a>
+            </li>
             <!--<li index="4" id="repository-li">
                 <a data-reload="true" href="{{getUrl('/repository')}}">
                     <i class="fa fa-clone"></i>仓库管理
                 </a>
             </li>-->
 
-            <li index="7" id="sysmanagement-li">
+            <!--<li index="7" id="sysmanagement-li">
                 <a class="nav-first-level" href="javascript:;">
                     <i class="fa fa-cogs"></i>系统管理<i class="fa icon-arrow"></i>
                 </a>
@@ -93,7 +103,7 @@
                         </a>
                     </li>
                 </ul>
-            </li>
+            </li>-->
         </ul>
     </aside>
     <div class="container clearfix">

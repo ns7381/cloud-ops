@@ -119,7 +119,7 @@ public class ResourcePackageController {
 
     @RequestMapping(value = "/upload", method = RequestMethod.POST)
     @ResponseBody
-    public ResourcePackage uploadWar(@RequestParam("file") final MultipartFile file,
+    public ResourcePackage uploadWar(@RequestParam("file") MultipartFile file,
                                            @RequestParam("version") String version,
                                            @RequestParam("type") String type,
                                            @RequestParam("applicationId") String applicationId) {
