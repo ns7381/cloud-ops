@@ -7,7 +7,7 @@ define(['App', 'common/ui/modal', 'common/ui/validator', 'bs/tab'], function (Ap
             return App.remote("/v1/applications/" + this.app_id);
         },
         dataFilter: function (err, data) {
-            return {topology: data};
+            return data;
         },
         ready: function () {
             var self = this;

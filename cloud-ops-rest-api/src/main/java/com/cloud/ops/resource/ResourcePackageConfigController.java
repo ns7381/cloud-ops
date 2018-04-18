@@ -1,11 +1,14 @@
 package com.cloud.ops.resource;
 
+import com.cloud.ops.common.cmd.LocalExecute;
 import com.cloud.ops.core.model.Resource.ResourcePackageConfig;
 import com.cloud.ops.core.resource.ResourcePackageConfigService;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,6 +19,7 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/package-configs")
 public class ResourcePackageConfigController {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ResourcePackageConfigController.class);
 
     @Autowired
     private ResourcePackageConfigService service;
@@ -62,7 +66,7 @@ public class ResourcePackageConfigController {
                 results.add(ref.getName());
             }
         } catch (GitAPIException e) {
-            e.printStackTrace();
+            LOGGER.error("git get branches info error: ", e);
         }
         return results;
     }

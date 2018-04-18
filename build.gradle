@@ -20,6 +20,7 @@ allprojects {
 
     apply plugin: 'java'
     apply plugin: 'idea'
+    apply plugin: 'project-report'
 
     sourceCompatibility = 1.8
     ext {

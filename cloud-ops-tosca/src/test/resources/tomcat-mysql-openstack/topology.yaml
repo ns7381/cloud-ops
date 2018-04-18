@@ -1,0 +1,76 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+topology_template:
+    node_templates:
+        tomcat_mysql_host:
+            type: tosca.nodes.Compute.Cloud.Openstack
+            attributes:
+                image: service-image-centos7
+                flavor: c2.small
+                password: 123456a?
+        mysql:
+            type: tosca.nodes.MySQL
+            attributes:
+                port: 3306
+                db_name: iop_dev
+                db_user: root
+                db_password: 123456a?
+            artifacts:
+                install_package:
+                    file: install_mysql_package.zip
+                    type: tosca.artifacts.File
+            interfaces:
+                Configure:
+                    exe_upgrade_sql:
+                        implementation: exe_upgrade_sql.sh
+                        inputs:
+                            db_name: { get_attribute: [ SELF, db_name ] }
+                            db_user: { get_attribute: [ SELF, db_user ] }
+                            db_password: { get_attribute: [ SELF, db_password ] }
+                            sql_file: { get_artifact: [ tomcat, patch_package ] }
+                    backup_db:
+                        implementation: backup_db.sh
+                        inputs:
+                            db_password: { get_attribute: [ SELF, db_password ] }
+                    create:
+                         implementation: install_mysql.sh
+                         inputs:
+                            install_package: { get_artifact: [ SELF, install_package ] }
+            requirements:
+                - host: tomcat_mysql_host
+        tomcat:
+            type: tosca.nodes.deploy.Tomcat
+            attributes:
+                tomcat_home: /opt/tomcat-cloud-web
+                app_context: cloud-web
+            artifacts:
+                patch_package:
+                    file: patch_package.zip
+                    type: tosca.artifacts.PatchFile
+                install_package:
+                    file: install_tomcat_package.zip
+                    type: tosca.artifacts.File
+            interfaces:
+                Configure:
+                    patch_deploy:
+                        implementation: patch_deploy.sh
+                        dependencies:
+                            - tomcat_stop: {do_interface: [SELF, tomcat_stop]}
+                            - backup_db: {do_interface: [mysql, backup_db]}
+                            - exe_upgrade_sql: {do_interface: [mysql, exe_upgrade_sql]}
+                        inputs:
+                              tomcat_home: { get_attribute: [ SELF, tomcat_home ] }
+                              app_context: { get_attribute: [ SELF, app_context ] }
+                              patch_package: { get_artifact: [ SELF, patch_package ] }
+                    tomcat_stop:
+                        implementation: tomcat_stop.sh
+                        inputs:
+                            tomcat_home: { get_attribute: [ SELF, tomcat_home ] }
+                    create:
+                        implementation: install_tomcat.sh
+                        dependencies:
+                            - mysql_create: {do_interface: [mysql, create]}
+                        inputs:
+                            tomcat_home: { get_attribute: [ SELF, tomcat_home ] }
+                            install_package: { get_artifact: [ SELF, install_package ] }
+            requirements:
+                - host: tomcat_mysql_host

@@ -17,7 +17,7 @@ public class ApplicationEnvironmentController {
 
     @RequestMapping(method = RequestMethod.POST)
     public ApplicationEnvironment create(@RequestBody ApplicationEnvironment applicationEnvironment) {
-        return service.add(applicationEnvironment);
+        return service.create(applicationEnvironment);
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
@@ -27,8 +27,8 @@ public class ApplicationEnvironmentController {
     }
 
     @RequestMapping(method = RequestMethod.PUT)
-    public ApplicationEnvironment edit(@RequestBody ApplicationEnvironment applicationEnvironment) {
-        return service.edit(applicationEnvironment);
+    public ApplicationEnvironment update(@RequestBody ApplicationEnvironment applicationEnvironment) {
+        return service.update(applicationEnvironment);
     }
 
     @RequestMapping(method = RequestMethod.GET)

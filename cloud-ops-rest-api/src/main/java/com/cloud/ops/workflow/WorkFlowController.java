@@ -1,7 +1,7 @@
 package com.cloud.ops.workflow;
 
 import com.cloud.ops.esc.wf.WorkFlowService;
-import com.cloud.ops.toscamodel.wf.WorkFlow;
+import com.cloud.ops.esc.wf.model.WorkFlowEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,7 +15,7 @@ public class WorkFlowController {
 	private WorkFlowService service;
 
 	@RequestMapping(method = RequestMethod.POST)
-	public WorkFlow create(@RequestBody WorkFlow workFlow){
+	public WorkFlowEntity create(@RequestBody WorkFlowEntity workFlow){
 		return service.save(workFlow);
 	}
 
@@ -26,12 +26,12 @@ public class WorkFlowController {
     }
 
 	@RequestMapping(method = RequestMethod.PUT)
-	public WorkFlow edit(@RequestBody WorkFlow workFlow){
+	public WorkFlowEntity edit(@RequestBody WorkFlowEntity workFlow){
 		return service.update(workFlow);
 	}
 
 	@RequestMapping(method = RequestMethod.GET )
-	public List<WorkFlow> getByObjectId(@RequestParam String objectId){
+	public List<WorkFlowEntity> getByObjectId(@RequestParam String objectId){
 		return service.getByObjectId(objectId);
 	}
 

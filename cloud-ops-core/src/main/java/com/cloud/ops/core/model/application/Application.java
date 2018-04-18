@@ -1,25 +1,25 @@
 package com.cloud.ops.core.model.application;
 
 import com.cloud.ops.dao.modal.BaseObject;
-import com.cloud.ops.esc.local.model.LocalLocation;
-import com.cloud.ops.toscamodel.impl.TopologyContext;
+import com.cloud.ops.tosca.model.Topology;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import java.util.Map;
 
 /**
  * Created by Administrator on 2017/1/13.
  */
 @Entity
-@Table(name="application")
+@Table(name = "application")
 public class Application extends BaseObject {
     private String yamlFilePath;
     private String topologyId;
     private String topologyName;
     private String environmentId;
-    private LocalLocation location;
-    private TopologyContext topologyContext;
+    private Topology topology;
+    private Map<String, Object> inputs;
 
     public String getYamlFilePath() {
         return yamlFilePath;
@@ -30,12 +30,12 @@ public class Application extends BaseObject {
     }
 
     @Transient
-    public LocalLocation getLocation() {
-        return location;
+    public Map<String, Object> getInputs() {
+        return inputs;
     }
 
-    public void setLocation(LocalLocation location) {
-        this.location = location;
+    public void setInputs(Map<String, Object> inputs) {
+        this.inputs = inputs;
     }
 
     public String getTopologyId() {
@@ -55,12 +55,12 @@ public class Application extends BaseObject {
     }
 
     @Transient
-    public TopologyContext getTopologyContext() {
-        return topologyContext;
+    public Topology getTopology() {
+        return topology;
     }
 
-    public void setTopologyContext(TopologyContext topologyContext) {
-        this.topologyContext = topologyContext;
+    public void setTopology(Topology topology) {
+        this.topology = topology;
     }
 
     public String getTopologyName() {

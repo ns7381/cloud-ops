@@ -38,7 +38,7 @@
                         <div class="alert">
                             <h5>已选定<em>{{archive.name}}</em>:</h5>
                         </div>
-                        <textarea name="content" cols="20" rows="10">{{archive.fileContents.join('\n')}}</textarea>
+                        <textarea name="content" cols="20" rows="10">{{archive.fileContents && archive.fileContents.join('\n')}}</textarea>
                     </div>
                     {{/each}}
                 </div>

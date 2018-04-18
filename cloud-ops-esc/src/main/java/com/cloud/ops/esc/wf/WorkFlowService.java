@@ -2,7 +2,7 @@ package com.cloud.ops.esc.wf;
 
 import com.cloud.ops.common.utils.BeanUtils;
 import com.cloud.ops.esc.wf.dao.WorkFlowRepository;
-import com.cloud.ops.toscamodel.wf.WorkFlow;
+import com.cloud.ops.esc.wf.model.WorkFlowEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -20,18 +20,18 @@ public class WorkFlowService {
 	@Autowired
 	private WorkFlowStepService workFlowStepService;
 
-	public WorkFlow get(String id) {
+	public WorkFlowEntity get(String id) {
 		return dao.findOne(id);
 	}
 
-	public WorkFlow save(WorkFlow workFlow){
+	public WorkFlowEntity save(WorkFlowEntity workFlow){
 		dao.save(workFlow);
 		return workFlow;
 	}
 
-    public List<WorkFlow> getByObjectId(String objectId) {
-        List<WorkFlow> workFlows = dao.findByObjectId(objectId, new Sort(Sort.Direction.DESC, "startAt"));
-        for (WorkFlow workFlow : workFlows) {
+    public List<WorkFlowEntity> getByObjectId(String objectId) {
+        List<WorkFlowEntity> workFlows = dao.findByObjectId(objectId, new Sort(Sort.Direction.DESC, "startAt"));
+        for (WorkFlowEntity workFlow : workFlows) {
             workFlow.setSteps(workFlowStepService.findByWorkFlowId(workFlow.getId()));
         }
         return workFlows;
@@ -41,9 +41,9 @@ public class WorkFlowService {
         dao.delete(id);
     }
 
-	public WorkFlow update(WorkFlow workFlow){
+	public WorkFlowEntity update(WorkFlowEntity workFlow){
         Assert.notNull(workFlow.getId(), "id can not be null");
-        WorkFlow db = this.get(workFlow.getId());
+        WorkFlowEntity db = this.get(workFlow.getId());
         BeanUtils.copyNotNullProperties(workFlow, db);
         dao.save(db);
         return db;

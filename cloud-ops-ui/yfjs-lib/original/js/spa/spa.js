@@ -632,7 +632,7 @@ define('yfjs/spa/app', [
                     _.def(self, '__err_stime__', nowTime);
                 }
                 var dTime = nowTime - self.__err_stime__;
-                if (dTime == 0 || dtime <= self.__err_frame__) {
+                if (dTime == 0 || dTime <= self.__err_frame__) {
                     var errBuffer = _.concatError(self.__err_buffer__, err),
                         errBufferArgs = [0, self.__err_buffer__.length];
                     errBufferArgs = errBufferArgs.concat(errBuffer);

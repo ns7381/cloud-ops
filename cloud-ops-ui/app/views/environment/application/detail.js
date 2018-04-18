@@ -4,9 +4,13 @@
 define(['App', 'bs/tab'], function (App) {
     return App.View({
         data: function () {
-            return {"name": App.getParam('name'), id : App.getParam("id"),
-                "environmentId": App.getParam('environmentId'), environmentName : App.getParam("environmentName"),
-                environmentType : App.getParam("environmentType")};
+            return {
+                name: App.getParam('name'),
+                id: App.getParam("id"),
+                environmentId: App.getParam('environmentId'),
+                environmentName: App.getParam("environmentName"),
+                environmentType: App.getParam("environmentType")
+            };
         },
         ready: function () {
             var tab = this.getParam('tab');

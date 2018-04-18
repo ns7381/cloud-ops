@@ -1,15 +1,9 @@
-{{ each nodes as node}}
+{{ each inputs as input name}}
 <div class="form-group form-required">
-    <label class="control-label col-sm-3">{{node.name}}：</label>
+    <label class="control-label col-sm-3">{{input.description}}：</label>
 
-    <div class="col-sm-2">
-        <input type="text" class="form-control" name="{{node.name}}user" placeholder="用户名">
-    </div>
-    <div class="col-sm-2">
-        <input type="text" class="form-control" name="{{node.name}}password" placeholder="密码">
-    </div>
-    <div class="col-sm-4">
-        <input type="text" class="form-control" name="{{node.name}}hosts" placeholder="IP(逗号分隔多个)">
+    <div class="col-sm-7">
+        <input type="text" class="form-control" name="{{name}}" data-type="{{input.type}}" placeholder="{{if input.type == 'list'}}多个用逗号隔开{{/if}}">
     </div>
 </div>
 {{/each}}

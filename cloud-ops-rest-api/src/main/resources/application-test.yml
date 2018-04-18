@@ -9,10 +9,12 @@ spring:
             hibernate:
                 dialect: org.hibernate.dialect.MySQL5Dialect
 logging:
-    path: /var/log
-    file: cloud-ops.log
-    level: DEBUG
-#        com.cloud.ops.service: DEBUG
+    file: /var/log/cloud-ops.log
+    level:
+        com.cloud.ops: DEBUG
+    pattern:
+        console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+        file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
 cloud-ops:
     file:
         topology: /opt/iop-ops/topology

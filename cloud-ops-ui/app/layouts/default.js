@@ -31,16 +31,6 @@ define(['App', 'common/ui/resetpwd', 'bs/collapse', 'jq/nicescroll'], function(A
                 }
             ]
         ],
-		// data: App.remote('v1/auth'),
-     	/*dataFilter: function(err, result) {
-	        if (err) {
-	            // this.onError(err, function(err) {
-	            //     Modal.error('获取集群失败。原因：'+err.message);
-	            // });
-	            result = [];
-	        }
-        	return {result: result};
-        },*/
         ready: function() {
 			var result = this.getData('result');
            // alert(result)
@@ -52,10 +42,12 @@ define(['App', 'common/ui/resetpwd', 'bs/collapse', 'jq/nicescroll'], function(A
             });
 			if(isAdmin){
 				this.$('#topology-li').show();
-				this.$('#sysmanagement-li').show();
+				this.$('#user-li').show();
+				this.$('#log-li').show();
 			} else {
                 this.$('#topology-li').hide();
-                this.$('#sysmanagement-li').hide();
+                this.$('#user-li').hide();
+                this.$('#log-li').hide();
             }
             var $aside = this.$('aside:first'),
                 $sideBar = $('#side-bar', $aside);

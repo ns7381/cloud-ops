@@ -28,15 +28,13 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
     @Bean
     @Order(Ordered.HIGHEST_PRECEDENCE)
     public CharacterEncodingFilter characterEncodingFilter() {
-        CharacterEncodingFilter filter = new CharacterEncodingFilter("UTF-8", true);
-        return filter;
+        return new CharacterEncodingFilter("UTF-8", true);
     }
 
     @Bean
     public CommonsMultipartResolver filterMultipartResolver() {
         CommonsMultipartResolver commonsMultipartResolver = new CommonsMultipartResolver();
         commonsMultipartResolver.setMaxInMemorySize(1024 * 1024 * 1024);
-        commonsMultipartResolver.setMaxUploadSize(1024 * 1024 * 1024);
         return commonsMultipartResolver;
     }
 
@@ -60,8 +58,8 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
         bean.setName("api-v1");
         return bean;
     }
-    @RequestMapping("/")
 
+    @RequestMapping("/")
     public Object index() {
         return ResponseEntity.ok().body(indexHtml);
     }

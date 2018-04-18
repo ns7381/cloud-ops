@@ -21,7 +21,6 @@ public class ResourcePackageConfig extends IdEntity {
     private String gitUrl;
     private String gitUsername;
     private String gitPassword;
-    private String branch;
 
     private String build;
     private String buildDir;

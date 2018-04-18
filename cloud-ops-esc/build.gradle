@@ -2,12 +2,21 @@ project(':cloud-ops-esc') {
 
     apply plugin: 'idea'
     apply plugin: 'java'
-
+    configurations {
+        all*.exclude group: 'org.apache.jclouds.api', module: 'rackspace-cloud-entity'
+    }
     dependencies {
         compile project(':cloud-ops-common')
         compile project(':cloud-ops-tosca')
-        compile("org.apache.jclouds:jclouds-all:2.0.1")
-        compile("org.apache.jclouds.driver:jclouds-log4j:2.0.1")
+        compile("org.apache.jclouds.api:docker:2.0.2")
+        compile("org.apache.jclouds.api:openstack-keystone:2.0.2")
+        compile("org.apache.jclouds.api:openstack-nova:2.0.2")
+        compile("org.apache.jclouds.api:openstack-cinder:2.0.2")
+        compile("org.apache.jclouds.labs:openstack-neutron:2.0.2")
+        compile("org.apache.jclouds.labs:openstack-glance:2.0.2")
+        compile("org.apache.jclouds:jclouds-compute:2.0.2")
+        compile("org.apache.jclouds.driver:jclouds-log4j:2.0.2")
+        testCompile("org.springframework.boot:spring-boot-starter-test:1.5.2.RELEASE")
     }
 
     idea {

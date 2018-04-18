@@ -6,7 +6,7 @@ project(':cloud-ops-core') {
     dependencies {
         compile project(':cloud-ops-esc')
         compile project(':cloud-ops-security')
-//        compile ('org.springframework.boot:spring-boot-starter-web:1.5.2.RELEASE')
+        testCompile("org.springframework.boot:spring-boot-starter-test:1.5.2.RELEASE")
     }
 
     idea {

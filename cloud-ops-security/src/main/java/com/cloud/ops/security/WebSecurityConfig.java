@@ -66,50 +66,31 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     .permitAll();
     }
 
-    @Override
-    public void configure(WebSecurity web) throws Exception {
-        /*web
-                .ignoring()
-                .antMatchers("/ui*//**");*/
-    }
-
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder());
     }
 
     private AuthenticationSuccessHandler successHandler() {
-        return new AuthenticationSuccessHandler() {
-            @Override
-            public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
-                                                Authentication authentication) throws IOException, ServletException {
-                response.setContentType("application/json");
-                PrintWriter out = response.getWriter();
-                ObjectMapper objectMapper = new ObjectMapper();
-                out.print(objectMapper.writeValueAsString(authentication.getPrincipal()));
-                out.flush();
-            }
+        return (request, response, authentication) -> {
+            response.setContentType("application/json");
+            PrintWriter out = response.getWriter();
+            ObjectMapper objectMapper = new ObjectMapper();
+            out.print(objectMapper.writeValueAsString(authentication.getPrincipal()));
+            out.flush();
         };
     }
 
     private AuthenticationFailureHandler failureHandler() {
-        return new AuthenticationFailureHandler() {
-            @Override
-            public void onAuthenticationFailure(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse,
-                                                AuthenticationException e) throws IOException, ServletException {
-                httpServletResponse.getWriter().append("Authentication failure");
-                httpServletResponse.setStatus(403);
-            }
+        return (httpServletRequest, httpServletResponse, e) -> {
+            httpServletResponse.getWriter().append("Authentication failure");
+            httpServletResponse.setStatus(401);
         };
     }
     private AccessDeniedHandler accessDeniedHandler() {
-        return new AccessDeniedHandler() {
-            @Override
-            public void handle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse,
-                               AccessDeniedException e) throws IOException, ServletException {
-                httpServletResponse.getWriter().append("Access denied");
-                httpServletResponse.setStatus(401);
-            }
+        return (httpServletRequest, httpServletResponse, e) -> {
+            httpServletResponse.getWriter().append("Access denied");
+            httpServletResponse.setStatus(403);
         };
     }
 }

@@ -21,16 +21,27 @@ define(['jquery'], function($) {
         },
         'repository': function (status, ext) {
             var label, cssClass = ["label-status"];
-            // label
             switch (status) {
-                case 'CLONED':
-                    label = "克隆完成";
+                case 'COMPARE':
+                    label = "正在比对";
                     break;
                 case 'CLONING':
                     label = "正在克隆";
                     break;
+                case 'BUILDING':
+                    label = "正在构建";
+                    break;
+                case 'SAVING':
+                    label = "正在保存";
+                    break;
+                case 'FINISH':
+                    label = "打包完成";
+                    break;
                 case 'FAIL':
-                    label = "克隆失败";
+                    label = "打包失败";
+                    break;
+                case 'DEPLOYED':
+                    label = "已部署";
                     break;
                 default:
                     label = status;
@@ -38,10 +49,14 @@ define(['jquery'], function($) {
             }
             // css class
             switch (status) {
-                case 'CLONED':
+                case 'FINISH':
+                case 'DEPLOYED':
                     cssClass.push("label-status-success");
                     break;
+                case 'COMPARE':
                 case 'CLONING':
+                case 'BUILDING':
+                case 'SAVING':
                     cssClass.push("label-status-info");
                     cssClass.push("anim-breath");
                     break;

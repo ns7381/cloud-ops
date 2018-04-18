@@ -1,6 +1,7 @@
 define(['App', 'common/ui/datatables', 'common/ui/modal', 'common/ui/websocket', 'common/ui/validator', 'common/ui/filedownload', 'bs/tab', 'jq/form'], function (App, DataTables, Modal, WS) {
     return App.View({
         app_id: "",
+        app_config: {},
         app_name: "",
         environmentId: "",
         environmentName: "",
@@ -14,22 +15,26 @@ define(['App', 'common/ui/datatables', 'common/ui/modal', 'common/ui/websocket',
             this.app_name = App.getParam('name');
             this.environmentId = App.getParam('environmentId');
             this.environmentName = App.getParam('environmentName');
-            return App.remote("/v1/applications/" + this.app_id);
+            return App.remote(["/v1/applications/" + this.app_id, 'v1/package-configs?applicationId=' + this.app_id]);
         },
         dataFilter: function (err, data) {
-            this.topology = data;
+            this.topology = data[0];
+            this.app_config = data[1];
+            if (data[1] === "") {
+                this.removeError(err);
+            }
         },
         ready: function () {
             var self = this;
             self.patch_containers = [];
             self.app_id = App.getParam('id');
             self.$table = $('#packageTable');
-            $.each(self.topology.topologyContext.nodeTemplateMap || [], function (k, node) {
-                if (node.type == "tosca.nodes.deploy.Tomcat") {
+            $.each(self.topology.topology.nodeTemplates || [], function (k, node) {
+                if (node.type === "tosca.nodes.deploy.Tomcat") {
                     $.each(node.artifacts || [], function (name, artifact) {
-                        if (artifact.type == "tosca.artifacts.PatchFile") {
+                        if (artifact.type === "tosca.artifacts.PatchFile") {
                             self.patch_containers.push(node);
-                        } else if (artifact.type == "tosca.artifacts.WarFile") {
+                        } else if (artifact.type === "tosca.artifacts.WarFile") {
                             self.war_containers.push(node);
                         }
                     })
@@ -39,9 +44,6 @@ define(['App', 'common/ui/datatables', 'common/ui/modal', 'common/ui/websocket',
                 var $tableTop = $(self.$table.selector + "_top");
                 self.bind('click', $('.btn-config', $tableTop), self.configPackage);
                 self.bind('click', $('.btn-add', $tableTop), self.addPackage);
-                // self.bind('click', $('.btn-git', $tableTop), self.gitPackage);
-                // self.bind('click', $('.btn-upload', $tableTop), self.uploadPackage);
-                // self.bind('click', $('.btn-patch', $tableTop), self.patchPackage);
                 self.bind('click', $('.btn-download', self.$table), self.downloadPackage);
                 self.bind('click', $('.btn-deploy', self.$table), self.deploy);
                 self.bind('click', $('.btn-delete', self.$table), self.deletePackage);
@@ -71,19 +73,29 @@ define(['App', 'common/ui/datatables', 'common/ui/modal', 'common/ui/websocket',
                         "width": DataTables.width("name")
                     },
                     {
+                        "data": "type",
+                        "width": DataTables.width("name"),
+                        "render": function (data) {
+                            return data === "WAR" ? "全量" : "增量";
+                        }
+                    },
+                    {
                         "data": "createdAt",
                         "width": DataTables.width("name")
                     },
                     {
                         "data": "status",
-                        "width": DataTables.width("name")
+                        "width": DataTables.width("name"),
+                        "render": function (data) {
+                            return '<span class="status">' + App.statusLabel("repository:" + data) + '</span>';
+                        }
                     },
                     {
                         "data": {},
                         "width": DataTables.width("opt"),
                         "render": function (data) {
-                            if (data.status == "FINISH" && (data.type == "PATCH" && self.patch_containers.length)
-                                || (data.type == "WAR" && self.war_containers.length)) {
+                            if (data.status === "FINISH" && (data.type === "PATCH" && self.patch_containers.length)
+                                || (data.type === "WAR" && self.war_containers.length)) {
                                 return [
                                     '<a class="btn-opt btn-download" data-toggle="tooltip" href="javascript:void(0)" title="下载">',
                                     '<i class="fa fa-cloud-download"></i>',
@@ -136,7 +148,6 @@ define(['App', 'common/ui/datatables', 'common/ui/modal', 'common/ui/websocket',
                 },
                 onloaded: function (dialog) {
                     var $dialog = dialog.getModalDialog();
-                    self.getBranches($dialog);
                     self.formValidate($dialog);
                 },
                 buttons: [{
@@ -155,6 +166,7 @@ define(['App', 'common/ui/datatables', 'common/ui/modal', 'common/ui/websocket',
                         config.applicationId = self.app_id;
                         var keywords = App.highlight("打包配置" + config.gitUrl, 4);
                         var processor = Modal.processing('正在保存' + keywords + '信息');
+                        self.app_config = config;
                         self.ajax.postJSON("v1/package-configs", config, function (err, data) {
                             if (err) {
                                 processor.error(keywords + '创建失败!原因：' + err.message);
@@ -188,21 +200,24 @@ define(['App', 'common/ui/datatables', 'common/ui/modal', 'common/ui/websocket',
                 },
                 onloaded: function (dialog) {
                     var $dialog = dialog.getModalDialog();
-                    self.formValidate($dialog);
-                    $('#type', $dialog).on('change', function () {
-                        var $method = $('#method', $dialog),
+                    $('input[type="checkbox"],input[type="radio"]').not($('.noinit')).iCheck({
+                        checkboxClass: "icheckbox-info",
+                        radioClass: "iradio-info"
+                    });
+                    $('input[name="type"]', $dialog).on('ifChecked', function(event){
+                        var $method = $('input[name="method"]:checked', $dialog),
                             type = $(this).val(),
                             method = $method.val();
                         self.changeTypeOrMethod(type, method, $dialog);
                     });
-                    $('#method', $dialog).on('change', function () {
-                        var $method = $('#method', $dialog),
-                            type = $('#type', $dialog).val(),
+                    $('input[name="method"]', $dialog).on('ifChecked', function(event){
+                        var $method = $('input[name="method"]:checked', $dialog),
+                            type = $('input[name="type"]:checked', $dialog).val(),
                             method = $method.val();
                         self.changeTypeOrMethod(type, method, $dialog);
                     });
-                    $('#type', $dialog).trigger('change');
-                    $('#method', $dialog).trigger('change');
+                    self.getBranches($dialog);
+                    self.formValidate($dialog);
                 },
                 buttons: [{
                     label: "取消",
@@ -218,9 +233,9 @@ define(['App', 'common/ui/datatables', 'common/ui/modal', 'common/ui/websocket',
                         if (!valid) return false;
                         var package = $(".form-horizontal", $modal).serializeObject();
                         package.applicationId = self.app_id;
-                        var keywords = App.highlight((package.type == "WAR" ? "全量包" : "增量包") + package.version, 3);
+                        var keywords = App.highlight((package.type === "WAR" ? "全量包" : "增量包") + package.version, 3);
                         var processor = Modal.processing('正在保存' + keywords + '信息');
-                        if ($('#method', $modal).val() == "file" && $("#file").val()) {
+                        if (package.method === "file" && $("#file").val()) {
                             var $warForm = $("#package-form", $modal);
                             $warForm.attr("method", "post");
                             $warForm.attr("enctype", "multipart/form-data");
@@ -243,7 +258,7 @@ define(['App', 'common/ui/datatables', 'common/ui/modal', 'common/ui/websocket',
                                     processor.error(keywords + '保存失败。原因：' + App.json.parse(err.responseText).message);
                                 }
                             });
-                        } else if($('#type', $modal).val() == "WAR" ){
+                        } else if(package.type === "WAR" ){
                             self.ajax.putJSON('v1/resource-packages/git', package, function (err, data) {
                                 if (err) {
                                     processor.error(keywords + '保存失败!原因：' + err.message);
@@ -283,13 +298,13 @@ define(['App', 'common/ui/datatables', 'common/ui/modal', 'common/ui/websocket',
                 message: '确定要下载' + keywords + '吗?',
                 callback: function (result) {
                     if (result) {
-                        var processor = Modal.processing("正在下载" + keywords);
+                        var processor = Modal.success("开始下载" + keywords);
                         $.fileDownload(App.getRootUrl('v1/resource-packages/' + id + "/download"), {
                             successCallback: function (url) {
-                                processor.success(keywords + '下载成功');
+                                // processor.success(keywords + '下载成功');
                             },
                             failCallback: function (html, url) {
-                                processor.error(keywords + '下载失败');
+                                // processor.error(keywords + '下载失败');
                             }
                         });
                     }
@@ -333,18 +348,18 @@ define(['App', 'common/ui/datatables', 'common/ui/modal', 'common/ui/websocket',
                 name = rowData.version;
             var keywords = App.highlight('程序包' + name, 3),
                 html = '',
-                containers = type == "PATCH" ? self.patch_containers : self.war_containers;
+                containers = type === "PATCH" ? self.patch_containers : self.war_containers;
             $.each(containers, function (k, v) {
-                html += '<input type="radio" name="container" value="' + v.name + '"' + (k == 0 ? "checked" : "") + '>' + v.name;
+                html += '<input type="radio" name="container" value="' + v.name + '"' + (k === 0 ? "checked" : "") + '>' + v.name;
             });
-            html = containers.length == 1 ? containers[0].name : html;
+            html = containers.length === 1 ? containers[0].name : html;
             Modal.confirm({
                 title: "部署程序包",
                 message: '确定将' + keywords + '部署在'+html+'上吗?',
                 callback: function (result) {
                     if (result) {
                         var $modal = this.getModalBody(),
-                            choose = containers.length == 1 ? containers[0].name :$(":radio:checked", $modal).val();
+                            choose = containers.length === 1 ? containers[0].name :$(":radio:checked", $modal).val();
                         var processor = Modal.processing("正在部署" + keywords);
                         self.ajax.put('v1/applications/' + self.app_id + "/node/"+choose+"/deploy/"+id, function (err, data) {
                             if (err) {
@@ -360,22 +375,17 @@ define(['App', 'common/ui/datatables', 'common/ui/modal', 'common/ui/websocket',
             });
         },
         changeTypeOrMethod: function (type, method, $dialog) {
-            if (type == "PATCH" && method == "file") {
+            if (method === "file") {
                 $('#versionDiv', $dialog).show();
                 $('#fileDiv', $dialog).show();
                 $('#gitDiv', $dialog).hide();
                 $('#patchDiv', $dialog).hide();
-            } else if (type == "PATCH" && method == "build") {
+            } else if (type === "PATCH" && method === "build") {
                 $('#versionDiv', $dialog).hide();
                 $('#fileDiv', $dialog).hide();
                 $('#gitDiv', $dialog).hide();
                 $('#patchDiv', $dialog).show();
-            } else if (type == "WAR" && method == "file") {
-                $('#versionDiv', $dialog).show();
-                $('#fileDiv', $dialog).show();
-                $('#gitDiv', $dialog).hide();
-                $('#patchDiv', $dialog).hide();
-            } else if (type == "WAR" && method == "build") {
+            } else if (type === "WAR" && method === "build") {
                 $('#versionDiv', $dialog).show();
                 $('#fileDiv', $dialog).hide();
                 $('#gitDiv', $dialog).show();
@@ -414,13 +424,9 @@ define(['App', 'common/ui/datatables', 'common/ui/modal', 'common/ui/websocket',
         getBranches: function ($modalBody) {
             var self = this;
             $modalBody.on('click', '#btn-connect', function () {
-                var gitUrl = $("#gitUrl", $modalBody).val().trim(),
-                    gitUsername = $("#gitUsername", $modalBody).val().trim(),
-                    gitPassword = $("#gitPassword", $modalBody).val().trim();
-                var config = {gitUrl: gitUrl, gitUsername: gitUsername, gitPassword: gitPassword};
-                self.ajax.putJSON("v1/package-configs/branches", config, function (err, branches) {
+                self.ajax.putJSON("v1/package-configs/branches", self.app_config, function (err, branches) {
                     if (branches) {
-                        if (branches.length == 0) {
+                        if (branches.length === 0) {
                             Modal.warning("当前配置的Git仓库不可用");
                             return false;
                         }

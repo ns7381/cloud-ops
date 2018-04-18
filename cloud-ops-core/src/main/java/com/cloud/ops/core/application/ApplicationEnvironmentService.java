@@ -1,6 +1,3 @@
-/**
- * 
- */
 package com.cloud.ops.core.application;
 
 import com.cloud.ops.common.utils.BeanUtils;
@@ -20,32 +17,33 @@ import java.util.List;
 public class ApplicationEnvironmentService {
 	
 	@Autowired
-	private ApplicationEnvironmentRepository applicationEnvironmentRepository;
+	private ApplicationEnvironmentRepository repository;
 	
 	public ApplicationEnvironment get(String id){
-		return applicationEnvironmentRepository.findOne(id);
+		return repository.findOne(id);
 	}
 
     @PostFilter("hasAuthority('ADMIN') or principal.username.equals(filterObject.username)")
     public List<ApplicationEnvironment> getAll() {
-		return applicationEnvironmentRepository.findAll(SortConstant.CREATED_AT);
+		return repository.findAll(SortConstant.CREATED_AT);
 	}
 
-    public ApplicationEnvironment add(ApplicationEnvironment applicationEnvironment) {
-        applicationEnvironmentRepository.save(applicationEnvironment);
-        return applicationEnvironment;
+    public ApplicationEnvironment create(ApplicationEnvironment entity) {
+//	    entity.setType("local");
+        repository.save(entity);
+        return entity;
     }
 
-    public ApplicationEnvironment edit(ApplicationEnvironment applicationEnvironment) {
-        Assert.notNull(applicationEnvironment.getId(), "id can not be null");
-        ApplicationEnvironment db = this.get(applicationEnvironment.getId());
-        BeanUtils.copyNotNullProperties(applicationEnvironment, db);
-        applicationEnvironmentRepository.save(db);
+    public ApplicationEnvironment update(ApplicationEnvironment entity) {
+        Assert.notNull(entity.getId(), "id can not be null");
+        ApplicationEnvironment db = this.get(entity.getId());
+        BeanUtils.copyNotNullProperties(entity, db);
+        repository.save(db);
         return db;
     }
 
     public void delete(String id) {
         Assert.hasLength(id, "id can not be null");
-        applicationEnvironmentRepository.delete(id);
+        repository.delete(id);
     }
 }

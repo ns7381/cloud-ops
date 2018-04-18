@@ -4,6 +4,7 @@ import com.cloud.ops.core.model.topology.TopologyArchive;
 import com.cloud.ops.core.topology.TopologyArchiveService;
 import com.cloud.ops.core.topology.TopologyService;
 import com.cloud.ops.common.store.FileStore;
+import com.google.common.io.Files;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Authorization;
 import org.apache.commons.io.IOUtils;
@@ -14,6 +15,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.activation.FileTypeMap;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -78,7 +80,9 @@ public class TopologyArchiveController {
     public List<TopologyArchive> getByTopologyId(@PathVariable String topologyId) throws IOException {
         List<TopologyArchive> archives = service.findByTopologyId(topologyId);
         for (TopologyArchive archive : archives) {
-            archive.setFileContents(IOUtils.readLines(new FileInputStream(archive.getFilePath()), "UTF-8"));
+            if (Files.getFileExtension(archive.getFilePath()).equals("sh")) {
+                archive.setFileContents(IOUtils.readLines(new FileInputStream(archive.getFilePath()), "UTF-8"));
+            }
         }
         return archives;
     }

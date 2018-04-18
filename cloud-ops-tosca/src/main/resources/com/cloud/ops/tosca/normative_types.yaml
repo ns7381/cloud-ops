@@ -1,0 +1,41 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+
+node_types:
+    tosca.nodes.Compute:
+        derived_from: tosca.nodes.Root
+
+    tosca.nodes.Compute.Cloud:
+        derived_from: tosca.nodes.Compute
+
+    tosca.nodes.Compute.Cloud.Openstack:
+        derived_from: tosca.nodes.Compute.Cloud
+
+    tosca.nodes.Compute.Cloud.Docker:
+        derived_from: tosca.nodes.Compute.Cloud
+
+    tosca.nodes.Compute.Local:
+        derived_from: tosca.nodes.Compute
+        attributes:
+            hosts:
+              type: list
+            user:
+              type: string
+            password:
+              type: string
+    tosca.nodes.deploy:
+        derived_from: tosca.nodes.Root
+    tosca.nodes.deploy.Tomcat:
+        derived_from: tosca.nodes.deploy
+    tosca.nodes.deploy.MySQL:
+        derived_from: tosca.nodes.deploy
+
+location_types:
+    tosca.locations.Cloud.Openstack:
+        derived_from: tosca.locations.Cloud
+        attributes:
+            endpoint:
+                type: string
+            identity:
+                type: string
+            credential:
+                type: string

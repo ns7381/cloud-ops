@@ -31,7 +31,6 @@ public class AuditTraceController {
     @PreAuthorize("hasAuthority('ADMIN')")
     public Page<AuditTrace> findPage(@PathVariable int pageNo, @PathVariable int pageSize) {
         Pageable pageable = new PageRequest(pageNo, pageSize, SortConstant.CREATED_AT);
-        //// TODO: 2017/4/27 jpa find method with map?
         return repository.findAll(pageable);
     }
 

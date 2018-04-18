@@ -1,13 +1,11 @@
 package com.cloud.ops.core.topology;
 
 import com.cloud.ops.common.utils.BeanUtils;
-import com.cloud.ops.core.model.topology.Topology;
+import com.cloud.ops.core.model.topology.TopologyEntity;
 import com.cloud.ops.core.topology.repository.TopologyRepository;
 import com.cloud.ops.dao.modal.SortConstant;
-import com.cloud.ops.toscamodel.Tosca;
+import com.cloud.ops.tosca.Tosca;
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,28 +17,27 @@ import java.util.List;
 @Service
 @Transactional
 public class TopologyService {
-    private final Logger logger = LoggerFactory.getLogger(getClass());
     @Autowired
     private TopologyRepository dao;
 
-    public Topology get(String id) {
-        Topology topology = dao.findOne(id);
+    public TopologyEntity get(String id) {
+        TopologyEntity topology = dao.findOne(id);
         setTopologyContext(topology);
         return topology;
     }
 
-    private void setTopologyContext(Topology topology) {
+    private void setTopologyContext(TopologyEntity topology) {
         if (StringUtils.isNotBlank(topology.getYamlFilePath())) {
-            topology.setTopologyContext(Tosca.newEnvironment(topology.getYamlFilePath()).getTopologyContext());
+            topology.setTopology(Tosca.read(topology.getYamlFilePath()));
         }
     }
 
-    public Topology create(Topology shell) {
+    public TopologyEntity create(TopologyEntity shell) {
         dao.save(shell);
         return shell;
     }
 
-    public List<Topology> findAll() {
+    public List<TopologyEntity> findAll() {
         return dao.findAll(SortConstant.CREATED_AT);
     }
 
@@ -48,17 +45,17 @@ public class TopologyService {
         dao.delete(id);
     }
 
-    public Topology update(String id, Topology topology) {
+    public TopologyEntity update(String id, TopologyEntity topology) {
         Assert.notNull(id, "id can not be null");
-        Topology db = this.get(id);
+        TopologyEntity db = this.get(id);
         BeanUtils.copyNotNullProperties(topology, db);
         dao.save(db);
         return db;
     }
 
-    public List<Topology> getListWithContext() {
-        List<Topology> topologies = dao.findAll();
-        for (Topology topology : topologies) {
+    public List<TopologyEntity> getListWithContext() {
+        List<TopologyEntity> topologies = dao.findAll();
+        for (TopologyEntity topology : topologies) {
             setTopologyContext(topology);
         }
         return topologies;

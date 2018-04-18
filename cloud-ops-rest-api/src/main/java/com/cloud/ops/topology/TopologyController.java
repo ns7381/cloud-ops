@@ -1,7 +1,7 @@
 package com.cloud.ops.topology;
 
 import com.cloud.ops.common.store.FileStore;
-import com.cloud.ops.core.model.topology.Topology;
+import com.cloud.ops.core.model.topology.TopologyEntity;
 import com.cloud.ops.core.topology.TopologyService;
 import io.swagger.annotations.Api;
 import org.apache.commons.io.IOUtils;
@@ -22,20 +22,20 @@ import java.util.List;
 @Api(value = "", description = "Operations on Topologies")
 public class TopologyController {
     @Value("${cloud-ops.file.topology}")
-    private String TOPOLOGY_FILE_PATH;
+    private static String TOPOLOGY_FILE_PATH;
     @Autowired
     private TopologyService service;
     @Autowired
     private FileStore fileStore;
 
     @PostMapping
-    public Topology create(@RequestBody Topology deploymentTopology) {
+    public TopologyEntity create(@RequestBody TopologyEntity deploymentTopology) {
         return service.create(deploymentTopology);
     }
 
     @PostMapping(value = "/{id}/upload")
-    public Topology upload(@RequestParam("file") MultipartFile file, @PathVariable String id) throws IOException {
-        Topology topology = service.get(id);
+    public TopologyEntity upload(@RequestParam("file") MultipartFile file, @PathVariable String id) throws IOException {
+        TopologyEntity topology = service.get(id);
         if (StringUtils.isNotBlank(topology.getYamlFilePath())) {
             fileStore.delete(topology.getYamlFilePath());
         }
@@ -53,25 +53,25 @@ public class TopologyController {
     }
 
     @PutMapping(value = "/{id}")
-    public Topology update(@PathVariable String id, @RequestBody Topology deploymentTopology) {
+    public TopologyEntity update(@PathVariable String id, @RequestBody TopologyEntity deploymentTopology) {
         return service.update(id, deploymentTopology);
     }
 
     @GetMapping(value = "/{id}")
-    public Topology get(@PathVariable String id) throws IOException {
-        Topology topology = service.get(id);
+    public TopologyEntity get(@PathVariable String id) throws IOException {
+        TopologyEntity topology = service.get(id);
         topology.setFileContents(IOUtils.readLines(new FileReader(topology.getYamlFilePath())));
         return topology;
     }
 
     @GetMapping
     @PreAuthorize("hasAuthority('ADMIN')")
-    public List<Topology> findAll() {
+    public List<TopologyEntity> findAll() {
         return service.findAll();
     }
 
     @GetMapping(value = "/list-with-context")
-    public List<Topology> getListWithContext() {
+    public List<TopologyEntity> getListWithContext() {
         return service.getListWithContext();
     }
 

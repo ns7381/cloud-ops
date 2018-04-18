@@ -1,10 +1,37 @@
 tosca_definitions_version: tosca_simple_yaml_1_0_0
 topology_template:
+    inputs:
+        tomcat_host_ips:
+          type: list
+          description: Tomcat主机IP
+        tomcat_host_user:
+          type: string
+          description: Tomcat主机用户名
+        tomcat_host_password:
+          type: string
+          description: Tomcat主机密码
+        mysql_host_ips:
+          type: list
+          description: Mysql主机IP
+        mysql_host_user:
+          type: string
+          description: Mysql主机用户名
+        mysql_host_password:
+          type: string
+          description: Mysql主机密码
     node_templates:
         tomcat_host:
             type: tosca.nodes.Compute.Local
+            attributes:
+                hosts: { get_input: tomcat_host_ips }
+                user: { get_input: tomcat_host_user }
+                password: { get_input: tomcat_host_password }
         mysql_host:
             type: tosca.nodes.Compute.Local
+            attributes:
+                hosts: { get_input: mysql_host_ips }
+                user: { get_input: mysql_host_user }
+                password: { get_input: mysql_host_password }
         mysql:
             type: tosca.nodes.deploy.MySQL
             attributes:

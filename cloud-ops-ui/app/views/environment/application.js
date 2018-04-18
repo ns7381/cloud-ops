@@ -71,11 +71,11 @@ define(['App', 'common/ui/datatables', 'common/ui/modal', 'rq/text!app/templates
                 }, callback);
             },
             addApp: function () {
-                var self = this, topologies = [], topologyChoose = {}, nodes = [];
+                var self = this, topologies = [], topologyChoose = {};
                 Modal.show({
                     title: "新建应用",
                     size: {
-                        width: '740px'
+                        width: '680px'
                     },
                     remote: function () {
                         var def = $.Deferred();
@@ -83,24 +83,8 @@ define(['App', 'common/ui/datatables', 'common/ui/modal', 'rq/text!app/templates
                             url: '+/add.html',
                             data: App.remote("/v1/topologies/list-with-context"),
                             dataFilter: function (err, topoList) {
-                                $.each(topoList, function (k, topo) {
-                                    var isEnv = false, topology={};
-                                    topology.id = topo.id;
-                                    topology.name = topo.name;
-                                    topology.nodes = [];
-                                    $.each(topo.topologyContext.nodeTemplateMap, function (name, node) {
-                                        if (node.type == "tosca.nodes.Compute.Local" && self.environmentType == "local") {
-                                            isEnv = true;
-                                            topology.nodes.push(node);
-                                        } else if (node.type == "tosca.nodes.Compute.Docker" && self.environmentType == "docker") {
-                                            isEnv = true;
-                                        }
-                                    });
-                                    if (isEnv) {
-                                        topologies.push(topology);
-                                    }
-                                });
-                                return {topologies: topologies};
+                                topologies = topoList;
+                                return {topologies: topoList};
                             },
                             callback: function (err, html, data) {
                                 def.resolve(html);
@@ -117,9 +101,9 @@ define(['App', 'common/ui/datatables', 'common/ui/modal', 'rq/text!app/templates
                             var topologyId = $topologyId.val();
                             $location.empty();
                             $.each(topologies, function (k, topo) {
-                                if (topo.id == topologyId) {
+                                if (topo.id === topologyId) {
                                     topologyChoose = topo;
-                                    $location.append(self.template.render(LocationTpl, topo));
+                                    $location.append(self.template.render(LocationTpl, topo.topology));
                                     dialog.setPosition();
                                 }
                             });
@@ -139,27 +123,19 @@ define(['App', 'common/ui/datatables', 'common/ui/modal', 'rq/text!app/templates
                             var valid = $(".form-horizontal", $modal).valid();
                             if (!valid) return false;
                             var app = $(".form-horizontal", $modal).serializeObject();
-                            if (self.environmentType == "local") {
-                                var location = {};
-                                location.host = {};
-                                $.each(topologyChoose.nodes, function (k, node) {
-                                    var host = {};
-                                    host.user = app[node.name + "user"];
-                                    host.password = app[node.name + "password"];
-                                    var hosts = app[node.name + "hosts"];
-                                    host.ips = hosts.trim().split(",");
-                                    location.host[node.name] = host;
-                                    delete app[node.name + "user"];
-                                    delete app[node.name + "password"];
-                                    delete app[node.name + "hosts"];
-                                });
-                                app.location = location;
-                            }
-                            app.environmentId = self.environmentId;
-                            app.topologyName = topologyChoose.name;
+                            var postData = {};
+                            postData.name = app.name;
+                            postData.topologyId = app.topologyId;
+                            postData.environmentId = self.environmentId;
+                            postData.topologyName = topologyChoose.name;
+                            postData.inputs = {};
+                            $('#location', $modal).find('input').each(function (e, input) {
+                                postData.inputs[$(input).attr("name")] = $(input).data('type') === "list" ?
+                                    $(input).val().trim().split(",") : $(input).val();
+                            });
                             var keywords = App.highlight("应用" + app.name, 2);
                             var processor = Modal.processing('正在保存' + keywords + '信息');
-                            self.ajax.postJSON("v1/applications", app, function (err, data) {
+                            self.ajax.postJSON("v1/applications", postData, function (err, data) {
                                 if (err) {
                                     processor.error(keywords + '创建失败!原因：' + err.message);
                                 } else {

@@ -4,7 +4,7 @@ project(':cloud-ops-security') {
     apply plugin: 'java'
 
     dependencies {
-        compile project(':cloud-ops-dao')
+        compile project(':cloud-ops-common')
         compile ('org.springframework.boot:spring-boot-starter-web:1.5.2.RELEASE')
         compile 'org.springframework.boot:spring-boot-starter-security:1.5.2.RELEASE'
         compile 'org.springframework.boot:spring-boot-starter-actuator:1.5.2.RELEASE'

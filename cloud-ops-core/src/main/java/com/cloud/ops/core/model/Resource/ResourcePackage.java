@@ -18,6 +18,7 @@ public class ResourcePackage extends BaseObject {
     private String build;
     private ResourcePackageStatus status;
     private ResourcePackageType type;
+    private String branch;
 
     public String getVersion() {
         return version;
@@ -52,7 +53,6 @@ public class ResourcePackage extends BaseObject {
         this.warPath = warPath;
     }
 
-    @Transient
     public String getBuild() {
         return build;
     }
@@ -77,5 +77,13 @@ public class ResourcePackage extends BaseObject {
 
     public void setType(ResourcePackageType type) {
         this.type = type;
+    }
+
+    public String getBranch() {
+        return branch;
+    }
+
+    public void setBranch(String branch) {
+        this.branch = branch;
     }
 }

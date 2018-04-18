@@ -1,21 +1,21 @@
 package com.cloud.ops.resource;
 
-import com.cloud.ops.common.cmd.LocalExecuteCommand;
+import com.cloud.ops.common.exception.OpsException;
+import com.cloud.ops.common.store.FileStore;
 import com.cloud.ops.common.utils.FileHelper;
 import com.cloud.ops.common.utils.ThreadWithEntity;
+import com.cloud.ops.common.ws.CustomWebSocketHandler;
+import com.cloud.ops.common.ws.WebSocketConstants;
 import com.cloud.ops.core.model.Resource.ResourcePackage;
 import com.cloud.ops.core.model.Resource.ResourcePackageConfig;
 import com.cloud.ops.core.model.Resource.ResourcePackageStatus;
 import com.cloud.ops.core.model.Resource.ResourcePackageType;
 import com.cloud.ops.core.resource.ResourcePackageConfigService;
 import com.cloud.ops.core.resource.ResourcePackageService;
-import com.cloud.ops.common.store.FileStore;
-import com.cloud.ops.common.ws.CustomWebSocketHandler;
-import com.cloud.ops.common.ws.WebSocketConstants;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
-import org.eclipse.jgit.api.Git;
-import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
@@ -27,9 +27,12 @@ import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
+import static com.cloud.ops.common.ws.WebSocketConstants.PACKAGE_STATUS;
+
 @RestController
 @RequestMapping(value = "/resource-packages")
 public class ResourcePackageController {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ResourcePackageController.class);
     @Value("${cloud-ops.file.package}")
     private String PACKAGE_FILE_PATH;
     @Autowired
@@ -72,16 +75,14 @@ public class ResourcePackageController {
                          @PathVariable("id") String id) {
         ResourcePackage resourcePackage = service.get(id);
         try {
-            // 清空response
             response.reset();
-            // 设置response的Header
             response.setContentType("licenseInfo/octet-stream;charset=UTF-8");
             File file = new File(resourcePackage.getWarPath());
             response.setHeader("Content-Disposition", "attachment;filename="
                     + java.net.URLEncoder.encode(file.getName(), "UTF-8"));
             FileUtils.copyFile(file, response.getOutputStream());
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error("file download error: ", e);
         }
     }
 
@@ -99,8 +100,8 @@ public class ResourcePackageController {
         ResourcePackage patchPackage = new ResourcePackage();
         patchPackage.setType(ResourcePackageType.PATCH);
         patchPackage.setApplicationId(applicationId);
-        patchPackage.setName(nextPackage.getVersion() + "-patch");
-        patchPackage.setVersion(nextPackage.getVersion() + "-patch");
+        patchPackage.setName(prePackage.getVersion() + "TO" + nextPackage.getVersion());
+        patchPackage.setVersion(nextPackage.getVersion());
         patchPackage.setDescription(prePackage.getVersion() + "版本至" + nextPackage.getVersion() + "版本的patch");
         patchPackage.setStatus(ResourcePackageStatus.COMPARE);
         service.create(patchPackage);
@@ -111,7 +112,7 @@ public class ResourcePackageController {
                 entity.setWarPath(patchPath);
                 entity.setStatus(ResourcePackageStatus.FINISH);
                 service.update(entity);
-                webSocketHandler.sendMsg(WebSocketConstants.PACKAGE_STATUS, entity);
+                webSocketHandler.sendMsg(PACKAGE_STATUS, entity);
             }
         }.start();
         return patchPackage;
@@ -120,11 +121,12 @@ public class ResourcePackageController {
     @RequestMapping(value = "/upload", method = RequestMethod.POST)
     @ResponseBody
     public ResourcePackage uploadWar(@RequestParam("file") MultipartFile file,
-                                           @RequestParam("version") String version,
-                                           @RequestParam("type") String type,
-                                           @RequestParam("applicationId") String applicationId) {
+                                     @RequestParam("version") String version,
+                                     @RequestParam("type") String type,
+                                     @RequestParam("applicationId") String applicationId) {
         final ResourcePackage resourcePackage = new ResourcePackage();
         resourcePackage.setType(ResourcePackageType.valueOf(type));
+        resourcePackage.setName(version);
         resourcePackage.setVersion(version);
         resourcePackage.setApplicationId(applicationId);
         if (file != null && !file.getOriginalFilename().trim().equals("")) {
@@ -140,16 +142,16 @@ public class ResourcePackageController {
                     try {
                         fileStore.storeFile(file.getInputStream(), filePath);
                     } catch (IOException e) {
-                        throw new RuntimeException("保存war包失败！", e);
+                        throw new OpsException("保存war包失败！", e);
                     }
                     entity.setWarPath(destination.getAbsolutePath());
                     entity.setStatus(ResourcePackageStatus.FINISH);
                     service.create(entity);
-                    webSocketHandler.sendMsg(WebSocketConstants.PACKAGE_STATUS, entity);
+                    webSocketHandler.sendMsg(PACKAGE_STATUS, entity);
                 }
             }.start();
         } else {
-            throw new RuntimeException("war包为空！");
+            throw new OpsException("war包为空！");
         }
         return resourcePackage;
     }
@@ -159,6 +161,7 @@ public class ResourcePackageController {
         ResourcePackageConfig config = configService.findByApplicationId(resourcePackage.getApplicationId());
         resourcePackage.setConfig(config);
         assert StringUtils.isNotBlank(resourcePackage.getBuild());
+        resourcePackage.setName(resourcePackage.getVersion());
         resourcePackage.setType(ResourcePackageType.WAR);
         resourcePackage.setStatus(ResourcePackageStatus.CLONING);
         this.create(resourcePackage);
@@ -166,65 +169,11 @@ public class ResourcePackageController {
 
             @Override
             public void run(ResourcePackage entity) {
-                ResourcePackageConfig config = entity.getConfig();
-                File localPath = null;
-                try {
-                    localPath = File.createTempFile("TestGitRepository", "");
-                    if(!localPath.delete()) {
-                        throw new IOException("Could not delete temporary file " + localPath);
-                    }
-                    System.out.println("clone from " + config.getGitUrl() + " to " + localPath);
-                    Git result = Git.cloneRepository()
-                            .setURI(config.getGitUrl())
-                            .setDirectory(localPath)
-                            .setCloneSubmodules(true)
-                            .setBranch(config.getBranch())
-                            .setCredentialsProvider(new UsernamePasswordCredentialsProvider(config.getGitUsername(), config.getGitPassword()))
-                            .call();
-                    System.out.println("Having repository: " + result.getRepository().getDirectory());
-                    entity.setStatus(ResourcePackageStatus.BUILDING);
-                    service.update(entity);
-                    webSocketHandler.sendMsg(WebSocketConstants.PACKAGE_STATUS, entity);
-
-                    File dir = result.getRepository().getDirectory().getParentFile();
-                    LocalExecuteCommand.execute(entity.getBuild(), dir);
-                    entity.setStatus(ResourcePackageStatus.SAVING);
-                    service.update(entity);
-                    webSocketHandler.sendMsg(WebSocketConstants.PACKAGE_STATUS, entity);
-
-                    String uploadPath = PACKAGE_FILE_PATH + UUID.randomUUID().toString();
-                    FileUtils.forceMkdir(new File(uploadPath));
-                    List<File> files = (List<File>) FileUtils.listFiles(new File(dir + File.separator + config.getBuildDir()), new String[]{"war","zip"}, false);
-                    assert files.size() > 0;
-                    File destFile = new File(uploadPath);
-                    FileUtils.copyFileToDirectory(files.get(0), destFile);
-                    entity.setWarPath(destFile + File.separator + files.get(0).getName());
-                    entity.setStatus(ResourcePackageStatus.FINISH);
-                    service.update(entity);
-                    webSocketHandler.sendMsg(WebSocketConstants.PACKAGE_STATUS, entity);
-                    deleteFile(localPath);
-                } catch (Exception e) {
-                    deleteFile(localPath);
-                    e.printStackTrace();
-                    entity.setStatus(ResourcePackageStatus.FAIL);
-                    service.update(entity);
-                    webSocketHandler.sendMsg(WebSocketConstants.PACKAGE_STATUS, entity);
-                }
+                service.packageWar(entity);
             }
         }.start();
         return resourcePackage;
     }
 
-    void deleteFile(File file) {
-        if (file.exists()) {
-            if (file.isFile()) {
-                file.delete();
-            } else if (file.isDirectory()) {
-                for (File child : file.listFiles()) {
-                    deleteFile(child);
-                }
-            }
-            file.delete();
-        }
-    }
+
 }
